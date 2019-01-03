@@ -1,5 +1,5 @@
 author = Atenfyr
-version = 0.1.0
+version = 0.1.1
 displayName = Better Taxes
 hideCode = true
 hideResources = true
