@@ -1,14 +1,9 @@
-# Rune Carver
-Rune Carver adds six new weapons which can be "empowered" six times as the game progresses.
-This mod currently includes:
-* The Rune Carver, a machine which, given certain materials, carves runes into compatible weapons, making them more powerful
-* Exultion, a long spear which can stab your opponents from afar
-* Exodium, a sword which fires a fast-moving projectile
-* Colstice, a shotgun which fires a tight spread of five bullets
-* Cellcrusher, a bow which fires two arrows instead of one
-* Ash, a staff which rapidly fires fireballs
-* Auger Arcanum, a railgun which fires a solid laser to cleave your opponents into two
-
-# Credits
-* Atenfyr: programming
-* Geocide: sprites and balancing
+# Better Taxes
+Overhauls the Tax Collector to be more useful with two small changes:
+* Increases the Tax Collector's money cap to 10 platinum rather than 10 gold.
+* Increases profit depending on how far in the game you are:
+    * At the start, rent is 50 copper a minute per NPC, or 6.3 gold an hour with 21 NPCs. (This is the vanilla amount regardless of progression.)
+    * After defeating any mechanical boss, rent raises to 1 silver a minute per NPC, or 12.6 gold an hour with 21 NPCs.
+    * After defeating Plantera, rent raises to 2 silver a minute per NPC, or 25.2 gold an hour with 21 NPCs.
+    * After defeating Golem, rent raises to 5 silver a minute per NPC, or 63 gold an hour with 21 NPCs.
+    * After defeating the Moon Lord, rent raises to 10 silver a minute per NPC, or 1.2 platinum an hour with 21 NPCs.
