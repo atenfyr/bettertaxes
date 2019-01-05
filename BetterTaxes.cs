@@ -10,5 +10,9 @@ namespace BetterTaxes {
                 Autoload = true
             };
         }
+
+        public override void Load() {
+            Config.Load();
+        }
     }
 }

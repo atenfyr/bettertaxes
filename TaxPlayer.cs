@@ -12,9 +12,7 @@ using Terraria.GameInput;
 
 namespace BetterTaxes {
     public class TaxPlayer : ModPlayer {
-        public int taxRate = Item.buyPrice(copper: 50); // amount given per paycheck
-        public int taxTimer = 3600; // time between paychecks, in frames
-        public int taxCap = Item.buyPrice(platinum: 10); // max the guy can hold
+        public int taxRate = TaxWorld.taxes["PostWall"]; // amount given per paycheck
         public int currentTaxes = 0;
         public int taxWait = 0;
         public bool isJustZero = false;
@@ -23,20 +21,21 @@ namespace BetterTaxes {
             if (Main.netMode != 2) {
                 //// increase taxes the further along you are
                 if (NPC.downedMoonlord) {
-                    this.taxRate = Item.buyPrice(silver: 10);
+                    this.taxRate = TaxWorld.taxes["PostMoonLord"];
                 } else if (NPC.downedGolemBoss) {
-                    this.taxRate = Item.buyPrice(silver: 5);
+                    this.taxRate = TaxWorld.taxes["PostGolem"];
                 } else if (NPC.downedPlantBoss) {
-                    this.taxRate = Item.buyPrice(silver: 2);
+                    this.taxRate = TaxWorld.taxes["PostPlantera"];
                 } else if (NPC.downedMechBossAny) {
-                    this.taxRate = Item.buyPrice(silver: 1);
+                    this.taxRate = TaxWorld.taxes["PostAnyMechBoss"];
                 } else {
-                    this.taxRate = Item.buyPrice(copper: 50);
+                    this.taxRate = TaxWorld.taxes["PostWall"];
                 }
 
                 //// taxes
                 this.taxWait += Main.dayRate;
-                if (this.taxWait >= this.taxTimer && NPC.savedTaxCollector) {
+                if (this.taxWait >= TaxWorld.taxTimer && NPC.savedTaxCollector) {
+                    // this is the exact same code that Terraria uses to determine the # of town NPCs alive
                     int npcCount = 0;
                     for (int i = 0; i < 200; i++) {
                         if (Main.npc[i].active && !Main.npc[i].homeless && NPC.TypeToHeadIndex(Main.npc[i].type) > 0) {
@@ -48,8 +47,8 @@ namespace BetterTaxes {
                 }
 
                 // enforce cap
-                if (this.currentTaxes > this.taxCap) {
-                    this.currentTaxes = this.taxCap;
+                if (this.currentTaxes > TaxWorld.taxCap) {
+                    this.currentTaxes = TaxWorld.taxCap;
                 }
 
                 // when paid, make sure to reset it
@@ -61,6 +60,7 @@ namespace BetterTaxes {
                     this.isJustZero = true;
                 }
 
+                // taxMoney is the amount of money the tax collector has stored for this player. the display dialog actually does support platinum despite that never happening in vanilla, so we can just override the stored value every single frame so that the old system does nothing
                 Main.player[Main.myPlayer].taxMoney = this.currentTaxes;
             }
         }
