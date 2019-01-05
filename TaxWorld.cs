@@ -26,9 +26,9 @@ namespace BetterTaxes {
                 writer.Write(item.Key);
                 writer.Write(item.Value);
             }
-		}
+        }
 
-		public override void NetReceive(BinaryReader reader) {
+        public override void NetReceive(BinaryReader reader) {
             taxTimer = reader.ReadInt32();
             taxCap = reader.ReadInt32();
             int count = reader.ReadInt32();
@@ -37,6 +37,6 @@ namespace BetterTaxes {
                 int rent = reader.ReadInt32();
                 taxes[progression] = rent;
             }
-		}
+        }
     }
 }
