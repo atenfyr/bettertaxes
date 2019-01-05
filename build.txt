@@ -1,0 +1,8 @@
+author = Atenfyr
+version = 0.1.1
+displayName = Better Taxes
+hideCode = true
+hideResources = true
+includeSource = false
+buildIgnore = *.csproj, *.user, obj\*, bin\*
+includePDB = true
