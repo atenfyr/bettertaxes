@@ -1,1 +1,7 @@
+.vs
+bin
+obj
 *.png
+*.csproj
+*.csproj.user
+*.sln

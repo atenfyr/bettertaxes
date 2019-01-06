@@ -1,14 +1,11 @@
-using System;
 using System.IO;
-using System.Collections.Generic;
 using Terraria;
-using Terraria.ID;
 using Terraria.IO;
 using Terraria.ModLoader;
 
 namespace BetterTaxes {
     public static class Config {
-        private static string path = Path.Combine(Main.SavePath, "Mod Configs", "BetterTaxes.json");
+        private static readonly string path = Path.Combine(Main.SavePath, "Mod Configs", "BetterTaxes.json");
         private static Preferences config = new Preferences(path);
 
         public static void Load() {

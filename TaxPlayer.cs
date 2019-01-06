@@ -1,14 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.DataStructures;
-using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
-using Terraria.GameInput;
 
 namespace BetterTaxes {
     public class TaxPlayer : ModPlayer {
@@ -21,15 +13,15 @@ namespace BetterTaxes {
             if (Main.netMode != 2) {
                 //// increase taxes the further along you are
                 if (NPC.downedMoonlord) {
-                    this.taxRate = TaxWorld.taxes["PostMoonLord"];
+                    taxRate = TaxWorld.taxes["PostMoonLord"];
                 } else if (NPC.downedGolemBoss) {
-                    this.taxRate = TaxWorld.taxes["PostGolem"];
+                    taxRate = TaxWorld.taxes["PostGolem"];
                 } else if (NPC.downedPlantBoss) {
-                    this.taxRate = TaxWorld.taxes["PostPlantera"];
+                    taxRate = TaxWorld.taxes["PostPlantera"];
                 } else if (NPC.downedMechBossAny) {
-                    this.taxRate = TaxWorld.taxes["PostAnyMechBoss"];
+                    taxRate = TaxWorld.taxes["PostAnyMechBoss"];
                 } else {
-                    this.taxRate = TaxWorld.taxes["PostWall"];
+                    taxRate = TaxWorld.taxes["PostWall"];
                 }
 
                 //// taxes
@@ -42,26 +34,26 @@ namespace BetterTaxes {
                             npcCount++;
                         }
                     }
-                    this.taxWait = 0;
-                    this.currentTaxes += (this.taxRate*npcCount);
+                    taxWait = 0;
+                    currentTaxes += (this.taxRate*npcCount);
                 }
 
                 // enforce cap
-                if (this.currentTaxes > TaxWorld.taxCap) {
-                    this.currentTaxes = TaxWorld.taxCap;
+                if (currentTaxes > TaxWorld.taxCap) {
+                    currentTaxes = TaxWorld.taxCap;
                 }
 
                 // when paid, make sure to reset it
                 if (Main.player[Main.myPlayer].taxMoney != 0) {
-                    this.isJustZero = false;
+                    isJustZero = false;
                 }
                 if (Main.player[Main.myPlayer].taxMoney == 0 && !isJustZero) {
-                    this.currentTaxes = 0;
-                    this.isJustZero = true;
+                    currentTaxes = 0;
+                    isJustZero = true;
                 }
 
                 // taxMoney is the amount of money the tax collector has stored for this player. the display dialog actually does support platinum despite that never happening in vanilla, so we can just override the stored value every single frame so that the old system does nothing
-                Main.player[Main.myPlayer].taxMoney = this.currentTaxes;
+                Main.player[Main.myPlayer].taxMoney = currentTaxes;
             }
         }
 
