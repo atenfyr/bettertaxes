@@ -95,7 +95,12 @@ namespace BetterTaxes
                     {
                         throw new Exception("Could not find mod world \"" + terms[1] + "\" in mod \"" + terms[0] + "\"");
                     }
-                    return (bool)customWorld.GetType().GetField(terms[2]).GetValue(customWorld);
+                    var thisField = customWorld.GetType().GetField(terms[2]);
+                    if (thisField == null)
+                    {
+                        throw new Exception("Could not find field \"" + terms[2] + "\" in mod world \"" + terms[1] + "\" in mod \"" + terms[0] + "\"");
+                    }
+                    return (bool)thisField.GetValue(customWorld);
                 }
             }
             return false;

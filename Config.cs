@@ -9,13 +9,17 @@ namespace BetterTaxes
     public static class DefaultValues
     {
         public static readonly int taxTimer = 3600;
-        public static readonly int taxCap = Item.buyPrice(platinum: 10);
+        public static readonly int taxCap = 10000000;
         public static readonly Dictionary<string, int> taxes = new Dictionary<string, int> {
-            {"Base.always", Item.buyPrice(copper: 50)},
-            {"Base.downedMechBossAny", Item.buyPrice(silver: 1)},
-            {"Base.downedPlantBoss", Item.buyPrice(silver: 2)},
-            {"Base.downedGolemBoss", Item.buyPrice(silver: 5)},
-            {"Base.downedMoonlord", Item.buyPrice(silver: 10)}
+            {"Base.always", 50},
+            {"Base.downedMechBossAny", 100},
+            {"Base.downedPlantBoss", 200},
+            {"Base.downedGolemBoss", 500},
+            {"Base.downedMoonlord", 1000},
+            {"CalamityMod.CalamityWorld.downedProvidence", 1250},
+            {"CalamityMod.CalamityWorld.downedDoG", 1500},
+            {"CalamityMod.CalamityWorld.downedYharon", 2500},
+            {"CalamityMod.CalamityWorld.downedSCal", 5000},
         };
         public static readonly bool addCustomDialog = true;
     }
