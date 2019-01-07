@@ -2,17 +2,26 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace BetterTaxes.NPCs {
-    public class GlobalNPCs : GlobalNPC {
-        public override void GetChat(NPC npc, ref string chat) {
-            if (npc.type == NPCID.TaxCollector) {
-                if (Main.rand.Next(3) == 0) {
+namespace BetterTaxes.NPCs
+{
+    public class CustomDialog : GlobalNPC
+    {
+        public override void GetChat(NPC npc, ref string chat)
+        {
+            if (npc.type == NPCID.TaxCollector && TaxWorld.addCustomDialog)
+            {
+                if (Main.rand.Next(3) == 0)
+                {
                     int dialog = Main.rand.Next(3);
-                    switch (dialog) {
+                    switch (dialog)
+                    {
                         case 0:
-                            if (NPC.downedMechBossAny) {
+                            if (NPC.downedMechBossAny)
+                            {
                                 chat = "Thanks to recent economic prosperity here, I can increase our taxes without as much complaint.";
-                            } else {
+                            }
+                            else
+                            {
                                 chat = "I expect that the loot some of those \"powerful monsters\" offer will contribute to the economy enough for me to extort more money from your citizens.";
                             }
                             break;

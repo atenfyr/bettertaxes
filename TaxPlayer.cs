@@ -2,52 +2,71 @@ using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
-namespace BetterTaxes {
-    public class TaxPlayer : ModPlayer {
+namespace BetterTaxes
+{
+    public class TaxPlayer : ModPlayer
+    {
         public int taxRate = TaxWorld.taxes["PostWall"]; // amount given per paycheck
         public int currentTaxes = 0;
         public int taxWait = 0;
         public bool isJustZero = false;
 
-        public override void PreUpdate() {
-            if (Main.netMode != 2) {
+        public override void PreUpdate()
+        {
+            if (Main.netMode != 2)
+            {
                 //// increase taxes the further along you are
-                if (NPC.downedMoonlord) {
+                if (NPC.downedMoonlord)
+                {
                     taxRate = TaxWorld.taxes["PostMoonLord"];
-                } else if (NPC.downedGolemBoss) {
+                }
+                else if (NPC.downedGolemBoss)
+                {
                     taxRate = TaxWorld.taxes["PostGolem"];
-                } else if (NPC.downedPlantBoss) {
+                }
+                else if (NPC.downedPlantBoss)
+                {
                     taxRate = TaxWorld.taxes["PostPlantera"];
-                } else if (NPC.downedMechBossAny) {
+                }
+                else if (NPC.downedMechBossAny)
+                {
                     taxRate = TaxWorld.taxes["PostAnyMechBoss"];
-                } else {
+                }
+                else
+                {
                     taxRate = TaxWorld.taxes["PostWall"];
                 }
 
                 //// taxes
-                this.taxWait += Main.dayRate;
-                if (this.taxWait >= TaxWorld.taxTimer && NPC.savedTaxCollector) {
-                    // this is the exact same code that Terraria uses to determine the # of town NPCs alive
+                taxWait += Main.dayRate; // enchanted sundial = 60x the speed
+                if (taxWait >= TaxWorld.taxTimer && NPC.savedTaxCollector)
+                {
+                    // this is the exact same code that Terraria uses to determine the # of town NPCs in the world
                     int npcCount = 0;
-                    for (int i = 0; i < 200; i++) {
-                        if (Main.npc[i].active && !Main.npc[i].homeless && NPC.TypeToHeadIndex(Main.npc[i].type) > 0) {
+                    for (int i = 0; i < 200; i++)
+                    {
+                        if (Main.npc[i].active && !Main.npc[i].homeless && NPC.TypeToHeadIndex(Main.npc[i].type) > 0)
+                        {
                             npcCount++;
                         }
                     }
                     taxWait = 0;
-                    currentTaxes += (this.taxRate*npcCount);
+                    currentTaxes += (taxRate * npcCount);
                 }
 
                 // enforce cap
-                if (currentTaxes > TaxWorld.taxCap) {
+                if (currentTaxes > TaxWorld.taxCap)
+                {
                     currentTaxes = TaxWorld.taxCap;
                 }
 
                 // when paid, make sure to reset it
-                if (Main.player[Main.myPlayer].taxMoney != 0) {
+                if (Main.player[Main.myPlayer].taxMoney != 0)
+                {
                     isJustZero = false;
                 }
-                if (Main.player[Main.myPlayer].taxMoney == 0 && !isJustZero) {
+                if (Main.player[Main.myPlayer].taxMoney == 0 && !isJustZero)
+                {
                     currentTaxes = 0;
                     isJustZero = true;
                 }
@@ -57,24 +76,28 @@ namespace BetterTaxes {
             }
         }
 
-        public override void clientClone(ModPlayer clientClone) {
+        public override void clientClone(ModPlayer clientClone)
+        {
             TaxPlayer clone = clientClone as TaxPlayer;
         }
 
-        public override void SyncPlayer(int toWho, int fromWho, bool newPlayer) {
+        public override void SyncPlayer(int toWho, int fromWho, bool newPlayer)
+        {
             ModPacket packet = mod.GetPacket();
             packet.Write((byte)player.whoAmI);
             packet.Send(toWho, fromWho);
         }
 
-        public override TagCompound Save() {
+        public override TagCompound Save()
+        {
             return new TagCompound {
                 {"taxes", currentTaxes},
                 {"internalZero", isJustZero}
             };
         }
 
-        public override void Load(TagCompound tag) {
+        public override void Load(TagCompound tag)
+        {
             currentTaxes = tag.GetInt("taxes");
             isJustZero = tag.GetBool("internalZero");
         }

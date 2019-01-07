@@ -1,10 +1,12 @@
-using System.Collections.Generic;
 using System.IO;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
 
-namespace BetterTaxes {
-    public class TaxWorld : ModWorld {
+namespace BetterTaxes
+{
+    public class TaxWorld : ModWorld
+    {
         public static int taxTimer = 3600;
         public static int taxCap = Item.buyPrice(platinum: 10);
         public static Dictionary<string, int> taxes = new Dictionary<string, int> {
@@ -14,23 +16,28 @@ namespace BetterTaxes {
             {"PostGolem", Item.buyPrice(silver: 5)},
             {"PostMoonLord", Item.buyPrice(silver: 10)}
         };
+        public static bool addCustomDialog = true;
 
         // sync config from server to client
-        public override void NetSend(BinaryWriter writer) {
+        public override void NetSend(BinaryWriter writer)
+        {
             writer.Write(taxTimer);
             writer.Write(taxCap);
             writer.Write(taxes.Keys.Count);
-            foreach (var item in taxes) {
+            foreach (var item in taxes)
+            {
                 writer.Write(item.Key);
                 writer.Write(item.Value);
             }
         }
 
-        public override void NetReceive(BinaryReader reader) {
+        public override void NetReceive(BinaryReader reader)
+        {
             taxTimer = reader.ReadInt32();
             taxCap = reader.ReadInt32();
             int count = reader.ReadInt32();
-            for (int i = 0; i < count; i++) {
+            for (int i = 0; i < count; i++)
+            {
                 string progression = reader.ReadString();
                 int rent = reader.ReadInt32();
                 taxes[progression] = rent;
