@@ -38,13 +38,13 @@ namespace BetterTaxes
 
         public static void Load()
         {
-            if (config.Load()) // if it has PostWall then this is pre-1.0.0 syntax and we need to regenerate the config
+            if (config.Load()) 
             {
                 config.Get("TaxRates", ref TaxWorld.taxes);
                 config.Get("TimeBetweenPaychecks", ref TaxWorld.taxTimer);
                 config.Get("MoneyCap", ref TaxWorld.taxCap);
                 config.Get("AddCustomDialog", ref TaxWorld.addCustomDialog);
-                if (TaxWorld.taxes.ContainsKey("PostWall"))
+                if (TaxWorld.taxes.ContainsKey("PostWall")) // if it has PostWall then this is pre-1.0.0 syntax and we need to regenerate the config
                 {
                     TaxWorld.taxes = DefaultValues.taxes;
                     TaxWorld.taxTimer = DefaultValues.taxTimer;
