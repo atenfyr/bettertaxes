@@ -1,22 +1,15 @@
 using System.IO;
 using System.Collections.Generic;
-using Terraria;
 using Terraria.ModLoader;
 
 namespace BetterTaxes
 {
     public class TaxWorld : ModWorld
     {
-        public static int taxTimer = 3600;
-        public static int taxCap = Item.buyPrice(platinum: 10);
-        public static Dictionary<string, int> taxes = new Dictionary<string, int> {
-            {"PostWall", Item.buyPrice(copper: 50)},
-            {"PostAnyMechBoss", Item.buyPrice(silver: 1)},
-            {"PostPlantera", Item.buyPrice(silver: 2)},
-            {"PostGolem", Item.buyPrice(silver: 5)},
-            {"PostMoonLord", Item.buyPrice(silver: 10)}
-        };
-        public static bool addCustomDialog = true;
+        public static int taxTimer = DefaultValues.taxTimer;
+        public static int taxCap = DefaultValues.taxCap;
+        public static Dictionary<string, int> taxes = DefaultValues.taxes;
+        public static bool addCustomDialog = DefaultValues.addCustomDialog;
 
         // sync config from server to client
         public override void NetSend(BinaryWriter writer)
