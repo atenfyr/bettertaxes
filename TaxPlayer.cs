@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
@@ -13,6 +14,93 @@ namespace BetterTaxes
         public int taxWait = 0;
         public bool isJustZero = false;
 
+        public bool interpretGates(string conditions)
+        {
+            List<string> terms = conditions.Split(' ').ToList();
+            
+            for (int i = 0; i < terms.Count; i++)
+            {
+                switch(terms[i])
+                {
+                    case "not":
+                        terms[i] = (interpretCondition(terms[i])) ? "Base.never" : "Base.always";
+                        terms.RemoveAt(i+1);
+                        break;
+                }
+            }
+
+            bool hasChanged = true;
+            while (hasChanged)
+            {
+                hasChanged = false;
+                for (int i = 1; i < terms.Count-1; i++) // first and last terms can't be a gate
+                {
+                    switch(terms[i])
+                    {
+                        case "and":
+                            terms[i-1] = (interpretCondition(terms[i-1]) && interpretCondition(terms[i+1])) ? "Base.always" : "Base.never";
+                            terms.RemoveAt(i+1);
+                            terms.RemoveAt(i);
+                            hasChanged = true;
+                            break;
+                        case "or":
+                            terms[i-1] = (interpretCondition(terms[i-1]) || interpretCondition(terms[i+1])) ? "Base.always" : "Base.never";
+                            terms.RemoveAt(i+1);
+                            terms.RemoveAt(i);
+                            hasChanged = true;
+                            break;
+                    }
+                }
+            }
+
+            return interpretCondition(string.Join(" ", terms.ToArray()));
+        }
+
+        public bool interpretCondition(string condition)
+        {
+            string[] terms = condition.Split('.');
+            if (terms.Length == 2 && terms[0] == "Base") // example: Base.downedMoonlord
+            {
+                switch (terms[1])
+                {
+                    case "always":
+                        return true;
+                    case "never":
+                        return false;
+                    case "downedMoonlord":
+                        return NPC.downedMoonlord;
+                    case "downedGolemBoss":
+                        return NPC.downedGolemBoss;
+                    case "downedPlantBoss":
+                        return NPC.downedPlantBoss;
+                    case "downedMechBossAny":
+                        return NPC.downedMechBossAny;
+                    case "downedMechBossAll":
+                        return NPC.downedMechBoss1 && NPC.downedMechBoss2 && NPC.downedMechBoss3;
+                    case "downedAncientCultist":
+                        return NPC.downedAncientCultist;
+                    case "expertMode":
+                        return Main.expertMode;
+                    case "crimson":
+                        return WorldGen.crimson;
+                }
+            }
+            else if (terms.Length == 3) // note that this will probably add some lag to world start times
+            {
+                Mod customMod = ModLoader.GetMod(terms[0]);
+                if (customMod != null)
+                {
+                    ModWorld customWorld = customMod.GetModWorld(terms[1]);
+                    if (customWorld == null)
+                    {
+                        throw new Exception("Could not find mod world \"" + terms[1] + "\" in mod \"" + terms[0] + "\"");
+                    }
+                    return (bool)customWorld.GetType().GetField(terms[2]).GetValue(customWorld);
+                }
+            }
+            return false;
+        }
+
         public override void PreUpdate()
         {
             if (Main.netMode != 2)
@@ -24,83 +112,9 @@ namespace BetterTaxes
                 {
                     if (entry.Value > taxRate && entry.Key.Contains(".")) // custom entries in config
                     {
-                        string[] terms = entry.Key.Split('.');
-                        if (terms.Length == 2 && terms[0] == "Base") // example: Base.downedMoonlord
+                        if (interpretGates(entry.Key))
                         {
-                            switch (terms[1])
-                            {
-                                case "always":
-                                    taxRate = entry.Value;
-                                    break;
-                                case "downedMoonlord":
-                                    if (NPC.downedMoonlord)
-                                    {
-                                        taxRate = entry.Value;
-                                    }
-                                    break;
-                                case "downedGolemBoss":
-                                    if (NPC.downedGolemBoss)
-                                    {
-                                        taxRate = entry.Value;
-                                    }
-                                    break;
-                                case "downedPlantBoss":
-                                    if (NPC.downedPlantBoss)
-                                    {
-                                        taxRate = entry.Value;
-                                    }
-                                    break;
-                                case "downedMechBossAny":
-                                    if (NPC.downedMechBossAny)
-                                    {
-                                        taxRate = entry.Value;
-                                    }
-                                    break;
-                                case "downedMechBossAll":
-                                    if (NPC.downedMechBoss1 && NPC.downedMechBoss2 && NPC.downedMechBoss3)
-                                    {
-                                        taxRate = entry.Value;
-                                    }
-                                    break;
-                                case "downedAncientCultist":
-                                    if (NPC.downedAncientCultist)
-                                    {
-                                        taxRate = entry.Value;
-                                    }
-                                    break;
-                                case "expertMode":
-                                    if (Main.expertMode)
-                                    {
-                                        taxRate = entry.Value;
-                                    }
-                                    break;
-                                case "crimson":
-                                    if (WorldGen.crimson)
-                                    {
-                                        taxRate = entry.Value;
-                                    }
-                                    break;
-                                case "corruption":
-                                    if (!WorldGen.crimson)
-                                    {
-                                        taxRate = entry.Value;
-                                    }
-                                    break;
-                            }
-                        }
-                        else if (terms.Length == 3)
-                        {
-                            // example: CalamityMod.CalamityWorld.downedDoG
-                            // note that this will probably add some lag to world start times
-                            Mod customMod = ModLoader.GetMod(terms[0]);
-                            if (customMod != null)
-                            {
-                                ModWorld customWorld = customMod.GetModWorld(terms[1]);
-                                if ((bool)customWorld.GetType().GetField(terms[2]).GetValue(customWorld))
-                                {
-                                    taxRate = entry.Value;
-                                }
-                            }
+                            taxRate = entry.Value;
                         }
                     }
                 }

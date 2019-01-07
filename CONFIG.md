@@ -6,6 +6,7 @@ The config file is written in JSON and has 4 fields, which are elaborated on bel
     - You can separate the list from the flag with a period, as so: `Base.crimson`
     - Here is a list of every single Base flag:
         - `Base.always`: Always set to true. Use this for a "default value."
+		- `Base.never`: Always set to false.
         - `Base.downedMechBossAny`: Any mechanical boss has been killed in the world.
         - `Base.downedMechBossAll`: All mechanical bosses have been killed in the world.
         - `Base.downedPlantBoss:` Plantera has been killed in the world.
@@ -14,8 +15,9 @@ The config file is written in JSON and has 4 fields, which are elaborated on bel
         - `Base.downedMoonlord`: The Moon Lord has been killed in the world.
         - `Base.expertMode`: The world is in expert mode.
         - `Base.crimson`: The world generated with crimson.
-        - `Base.corruption`: The world generated with corruption.
-    - If multiple flags are true, the one which provides the most money to the player is used.
+    - If multiple lines are true, the one which provides the most money to the player is used.
+	- Multiple flags can be separated by a logic gate inside the same line with "and," "or", and "not," as follows: `Base.crimson and Base.expertMode` `Base.downedMechBossAny or Base.crimson` `not Base.expertMode`
+	- You can combine logic gates, as follows: `Base.expertMode and not Base.crimson` `Base.expertMode and Base.downedMechBossAll and Base.crimson`
     - If you would like to use a flag from another mod, the following format is used: `<mod name>.<mod world>.<value>`. For example, `CalamityMod.CalamityWorld.downedDoG` would evaluate to true once the Devourer of Gods has been defeated in that world. You may want to look inside the source code of the mod you wish to retrieve values from.
 - TimeBetweenPaychecks
     - This key corresponds to the amount of time that is separated between paychecks, or when money is contributed to the Tax Collector's "storage." In vanilla Terraria, this is 60 seconds. Note that when the Enchanted Sundial is being used, one second corresponds to what would otherwise be a minute.
