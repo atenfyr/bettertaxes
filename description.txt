@@ -7,5 +7,6 @@ Overhauls the Tax Collector to be more useful with a few small changes:
         * After defeating Golem, rent raises to 5 silver a minute per NPC, or 63 gold an hour with 21 NPCs.
         * After defeating the Moon Lord, rent raises to 10 silver a minute per NPC, or 1.2 platinum an hour with 21 NPCs.
     * Adds a config file stored in the save directory to modify the above values as well as the paycheck rate and money cap. When joining a server, the config file on the machine's installation of Terraria will be used and enforced.
+    * Adds a basic system in the config to add custom rent values for certain mods, given programming knowledge. See https://bit.ly/2VAjD3y.
 
 The source code for this mod is available on Github - https://github.com/atenfyr/bettertaxes
