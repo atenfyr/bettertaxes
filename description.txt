@@ -5,7 +5,12 @@ Overhauls the Tax Collector to be more useful with a few small changes:
         * After defeating any mechanical boss, rent raises to 1 silver a minute per NPC, or 12.6 gold an hour with 21 NPCs.
         * After defeating Plantera, rent raises to 2 silver a minute per NPC, or 25.2 gold an hour with 21 NPCs.
         * After defeating Golem, rent raises to 5 silver a minute per NPC, or 63 gold an hour with 21 NPCs.
-        * After defeating the Moon Lord, rent raises to 10 silver a minute per NPC, or 1.2 platinum an hour with 21 NPCs.
+        * After defeating the Moon Lord, rent raises to 10 silver a minute per NPC, or 1.3 platinum an hour with 21 NPCs.
+        * If Calamity is installed, there are four extra tiers:
+            * After defeating Providence, rent raises to 12.5 silver a minute per NPC, or 1.6 platinum an hour with 21 NPCs.
+            * After defeating the Devourer of Gods, rent raises to 15 silver a minute per NPC, or 1.9 platinum an hour with 21 NPCs.
+            * After defeating Yharon, rent raises to 25 silver a minute per NPC, or 3.1 platinum an hour with 21 NPCs.
+            * After defeating Supreme Calamitas, rent raises to 50 silver a minute per NPC, or 6.3 platinum an hour with 21 NPCs.
     * Adds a config file stored in the save directory to modify the above values as well as the paycheck rate and money cap. When joining a server, the config file on the machine's installation of Terraria will be used and enforced.
     * Adds a basic system in the config to add custom rent values for certain mods, given programming knowledge. See https://bit.ly/2VAjD3y.
 
