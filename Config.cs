@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Collections.Generic;
 using Terraria;
@@ -16,10 +17,10 @@ namespace BetterTaxes
             {"Base.downedPlantBoss", 200},
             {"Base.downedGolemBoss", 500},
             {"Base.downedMoonlord", 1000},
-            {"CalamityMod.CalamityWorld.downedProvidence", 1250},
-            {"CalamityMod.CalamityWorld.downedDoG", 1500},
-            {"CalamityMod.CalamityWorld.downedYharon", 2500},
-            {"CalamityMod.CalamityWorld.downedSCal", 5000},
+            {"Calamity.downedProvidence", 1250},
+            {"Calamity.downedDoG", 1500},
+            {"Calamity.downedYharon", 2500},
+            {"Calamity.downedSCal", 5000},
         };
         public static readonly bool addCustomDialog = true;
     }

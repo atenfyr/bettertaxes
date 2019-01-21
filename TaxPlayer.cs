@@ -7,6 +7,21 @@ using Terraria.ModLoader.IO;
 
 namespace BetterTaxes
 {
+    public static class TaxConstants
+    {
+        public static Mod calamityMod;
+        public static Type calamityWorld;
+
+        static TaxConstants()
+        {
+            calamityMod = ModLoader.GetMod("CalamityMod");
+            if (calamityMod != null)
+            {
+                calamityWorld = calamityMod.GetModWorld("CalamityWorld").GetType();
+            }
+        }
+    }
+
     public class TaxPlayer : ModPlayer
     {
         public int taxRate = 0; // amount given per paycheck
@@ -14,7 +29,7 @@ namespace BetterTaxes
         public int taxWait = 0;
         public bool isJustZero = false;
 
-        public bool interpretGates(string conditions)
+        public bool InterpretGates(string conditions)
         {
             List<string> terms = conditions.Split(' ').ToList();
             
@@ -23,7 +38,7 @@ namespace BetterTaxes
                 switch(terms[i])
                 {
                     case "not":
-                        terms[i] = (interpretCondition(terms[i])) ? "Base.never" : "Base.always";
+                        terms[i] = (InterpretCondition(terms[i])) ? "Base.never" : "Base.always";
                         terms.RemoveAt(i+1);
                         break;
                 }
@@ -38,13 +53,13 @@ namespace BetterTaxes
                     switch(terms[i])
                     {
                         case "and":
-                            terms[i-1] = (interpretCondition(terms[i-1]) && interpretCondition(terms[i+1])) ? "Base.always" : "Base.never";
+                            terms[i-1] = (InterpretCondition(terms[i-1]) && InterpretCondition(terms[i+1])) ? "Base.always" : "Base.never";
                             terms.RemoveAt(i+1);
                             terms.RemoveAt(i);
                             hasChanged = true;
                             break;
                         case "or":
-                            terms[i-1] = (interpretCondition(terms[i-1]) || interpretCondition(terms[i+1])) ? "Base.always" : "Base.never";
+                            terms[i-1] = (InterpretCondition(terms[i-1]) || InterpretCondition(terms[i+1])) ? "Base.always" : "Base.never";
                             terms.RemoveAt(i+1);
                             terms.RemoveAt(i);
                             hasChanged = true;
@@ -53,12 +68,14 @@ namespace BetterTaxes
                 }
             }
 
-            return interpretCondition(string.Join(" ", terms.ToArray()));
+            return InterpretCondition(string.Join(" ", terms.ToArray()));
         }
 
-        public bool interpretCondition(string condition)
+        public bool InterpretCondition(string condition)
         {
             string[] terms = condition.Split('.');
+            Dictionary<string, bool> invalidMods = new Dictionary<string, bool>();
+
             if (terms.Length == 2 && terms[0] == "Base") // example: Base.downedMoonlord
             {
                 switch (terms[1])
@@ -85,7 +102,21 @@ namespace BetterTaxes
                         return WorldGen.crimson;
                 }
             }
-            else if (terms.Length == 3) // note that this will probably add some lag to world start times
+            else if (terms.Length == 2 && terms[0] == "Calamity" && TaxConstants.calamityWorld != null) // example: Calamity.downedProvidence
+            {
+                switch (terms[1])
+                {
+                    case "downedProvidence":
+                        return (bool)TaxConstants.calamityWorld.GetField("downedProvidence").GetValue(TaxConstants.calamityWorld);
+                    case "downedDoG":
+                        return (bool)TaxConstants.calamityWorld.GetField("downedDoG").GetValue(TaxConstants.calamityWorld);
+                    case "downedYharon":
+                        return (bool)TaxConstants.calamityWorld.GetField("downedYharon").GetValue(TaxConstants.calamityWorld);
+                    case "downedSCal":
+                        return (bool)TaxConstants.calamityWorld.GetField("downedSCal").GetValue(TaxConstants.calamityWorld);
+                }
+            }
+            else if (terms.Length == 3 && !invalidMods.ContainsKey(terms[0])) // note that this will probably add some lag to world start times
             {
                 Mod customMod = ModLoader.GetMod(terms[0]);
                 if (customMod != null)
@@ -102,6 +133,10 @@ namespace BetterTaxes
                     }
                     return (bool)thisField.GetValue(customWorld);
                 }
+                else
+                {
+                    invalidMods.Add(terms[0], true);
+                }
             }
             return false;
         }
@@ -117,7 +152,7 @@ namespace BetterTaxes
                 {
                     if (entry.Value > taxRate && entry.Key.Contains(".")) // custom entries in config
                     {
-                        if (interpretGates(entry.Key))
+                        if (InterpretGates(entry.Key))
                         {
                             taxRate = entry.Value;
                         }
