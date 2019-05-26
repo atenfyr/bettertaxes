@@ -19,6 +19,7 @@ The config file is written in JSON and has 4 fields, which are elaborated on bel
 	- Multiple flags can be separated by a logic gate inside the same line with "and," "or", and "not," as follows: `Base.crimson and Base.expertMode` `Base.downedMechBossAny or Base.crimson` `not Base.expertMode`
 	- You can combine logic gates, as follows: `Base.expertMode and not Base.crimson` `Base.expertMode and Base.downedMechBossAll and Base.crimson`
     - If you would like to use a flag from another mod, the following format is used: `<mod name>.<mod world>.<value>`. For example, `CalamityMod.CalamityWorld.downedDoG` would evaluate to true once the Devourer of Gods has been defeated in that world. You may want to look inside the source code of the mod you wish to retrieve values from.
+	- The largest tax rate that fulfills its requirements will be chosen, regardless of the order of the flags.
 - TimeBetweenPaychecks
     - This key corresponds to the amount of time that is separated between paychecks, or when money is contributed to the Tax Collector's "storage." In vanilla Terraria, this is 60 seconds. Note that when the Enchanted Sundial is being used, one second corresponds to what would otherwise be a minute.
 - MoneyCap

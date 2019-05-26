@@ -1,9 +1,7 @@
-using System;
 using System.IO;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.IO;
-using Terraria.ModLoader;
 
 namespace BetterTaxes
 {
@@ -18,6 +16,7 @@ namespace BetterTaxes
             {"Base.downedGolemBoss", 500},
             {"Base.downedMoonlord", 1000},
             {"Calamity.downedProvidence", 1250},
+            {"ThoriumMod.ThoriumWorld.downedRealityBreaker", 1500},
             {"Calamity.downedDoG", 1500},
             {"Calamity.downedYharon", 2500},
             {"Calamity.downedSCal", 5000},
@@ -32,7 +31,6 @@ namespace BetterTaxes
 
         private static void CreateConfig()
         {
-            ErrorLogger.Log("Making a config for Better Taxes");
             config.Clear();
             config.Put("TaxRates", DefaultValues.taxes);
             config.Put("TimeBetweenPaychecks", (DefaultValues.taxTimer) / 60);
@@ -49,15 +47,6 @@ namespace BetterTaxes
                 config.Get("TimeBetweenPaychecks", ref TaxWorld.taxTimer);
                 config.Get("MoneyCap", ref TaxWorld.taxCap);
                 config.Get("AddCustomDialog", ref TaxWorld.addCustomDialog);
-                if (TaxWorld.taxes.ContainsKey("PostWall")) // if it has PostWall then this is pre-1.0.0 syntax and we need to regenerate the config
-                {
-                    TaxWorld.taxes = DefaultValues.taxes;
-                    TaxWorld.taxTimer = DefaultValues.taxTimer;
-                    TaxWorld.taxCap = DefaultValues.taxCap;
-                    TaxWorld.addCustomDialog = DefaultValues.addCustomDialog;
-                    CreateConfig();
-                    return;
-                }
                 TaxWorld.taxTimer *= 60; // 60 frames are in a second
                 if (TaxWorld.taxTimer < 1)
                 { // minimum is 1 frame
@@ -75,6 +64,40 @@ namespace BetterTaxes
                         TaxWorld.taxes = DefaultValues.taxes;
                         break;
                     }
+                }
+
+                bool hasChanged = false;
+                foreach (KeyValuePair<string, int> entry in DefaultValues.taxes)
+                {
+                    if (!TaxWorld.taxes.ContainsKey(entry.Key))
+                    {
+                        TaxWorld.taxes.Add(entry.Key, entry.Value);
+                        hasChanged = true;
+                    }
+                }
+                if (!config.Contains("TimeBetweenPaychecks"))
+                {
+                    TaxWorld.taxTimer = DefaultValues.taxTimer;
+                    hasChanged = true;
+                }
+                if (!config.Contains("MoneyCap"))
+                {
+                    TaxWorld.taxCap = DefaultValues.taxCap;
+                    hasChanged = true;
+                }
+                if (!config.Contains("AddCustomDialog"))
+                {
+                    TaxWorld.addCustomDialog = DefaultValues.addCustomDialog;
+                    hasChanged = true;
+                }
+                if (hasChanged)
+                {
+                    config.Clear();
+                    config.Put("TaxRates", TaxWorld.taxes);
+                    config.Put("TimeBetweenPaychecks", (TaxWorld.taxTimer) / 60);
+                    config.Put("MoneyCap", TaxWorld.taxCap);
+                    config.Put("AddCustomDialog", TaxWorld.addCustomDialog);
+                    config.Save();
                 }
             }
             else
