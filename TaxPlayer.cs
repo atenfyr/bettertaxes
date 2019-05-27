@@ -10,28 +10,12 @@ namespace BetterTaxes
     public static class TaxConstants
     {
         public static Mod calamityMod;
-        public static ModWorld calamityWorld;
-        public static Type calamityType;
-
         public static Mod thoriumMod;
-        public static ModWorld thoriumWorld;
-        public static Type thoriumType;
 
         static TaxConstants()
         {
             calamityMod = ModLoader.GetMod("CalamityMod");
-            if (calamityMod != null)
-            {
-                calamityWorld = calamityMod.GetModWorld("CalamityWorld");
-                if (calamityWorld != null) calamityType = calamityWorld.GetType();
-            }
-
             thoriumMod = ModLoader.GetMod("ThoriumMod");
-            if (thoriumMod != null)
-            {
-                thoriumWorld = thoriumMod.GetModWorld("ThoriumWorld");
-                if (thoriumWorld != null) thoriumType = thoriumWorld.GetType();
-            }
         }
     }
 
@@ -114,18 +98,19 @@ namespace BetterTaxes
             }
             else if (terms.Length == 2 && terms[0] == "Calamity") // example: Calamity.downedProvidence
             {
-                if (TaxConstants.calamityType != null)
+                if (TaxConstants.calamityMod != null)
                 {
+                    ModWorld calamityWorld = TaxConstants.calamityMod.GetModWorld("CalamityWorld");
                     switch (terms[1])
                     {
                         case "downedProvidence":
-                            return (bool)TaxConstants.calamityType.GetField("downedProvidence").GetValue(TaxConstants.calamityWorld);
+                            return (bool)calamityWorld.GetType().GetField("downedProvidence").GetValue(calamityWorld);
                         case "downedDoG":
-                            return (bool)TaxConstants.calamityType.GetField("downedDoG").GetValue(TaxConstants.calamityWorld);
+                            return (bool)calamityWorld.GetType().GetField("downedDoG").GetValue(calamityWorld);
                         case "downedYharon":
-                            return (bool)TaxConstants.calamityType.GetField("downedYharon").GetValue(TaxConstants.calamityWorld);
+                            return (bool)calamityWorld.GetType().GetField("downedYharon").GetValue(calamityWorld);
                         case "downedSCal":
-                            return (bool)TaxConstants.calamityType.GetField("downedSCal").GetValue(TaxConstants.calamityWorld);
+                            return (bool)calamityWorld.GetType().GetField("downedSCal").GetValue(calamityWorld);
                     }
                     throw new InvalidConfigException("Invalid condition \"" + terms[1] + "\" under list \"Calamity\". See https://github.com/atenfyr/bettertaxes/blob/master/CONFIG.md.");
                 }
@@ -133,12 +118,13 @@ namespace BetterTaxes
             }
             else if (terms.Length == 2 && terms[0] == "Thorium") // example: Thorium.downedRealityBreaker
             {
-                if (TaxConstants.thoriumType != null)
+                if (TaxConstants.thoriumMod != null)
                 {
+                    ModWorld thoriumWorld = TaxConstants.thoriumMod.GetModWorld("ThoriumWorld");
                     switch (terms[1])
                     {
                         case "downedRealityBreaker":
-                            return (bool)TaxConstants.thoriumType.GetField("downedRealityBreaker").GetValue(TaxConstants.thoriumWorld);
+                            return (bool)thoriumWorld.GetType().GetField("downedRealityBreaker").GetValue(thoriumWorld);
                     }
                     throw new InvalidConfigException("Invalid condition \"" + terms[1] + "\" under list \"Thorium\". See https://github.com/atenfyr/bettertaxes/blob/master/CONFIG.md.");
                 }

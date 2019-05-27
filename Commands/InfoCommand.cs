@@ -51,7 +51,7 @@ namespace BetterTaxes.Commands
             int taxRate = 0;
             foreach (KeyValuePair<string, int> entry in TaxWorld.taxes)
             {
-                if (entry.Value > taxRate && entry.Key.Contains(".")) // custom entries in config
+                if (entry.Value > taxRate) // custom entries in config
                 {
                     if (GateParser.Interpret(entry.Key))
                     {
@@ -61,7 +61,7 @@ namespace BetterTaxes.Commands
             }
 
             int rate = TaxWorld.taxTimer / 60;
-            caller.Reply("Tax rate: " + InfoCommand.ValueToCoins(taxRate * npcCount) + " per " + TimeSpan.FromSeconds(rate / Main.dayRate).ToString(@"mm\:ss") + "\nUnadjusted tax rate: " + InfoCommand.ValueToCoins(taxRate) + " per " + TimeSpan.FromSeconds(rate).ToString(@"mm\:ss") + " per NPC\nHoused NPC Count: " + npcCount, Color.Yellow);
+            caller.Reply("Tax rate: " + ValueToCoins(taxRate * npcCount) + " per " + TimeSpan.FromSeconds(rate / Main.dayRate).ToString(@"mm\:ss") + "\nUnadjusted tax rate: " + ValueToCoins(taxRate) + " per " + TimeSpan.FromSeconds(rate).ToString(@"mm\:ss") + " per NPC\nHoused NPC Count: " + npcCount, Color.Yellow);
         }
     }
 }

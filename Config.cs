@@ -88,18 +88,18 @@ namespace BetterTaxes
                 TaxWorld.taxTimer *= 60; // 60 frames are in a second
                 if (TaxWorld.taxTimer < 1) // minimum is 1 frame
                 {
-                    TaxWorld.taxTimer = DefaultValues.taxTimer;
+                    throw new InvalidConfigException("Tax timer value \"" + TaxWorld.taxTimer/60 + "\" is too small.");
                 }
                 if (TaxWorld.taxCap < 1) // minimum is 1 copper
                 {
-                    TaxWorld.taxCap = DefaultValues.taxCap;
+                    throw new InvalidConfigException("Tax cap value \"" + TaxWorld.taxCap + "\" is too small.");
                 }
 
                 foreach (KeyValuePair<string, int> entry in TaxWorld.taxes)
                 {
                     if (entry.Value < 0)
                     {
-                        throw new InvalidConfigException("Cannot have invalid tax value \"" + entry.Value + "\" in the flag \"" + entry.Key + "\".");
+                        throw new InvalidConfigException("Tax value \"" + entry.Value + "\" in the flag \"" + entry.Key + "\" is too small.");
                     }
                 }
             }
