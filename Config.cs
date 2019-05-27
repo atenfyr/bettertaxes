@@ -102,12 +102,6 @@ namespace BetterTaxes
                         throw new InvalidConfigException("Cannot have invalid tax value \"" + entry.Value + "\" in the flag \"" + entry.Key + "\".");
                     }
                 }
-
-                // we run through the config once to make sure it's not malformed
-                foreach (KeyValuePair<string, int> entry in TaxWorld.taxes)
-                {
-                    GateParser.Interpret(entry.Key);
-                }
             }
             else
             {
