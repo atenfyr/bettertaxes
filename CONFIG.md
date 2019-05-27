@@ -1,5 +1,6 @@
 # Better Taxes Config File
-The config file is written in JSON and has 4 fields, which are elaborated on below:
+The config file is written in JSON and has 4 fields, which are elaborated on below.
+Make sure you always backup your custom configs.
 - TaxRates
     - This field is a dictionary which maps "keys" to the amount of money given per paycheck.
     - Each "key" consists of a list and a condition, separated by a period. For example, `Base.crimson` is the key, `Base` is the list, and `crimson` is the condition.
@@ -31,4 +32,3 @@ The config file is written in JSON and has 4 fields, which are elaborated on bel
     - This field corresponds to the maximum amount of money, represented in copper coins, that the Tax Collector will hold at one period of time. In vanilla Terraria, this is 10 gold, or 100,000 copper.
 - AddCustomDialog
     - This field is a boolean (true or false) which corresponds to whether or not the new lines of dialog should be added to the Tax Collector's dialog pool.
-You should always backup your custom configs.
