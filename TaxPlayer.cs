@@ -11,6 +11,8 @@ namespace BetterTaxes
     {
         public static Mod calamityMod;
         public static Type calamityWorld;
+        public static Mod thoriumMod;
+        public static Type thoriumWorld;
 
         static TaxConstants()
         {
@@ -19,27 +21,29 @@ namespace BetterTaxes
             {
                 calamityWorld = calamityMod.GetModWorld("CalamityWorld").GetType();
             }
+            thoriumMod = ModLoader.GetMod("ThoriumMod");
+            if (thoriumMod != null)
+            {
+                thoriumWorld = thoriumMod.GetModWorld("ThoriumWorld").GetType();
+            }
         }
     }
 
-    public class TaxPlayer : ModPlayer
+    public static class GateParser
     {
-        public int taxRate = 0; // amount given per paycheck
-        public int currentTaxes = 0;
-        public int taxWait = 0;
-        public bool isJustZero = false;
+        private static Dictionary<string, bool> invalidMods = new Dictionary<string, bool>();
 
-        public bool InterpretGates(string conditions)
+        public static bool Interpret(string conditions)
         {
             List<string> terms = conditions.Split(' ').ToList();
-            
+
             for (int i = 0; i < terms.Count; i++)
             {
-                switch(terms[i])
+                switch (terms[i])
                 {
                     case "not":
                         terms[i] = (InterpretCondition(terms[i])) ? "Base.never" : "Base.always";
-                        terms.RemoveAt(i+1);
+                        terms.RemoveAt(i + 1);
                         break;
                 }
             }
@@ -48,19 +52,19 @@ namespace BetterTaxes
             while (hasChanged)
             {
                 hasChanged = false;
-                for (int i = 1; i < terms.Count-1; i++) // first and last terms can't be a gate
+                for (int i = 1; i < terms.Count - 1; i++) // first and last terms can't be a gate
                 {
-                    switch(terms[i])
+                    switch (terms[i])
                     {
                         case "and":
-                            terms[i-1] = (InterpretCondition(terms[i-1]) && InterpretCondition(terms[i+1])) ? "Base.always" : "Base.never";
-                            terms.RemoveAt(i+1);
+                            terms[i - 1] = (InterpretCondition(terms[i - 1]) && InterpretCondition(terms[i + 1])) ? "Base.always" : "Base.never";
+                            terms.RemoveAt(i + 1);
                             terms.RemoveAt(i);
                             hasChanged = true;
                             break;
                         case "or":
-                            terms[i-1] = (InterpretCondition(terms[i-1]) || InterpretCondition(terms[i+1])) ? "Base.always" : "Base.never";
-                            terms.RemoveAt(i+1);
+                            terms[i - 1] = (InterpretCondition(terms[i - 1]) || InterpretCondition(terms[i + 1])) ? "Base.always" : "Base.never";
+                            terms.RemoveAt(i + 1);
                             terms.RemoveAt(i);
                             hasChanged = true;
                             break;
@@ -71,10 +75,9 @@ namespace BetterTaxes
             return InterpretCondition(string.Join(" ", terms.ToArray()));
         }
 
-        public bool InterpretCondition(string condition)
+        public static bool InterpretCondition(string condition)
         {
             string[] terms = condition.Split('.');
-            Dictionary<string, bool> invalidMods = new Dictionary<string, bool>();
 
             if (terms.Length == 2 && terms[0] == "Base") // example: Base.downedMoonlord
             {
@@ -101,9 +104,11 @@ namespace BetterTaxes
                     case "crimson":
                         return WorldGen.crimson;
                 }
+                throw new InvalidConfigException("Invalid condition \"" + terms[1] + "\" under list \"Base\". See https://github.com/atenfyr/bettertaxes/blob/master/CONFIG.md.");
             }
-            else if (terms.Length == 2 && terms[0] == "Calamity" && TaxConstants.calamityWorld != null) // example: Calamity.downedProvidence
+            else if (terms.Length == 2 && terms[0] == "Calamity") // example: Calamity.downedProvidence
             {
+                if (TaxConstants.calamityWorld == null) return false;
                 switch (terms[1])
                 {
                     case "downedProvidence":
@@ -115,9 +120,25 @@ namespace BetterTaxes
                     case "downedSCal":
                         return (bool)TaxConstants.calamityWorld.GetField("downedSCal").GetValue(TaxConstants.calamityWorld);
                 }
+                throw new InvalidConfigException("Invalid condition \"" + terms[1] + "\" under list \"Calamity\".");
             }
-            else if (terms.Length == 3 && !invalidMods.ContainsKey(terms[0])) // note that this will probably add some lag to world start times
+            else if (terms.Length == 2 && terms[0] == "Thorium") // example: Thorium.downedRealityBreaker
             {
+                if (TaxConstants.thoriumWorld == null) return false;
+                switch (terms[1])
+                {
+                    case "downedRealityBreaker":
+                        return (bool)TaxConstants.thoriumWorld.GetField("downedRealityBreaker").GetValue(TaxConstants.thoriumWorld);
+                }
+                throw new InvalidConfigException("Invalid condition \"" + terms[1] + "\" under list \"Thorium\".");
+            }
+            else if (terms.Length == 2)
+            {
+                throw new InvalidConfigException("Invalid list \"" + terms[0] + "\".");
+            }
+            else if (terms.Length == 3) // note that this will probably add some lag to world start times
+            {
+                if (invalidMods.ContainsKey(terms[0])) return false;
                 Mod customMod = ModLoader.GetMod(terms[0]);
                 if (customMod != null)
                 {
@@ -137,64 +158,74 @@ namespace BetterTaxes
                 {
                     invalidMods.Add(terms[0], true);
                 }
+                return false;
             }
-            return false;
+            throw new InvalidConfigException("Failed to parse flag \"" + condition + "\". See https://github.com/atenfyr/bettertaxes/blob/master/CONFIG.md.");
         }
+    }
+    public class TaxPlayer : ModPlayer
+    {
+        public int taxRate = 0;
+        public int currentTaxes = 0;
+        public int taxWait = 0;
+        private bool isJustZero = false;
 
         public override void PreUpdate()
         {
             if (Main.netMode != 2)
             {
-                //// increase taxes the further along you are. we have to check every single time so that it updates if a boss is killed and the mod is not reloaded, but .GetField is super quick after first time so this shouldn't be a problem for custom configs
-                taxRate = 0;
-
-                foreach (KeyValuePair<string, int> entry in TaxWorld.taxes)
-                {
-                    if (entry.Value > taxRate && entry.Key.Contains(".")) // custom entries in config
-                    {
-                        if (InterpretGates(entry.Key))
-                        {
-                            taxRate = entry.Value;
-                        }
-                    }
-                }
-
-                //// taxes
                 taxWait += Main.dayRate;
                 if (taxWait >= TaxWorld.taxTimer && NPC.savedTaxCollector)
                 {
-                    // this is the exact same code that Terraria uses to determine the # of town NPCs in the world
-                    int npcCount = 0;
-                    for (int i = 0; i < 200; i++)
-                    {
-                        if (Main.npc[i].active && !Main.npc[i].homeless && NPC.TypeToHeadIndex(Main.npc[i].type) > 0)
-                        {
-                            npcCount++;
-                        }
-                    }
                     taxWait = 0;
-                    currentTaxes += (taxRate * npcCount);
-                }
 
-                // enforce cap
-                if (currentTaxes > TaxWorld.taxCap)
-                {
-                    currentTaxes = TaxWorld.taxCap;
+                    // we don't need to update the tax storage if we've already hit the cap
+                    if (currentTaxes < TaxWorld.taxCap)
+                    {
+                        // determines the number of town NPCs in the world
+                        int npcCount = 0;
+                        for (int i = 0; i < 200; i++)
+                        {
+                            if (Main.npc[i].active && !Main.npc[i].homeless && NPC.TypeToHeadIndex(Main.npc[i].type) > 0)
+                            {
+                                npcCount++;
+                            }
+                        }
+
+                        // we have to check the tax rate we should apply every single time an update is due so that the tax rate updates if a boss is killed, but .GetField is super quick after the first time so this shouldn't be a huge problem for custom configs
+                        taxRate = 0;
+                        foreach (KeyValuePair<string, int> entry in TaxWorld.taxes)
+                        {
+                            if (entry.Value > taxRate) // custom entries in config
+                            {
+                                if (GateParser.Interpret(entry.Key))
+                                {
+                                    taxRate = entry.Value;
+                                }
+                            }
+                        }
+
+                        currentTaxes += taxRate * npcCount;
+                    }
+                    else
+                    {
+                        currentTaxes = TaxWorld.taxCap;
+                    }
                 }
 
                 // when paid, make sure to reset it
-                if (Main.player[Main.myPlayer].taxMoney != 0)
+                if (player.taxMoney != 0)
                 {
                     isJustZero = false;
                 }
-                if (Main.player[Main.myPlayer].taxMoney == 0 && !isJustZero)
+                if (player.taxMoney == 0 && !isJustZero)
                 {
                     currentTaxes = 0;
                     isJustZero = true;
                 }
 
                 // taxMoney is the amount of money the tax collector has stored for this player. the display dialog actually does support platinum despite that never happening in vanilla, so we can just override the stored value every single frame so that the old system does nothing
-                Main.player[Main.myPlayer].taxMoney = currentTaxes;
+                player.taxMoney = currentTaxes;
             }
         }
 
