@@ -10,21 +10,21 @@ namespace BetterTaxes
     public static class TaxConstants
     {
         public static Mod calamityMod;
-        public static Type calamityWorld;
+        public static ModWorld calamityWorld;
         public static Mod thoriumMod;
-        public static Type thoriumWorld;
+        public static ModWorld thoriumWorld;
 
         static TaxConstants()
         {
             calamityMod = ModLoader.GetMod("CalamityMod");
             if (calamityMod != null)
             {
-                calamityWorld = calamityMod.GetModWorld("CalamityWorld").GetType();
+                calamityWorld = calamityMod.GetModWorld("CalamityWorld");
             }
             thoriumMod = ModLoader.GetMod("ThoriumMod");
             if (thoriumMod != null)
             {
-                thoriumWorld = thoriumMod.GetModWorld("ThoriumWorld").GetType();
+                thoriumWorld = thoriumMod.GetModWorld("ThoriumWorld");
             }
         }
     }
@@ -108,29 +108,35 @@ namespace BetterTaxes
             }
             else if (terms.Length == 2 && terms[0] == "Calamity") // example: Calamity.downedProvidence
             {
-                if (TaxConstants.calamityWorld == null) return false;
-                switch (terms[1])
+                if (TaxConstants.calamityWorld != null)
                 {
-                    case "downedProvidence":
-                        return (bool)TaxConstants.calamityWorld.GetField("downedProvidence").GetValue(TaxConstants.calamityWorld);
-                    case "downedDoG":
-                        return (bool)TaxConstants.calamityWorld.GetField("downedDoG").GetValue(TaxConstants.calamityWorld);
-                    case "downedYharon":
-                        return (bool)TaxConstants.calamityWorld.GetField("downedYharon").GetValue(TaxConstants.calamityWorld);
-                    case "downedSCal":
-                        return (bool)TaxConstants.calamityWorld.GetField("downedSCal").GetValue(TaxConstants.calamityWorld);
+                    switch (terms[1])
+                    {
+                        case "downedProvidence":
+                            return (bool)TaxConstants.calamityWorld.GetType().GetField("downedProvidence").GetValue(TaxConstants.calamityWorld);
+                        case "downedDoG":
+                            return (bool)TaxConstants.calamityWorld.GetType().GetField("downedDoG").GetValue(TaxConstants.calamityWorld);
+                        case "downedYharon":
+                            return (bool)TaxConstants.calamityWorld.GetType().GetField("downedYharon").GetValue(TaxConstants.calamityWorld);
+                        case "downedSCal":
+                            return (bool)TaxConstants.calamityWorld.GetType().GetField("downedSCal").GetValue(TaxConstants.calamityWorld);
+                    }
+                    throw new InvalidConfigException("Invalid condition \"" + terms[1] + "\" under list \"Calamity\". See https://github.com/atenfyr/bettertaxes/blob/master/CONFIG.md.");
                 }
-                throw new InvalidConfigException("Invalid condition \"" + terms[1] + "\" under list \"Calamity\".");
+                return false;
             }
             else if (terms.Length == 2 && terms[0] == "Thorium") // example: Thorium.downedRealityBreaker
             {
-                if (TaxConstants.thoriumWorld == null) return false;
-                switch (terms[1])
+                if (TaxConstants.thoriumWorld != null)
                 {
-                    case "downedRealityBreaker":
-                        return (bool)TaxConstants.thoriumWorld.GetField("downedRealityBreaker").GetValue(TaxConstants.thoriumWorld);
+                    switch (terms[1])
+                    {
+                        case "downedRealityBreaker":
+                            return (bool)TaxConstants.thoriumWorld.GetType().GetField("downedRealityBreaker").GetValue(TaxConstants.thoriumWorld);
+                    }
+                    throw new InvalidConfigException("Invalid condition \"" + terms[1] + "\" under list \"Thorium\". See https://github.com/atenfyr/bettertaxes/blob/master/CONFIG.md.");
                 }
-                throw new InvalidConfigException("Invalid condition \"" + terms[1] + "\" under list \"Thorium\".");
+                return false;
             }
             else if (terms.Length == 2)
             {
