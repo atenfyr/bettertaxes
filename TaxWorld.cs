@@ -1,6 +1,7 @@
 using System.IO;
 using System.Collections.Generic;
 using Terraria.ModLoader;
+using Terraria;
 
 namespace BetterTaxes
 {
@@ -9,15 +10,22 @@ namespace BetterTaxes
         public static int taxTimer = DefaultValues.taxTimer;
         public static int taxCap = DefaultValues.taxCap;
         public static Dictionary<string, int> taxes = DefaultValues.taxes;
-        public static bool addCustomDialog = DefaultValues.addCustomDialog;
 
-        // sync config from server to client
+        // when we first load the world, it's our personal config. if and when we sync, that'll overwrite the old data and put in the new if necessary
+        public override void Initialize()
+        {
+            taxTimer = Config.taxTimer;
+            taxCap = Config.taxCap;
+            taxes = Config.taxes;
+        }
+
+        // sync config from server to client. we intentionally do not sync addCustomDialog because that should be the user's choice, not the server's
         public override void NetSend(BinaryWriter writer)
         {
-            writer.Write(taxTimer);
-            writer.Write(taxCap);
-            writer.Write(taxes.Keys.Count);
-            foreach (var item in taxes)
+            writer.Write(Config.taxTimer);
+            writer.Write(Config.taxCap);
+            writer.Write(Config.taxes.Keys.Count);
+            foreach (var item in Config.taxes)
             {
                 writer.Write(item.Key);
                 writer.Write(item.Value);

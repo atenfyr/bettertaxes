@@ -39,29 +39,27 @@ namespace BetterTaxes.Commands
 
         public override void Action(CommandCaller caller, string input, string[] args)
         {
-            int npcCount = 0;
-            for (int i = 0; i < 200; i++)
+            if (!NPC.savedTaxCollector)
             {
-                if (Main.npc[i].active && !Main.npc[i].homeless && NPC.TypeToHeadIndex(Main.npc[i].type) > 0)
-                {
-                    npcCount++;
-                }
+                caller.Reply("You have not yet saved the Tax Collector!", Color.OrangeRed);
             }
-
-            int taxRate = 0;
-            foreach (KeyValuePair<string, int> entry in TaxWorld.taxes)
+            else
             {
-                if (entry.Value > taxRate) // custom entries in config
+                int npcCount = 0;
+                for (int i = 0; i < 200; i++)
                 {
-                    if (GateParser.Interpret(entry.Key))
-                    {
-                        taxRate = entry.Value;
-                    }
+                    if (Main.npc[i].active && !Main.npc[i].homeless && NPC.TypeToHeadIndex(Main.npc[i].type) > 0) npcCount++;
                 }
-            }
 
-            int rate = TaxWorld.taxTimer / 60;
-            caller.Reply("Tax rate: " + ValueToCoins(taxRate * npcCount) + " per " + TimeSpan.FromSeconds(rate / Main.dayRate).ToString(@"mm\:ss") + "\nUnadjusted tax rate: " + ValueToCoins(taxRate) + " per " + TimeSpan.FromSeconds(rate).ToString(@"mm\:ss") + " per NPC\nHoused NPC Count: " + npcCount, Color.Yellow);
+                int taxRate = 0;
+                foreach (KeyValuePair<string, int> entry in TaxWorld.taxes)
+                {
+                    if (entry.Value > taxRate && GateParser.Interpret(entry.Key)) taxRate = entry.Value;
+                }
+
+                int rate = TaxWorld.taxTimer / 60;
+                caller.Reply("Tax rate: " + ValueToCoins(taxRate * npcCount) + " per " + TimeSpan.FromSeconds(rate / Main.dayRate).ToString(@"mm\:ss") + "\nUnadjusted tax rate: " + ValueToCoins(taxRate) + " per " + TimeSpan.FromSeconds(rate).ToString(@"mm\:ss") + " per NPC\nHoused NPC Count: " + npcCount, Color.Yellow);
+            }
         }
     }
 }
