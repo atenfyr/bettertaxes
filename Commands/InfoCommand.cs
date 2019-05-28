@@ -19,7 +19,7 @@ namespace BetterTaxes.Commands
 
         public override CommandType Type
         {
-            get { return CommandType.Chat; }
+            get { return CommandType.Chat | CommandType.Console; }
         }
 
         public override string Command
@@ -34,16 +34,12 @@ namespace BetterTaxes.Commands
 
         public override string Description
         {
-            get { return "Provides information about tax rates currently in place"; }
+            get { return "Provides information about tax rates currently in place."; }
         }
 
         public override void Action(CommandCaller caller, string input, string[] args)
         {
-            if (!NPC.savedTaxCollector)
-            {
-                caller.Reply("You have not yet saved the Tax Collector!", Color.OrangeRed);
-            }
-            else
+            if (NPC.savedTaxCollector)
             {
                 int npcCount = 0;
                 for (int i = 0; i < 200; i++)
@@ -59,6 +55,10 @@ namespace BetterTaxes.Commands
 
                 int rate = TaxWorld.taxTimer / 60;
                 caller.Reply("Tax rate: " + ValueToCoins(taxRate * npcCount) + " per " + TimeSpan.FromSeconds(rate / Main.dayRate).ToString(@"mm\:ss") + "\nUnadjusted tax rate: " + ValueToCoins(taxRate) + " per " + TimeSpan.FromSeconds(rate).ToString(@"mm\:ss") + " per NPC\nHoused NPC Count: " + npcCount, Color.Yellow);
+            }
+            else
+            {
+                caller.Reply("You have not yet saved the Tax Collector!", Color.OrangeRed);
             }
         }
     }
