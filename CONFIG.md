@@ -2,7 +2,6 @@
 The config file is written in JSON and has 4 fields, which are elaborated on below.
 Make sure you always backup your custom configs.
 ## TaxRates
-### Keys
 - This field is a dictionary which maps statements composed of "keys" to the amount of money given per paycheck represented in copper coins.
 - A statement can either be just a single key, or can be separated by [logic gates](#logic-gates), which work together to combine the results of each key to determine the value of the statement itself. Each key evaluates to "true" or "false" based on what said key is looking for; for example, `Base.crimson` would return true if the world generated with crimson and false if it didn't.
 - The statement with the highest coin value that evaluates to true is the one whose corresponding coin value is put into effect.
@@ -42,7 +41,7 @@ Make sure you always backup your custom configs.
 ### Logic Gates
 - Multiple keys can be separated by a logic gate inside the same statement with "and," "or", and "not," as follows: `Base.crimson and Base.expertMode` `Base.downedMechBossAny or Base.crimson` `not Base.expertMode`
 - You can also combine logic gates, as follows: `Base.expertMode and not Base.crimson` `Base.expertMode and Base.downedMechBossAll and Base.crimson`
-### Custom Mod Support (Exceptions to the List/Condition format)
+### Custom Mod Support (Exception to the List/Condition format)
 - If you would like to use a flag from another mod, the following format is used instead of the standard list/condition format: `<mod name>.<mod world>.<field>`
 - For example, `CalamityMod.CalamityWorld.downedDoG` would evaluate to true once the Devourer of Gods has been defeated, and this would be what you would use if the Calamity list did not exist.
 - This alternative format is still compatible with logic gates.
