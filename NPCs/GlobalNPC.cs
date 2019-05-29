@@ -19,9 +19,9 @@ namespace BetterTaxes.NPCs
                 int taxAverage = 0;
                 int playerCount = 0;
                 for (int i = 0; i < 255; i++)
-				{
-					Player user = Main.player[i];
-					if (!user.active) continue;
+                {
+                    Player user = Main.player[i];
+                    if (!user.active) continue;
                     playerCount++;
                     taxAverage += user.taxMoney;
                 }

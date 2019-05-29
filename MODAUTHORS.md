@@ -7,23 +7,23 @@ Here's a code snippet to give you an idea:
 Mod betterTaxes = ModLoader.GetMod("BetterTaxes");
 if (betterTaxes != null)
 {
-	// Adding a brand new list with conditions
-	betterTaxes.Call("AddList", "YourListName", (Func<string, bool>)delegate(string name)
-	{
-		switch (name)
-		{
-			case "YourCondition1":
-				return YourModWorld.downedYourBoss1;
-			case "YourCondition2":
-				return YourModWorld.downedYourBoss2;
-			default:
-				return false;
-		}
-	});
+    // Adding a brand new list with conditions
+    betterTaxes.Call("AddList", "YourListName", (Func<string, bool>)delegate(string name)
+    {
+        switch (name)
+        {
+            case "YourCondition1":
+                return YourModWorld.downedYourBoss1;
+            case "YourCondition2":
+                return YourModWorld.downedYourBoss2;
+            default:
+                return false;
+        }
+    });
 
-	// Adding a statement to flexible config files
-	betterTaxes.Call("AddStatement", "YourListName.YourCondition1", 9999);
-	betterTaxes.Call("Save");
+    // Adding a statement to flexible config files
+    betterTaxes.Call("AddStatement", "YourListName.YourCondition1", 9999);
+    betterTaxes.Call("Save");
 }
 ```
 

@@ -8,35 +8,35 @@ Make sure you always backup your custom configs.
 - Each key consists of a list and a condition, separated by a period. For example, given the key `Base.crimson`, `Base` is the list, and `crimson` is the condition.
 - There are three built-in lists: `Base`, `Calamity`, and `Thorium`. The `Calamity` and `Thorium` lists will always return false regardless of the condition if the corresponding mod is not enabled.
 - Here is a list of every single key with the list `Base`:
-	- `Base.always`: Always set to true. Use this for a "default value."
-	- `Base.never`: Always set to false. Mostly used internally, but you can also use this for debugging.
-	- `Base.downedMechBossAny`: Any mechanical boss has been defeated.
-	- `Base.downedMechBossAll`: All mechanical bosses have been defeated.
-	- `Base.downedPlantBoss:` Plantera has been defeated.
-	- `Base.downedGolemBoss`: Golem has been defeated.
-	- `Base.downedAncientCultist`: The Lunatic Cultist has been defeated.
-	- `Base.downedMoonlord`: The Moon Lord has been defeated.
-	- `Base.expertMode`: The world is in expert mode.
-	- `Base.crimson`: The world generated with crimson.
+    - `Base.always`: Always set to true. Use this for a "default value."
+    - `Base.never`: Always set to false. Mostly used internally, but you can also use this for debugging.
+    - `Base.downedMechBossAny`: Any mechanical boss has been defeated.
+    - `Base.downedMechBossAll`: All mechanical bosses have been defeated.
+    - `Base.downedPlantBoss:` Plantera has been defeated.
+    - `Base.downedGolemBoss`: Golem has been defeated.
+    - `Base.downedAncientCultist`: The Lunatic Cultist has been defeated.
+    - `Base.downedMoonlord`: The Moon Lord has been defeated.
+    - `Base.expertMode`: The world is in expert mode.
+    - `Base.crimson`: The world generated with crimson.
 - Here is a list of every single key with the list `Calamity`:
-	- `Calamity.cryogen`: Cryogen has been defeated.
-	- `Calamity.leviathan`: The Leviathan has been defeated.
-	- `Calamity.astrumDeus`: Astrum Deus has been defeated.
-	- `Calamity.plaguebringer`: The Plaguebringer Goliath has been defeated.
-	- `Calamity.ravager`: The Ravager has been defeated.
-	- `Calamity.bumblebirb`: Bumblebirb has been defeated.
-	- `Calamity.downedProvidence`: Providence, the Profaned Goddess has been defeated.
-	- `Calamity.downedDoG`: The Devourer of Gods has been defeated.
-	- `Calamity.downedYharon`: Yharon has been defeated.
-	- `Calamity.downedSCal`: Supreme Calamitas has been defeated.
+    - `Calamity.cryogen`: Cryogen has been defeated.
+    - `Calamity.leviathan`: The Leviathan has been defeated.
+    - `Calamity.astrumDeus`: Astrum Deus has been defeated.
+    - `Calamity.plaguebringer`: The Plaguebringer Goliath has been defeated.
+    - `Calamity.ravager`: The Ravager has been defeated.
+    - `Calamity.bumblebirb`: Bumblebirb has been defeated.
+    - `Calamity.downedProvidence`: Providence, the Profaned Goddess has been defeated.
+    - `Calamity.downedDoG`: The Devourer of Gods has been defeated.
+    - `Calamity.downedYharon`: Yharon has been defeated.
+    - `Calamity.downedSCal`: Supreme Calamitas has been defeated.
 - Here is a list of every single key with the list `Thorium`:
-	- `Thorium.downedPatchwerk`: Patch Werk has been defeated.
-	- `Thorium.downedBloom`: Corpse Bloom has been defeated.
-	- `Thorium.downedStrider`: The Borean Strider has been defeated.
-	- `Thorium.downedFallenBeholder`: Coznix, the Fallen Beholder has been defeated.
-	- `Thorium.downedLich`: The Lich has been defeated.
-	- `Thorium.downedDepthBoss`: Abyssion, The Forgotten One has been defeated.
-	- `Thorium.downedRealityBreaker`: The Ragnarök has been defeated.
+    - `Thorium.downedPatchwerk`: Patch Werk has been defeated.
+    - `Thorium.downedBloom`: Corpse Bloom has been defeated.
+    - `Thorium.downedStrider`: The Borean Strider has been defeated.
+    - `Thorium.downedFallenBeholder`: Coznix, the Fallen Beholder has been defeated.
+    - `Thorium.downedLich`: The Lich has been defeated.
+    - `Thorium.downedDepthBoss`: Abyssion, The Forgotten One has been defeated.
+    - `Thorium.downedRealityBreaker`: The Ragnarï¿½k has been defeated.
 ### Logic Gates
 - Multiple keys can be separated by a logic gate inside the same statement with "and," "or", and "not," as follows: `Base.crimson and Base.expertMode` `Base.downedMechBossAny or Base.crimson` `not Base.expertMode`
 - You can also combine logic gates, as follows: `Base.expertMode and not Base.crimson` `Base.expertMode and Base.downedMechBossAll and Base.crimson`
