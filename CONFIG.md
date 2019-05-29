@@ -36,7 +36,7 @@ Make sure you always backup your custom configs.
     - `Thorium.downedFallenBeholder`: Coznix, the Fallen Beholder has been defeated.
     - `Thorium.downedLich`: The Lich has been defeated.
     - `Thorium.downedDepthBoss`: Abyssion, The Forgotten One has been defeated.
-    - `Thorium.downedRealityBreaker`: The Ragnar�k has been defeated.
+    - `Thorium.downedRealityBreaker`: The Ragnarök has been defeated.
 ### Logic Gates
 - Multiple keys can be separated by a logic gate inside the same statement with "and," "or", and "not," as follows: `Base.crimson and Base.expertMode` `Base.downedMechBossAny or Base.crimson` `not Base.expertMode`
 - You can also combine logic gates, as follows: `Base.expertMode and not Base.crimson` `Base.expertMode and Base.downedMechBossAll and Base.crimson`
