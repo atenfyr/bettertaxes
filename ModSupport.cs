@@ -24,7 +24,7 @@ namespace BetterTaxes
             Mod betterTaxes = ModLoader.GetMod("BetterTaxes");
 		    if (betterTaxes != null)
             {
-                // Adding a brand new list
+                // Adding a brand new list with conditions
                 betterTaxes.Call("AddKey", "YourListName", "YourCondition1", (Func<bool>)delegate(){return YourModWorld.downedYourBoss1;});
                 betterTaxes.Call("AddKey", "YourListName", "YourCondition2", (Func<bool>)delegate(){return YourModWorld.downedYourBoss2;});
 
