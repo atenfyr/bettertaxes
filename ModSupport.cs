@@ -42,11 +42,11 @@ namespace BetterTaxes
             {
                 case "AddList":
                     if (args.Length < 3 || !(args[1] is string)) return new ModSupportException("Usage: AddList <list name>");
-                    TaxConstants.NewList((string)args[1]);
+                    ModHandler.NewList((string)args[1]);
                     return true;
                 case "AddKey":
                     if (args.Length < 3 || !(args[1] is string) || !(args[2] is string) || !(args[3] is Func<bool>)) return new ModSupportException("Usage: AddKey <list name> <condition name> <function returning a boolean>");
-                    TaxConstants.NewCondition((string)args[1], (string)args[2], (Func<bool>)args[3]);
+                    ModHandler.NewCondition((string)args[1], (string)args[2], (Func<bool>)args[3]);
                     return true;
                 case "AddStatement":
                     if (args.Length < 3 || !(args[1] is string) || !(args[2] is int)) return new ModSupportException("Usage: AddStatement <statement> <rent in copper coins>");

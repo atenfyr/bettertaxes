@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
@@ -8,7 +7,7 @@ using Terraria.ModLoader.IO;
 
 namespace BetterTaxes
 {
-    public class TaxConstants
+    public class ModHandler
     {
         public static readonly Dictionary<string, string[]> legacyLists = new Dictionary<string, string[]> {
             { "Thorium", new string[7] { "downedRealityBreaker", "downedPatchwerk", "downedBloom", "downedStrider", "downedFallenBeholder", "downedLich", "downedDepthBoss" } }
@@ -18,10 +17,12 @@ namespace BetterTaxes
             { "Thorium", new string[2] { "ThoriumMod", "ThoriumWorld" } }
         };
 
+        public static Dictionary<string, Mod> mods = new Dictionary<string, Mod>();
+
         public static Dictionary<string, Dictionary<string, Func<bool>>> delegates = new Dictionary<string, Dictionary<string, Func<bool>>>();
         public static Func<string, bool> calamityDelegate;
 
-        public static Dictionary<string, Mod> mods = new Dictionary<string, Mod>();
+        public static GateParser parser;
 
         public static void NewList(string list_name)
         {
@@ -35,10 +36,11 @@ namespace BetterTaxes
             delegates[list_name].Add(condition, delegatef);
         }
 
-        public TaxConstants()
+        public ModHandler()
         {
             delegates = new Dictionary<string, Dictionary<string, Func<bool>>>();
             mods = new Dictionary<string, Mod>();
+            parser = new GateParser();
 
             Mod calamityMod = ModLoader.GetMod("CalamityMod");
             if (calamityMod != null) calamityDelegate = (Func<string, bool>)calamityMod.Call("Downed");
@@ -50,168 +52,6 @@ namespace BetterTaxes
         }
     }
 
-    public static class GateParser
-    {
-        private static Dictionary<string, bool> invalidMods = new Dictionary<string, bool>();
-
-        public static bool Interpret(string conditions)
-        {
-            List<string> terms = conditions.Split(' ').ToList();
-
-            for (int i = 0; i < terms.Count; i++)
-            {
-                switch (terms[i])
-                {
-                    case "not":
-                        terms[i] = (InterpretCondition(terms[i])) ? "Base.never" : "Base.always";
-                        terms.RemoveAt(i + 1);
-                        break;
-                }
-            }
-
-            bool hasChanged = true;
-            while (hasChanged)
-            {
-                hasChanged = false;
-                for (int i = 1; i < terms.Count - 1; i++) // first and last terms can't be a gate
-                {
-                    switch (terms[i])
-                    {
-                        case "and":
-                            terms[i - 1] = (InterpretCondition(terms[i - 1]) && InterpretCondition(terms[i + 1])) ? "Base.always" : "Base.never";
-                            terms.RemoveAt(i + 1);
-                            terms.RemoveAt(i);
-                            hasChanged = true;
-                            break;
-                        case "or":
-                            terms[i - 1] = (InterpretCondition(terms[i - 1]) || InterpretCondition(terms[i + 1])) ? "Base.always" : "Base.never";
-                            terms.RemoveAt(i + 1);
-                            terms.RemoveAt(i);
-                            hasChanged = true;
-                            break;
-                    }
-                }
-            }
-
-            return InterpretCondition(string.Join(" ", terms.ToArray()));
-        }
-
-        public static bool InterpretCondition(string condition)
-        {
-            string[] terms = condition.Split('.');
-
-            if (terms.Length == 2 && terms[0] == "Base") // example: Base.downedMoonlord
-            {
-                switch (terms[1])
-                {
-                    case "always":
-                        return true;
-                    case "never":
-                        return false;
-                    case "downedMoonlord":
-                        return NPC.downedMoonlord;
-                    case "downedGolemBoss":
-                        return NPC.downedGolemBoss;
-                    case "downedPlantBoss":
-                        return NPC.downedPlantBoss;
-                    case "downedMechBossAny":
-                        return NPC.downedMechBossAny;
-                    case "downedMechBossAll":
-                        return NPC.downedMechBoss1 && NPC.downedMechBoss2 && NPC.downedMechBoss3;
-                    case "downedAncientCultist":
-                        return NPC.downedAncientCultist;
-                    case "expertMode":
-                        return Main.expertMode;
-                    case "crimson":
-                        return WorldGen.crimson;
-                }
-                throw new InvalidConfigException("Invalid condition \"" + terms[1] + "\" under list \"Base\"");
-            }
-            else if (terms.Length == 2)
-            {
-                string chosen_list = terms[0];
-                string chosen_condition = terms[1];
-
-                // delegate system
-                if (TaxConstants.delegates.ContainsKey(chosen_list))
-                {
-                    Dictionary<string, Func<bool>> checkers = TaxConstants.delegates[chosen_list];
-                    if (checkers != null)
-                    {
-                        if (!checkers.ContainsKey(chosen_condition)) throw new InvalidConfigException("Invalid condition \"" + chosen_condition + "\" under list \"" + chosen_list + "\"");
-                        return checkers[chosen_condition]();
-                    }
-                    return false;
-                }
-
-                // special case for calamity
-                if (chosen_list == "Calamity")
-                {
-                    if (TaxConstants.calamityDelegate != null)
-                    {
-                        if (TaxConstants.calamityDelegate(chosen_condition)) return true;
-                        switch (chosen_condition) // backwards compatibility
-                        {
-                            case "downedProvidence":
-                                return TaxConstants.calamityDelegate("providence");
-                            case "downedDoG":
-                                return TaxConstants.calamityDelegate("devourerofgods");
-                            case "downedYharon":
-                                return TaxConstants.calamityDelegate("yharon");
-                            case "downedSCal":
-                                return TaxConstants.calamityDelegate("supremecalamitas");
-                        }
-                        return false;
-                    }
-                    return false;
-                }
-
-                // legacy system
-                if (!TaxConstants.legacyMods.ContainsKey(chosen_list)) return false;
-                if (TaxConstants.mods.ContainsKey(chosen_list) && TaxConstants.mods[chosen_list] != null)
-                {
-                    ModWorld world = TaxConstants.mods[chosen_list].GetModWorld(TaxConstants.legacyMods[chosen_list][1]);
-                    foreach (string boss in TaxConstants.legacyLists[chosen_list])
-                    {
-                        if (boss == chosen_condition)
-                        {
-                            return (bool)world.GetType().GetField(boss).GetValue(world);
-                        }
-                    }
-                    throw new InvalidConfigException("Invalid condition \"" + chosen_condition + "\" under list \"" + chosen_list + "\"");
-                }
-                return false;
-            }
-            else if (terms.Length == 3) // note that this will probably add some lag to world start times
-            {
-                if (invalidMods.ContainsKey(terms[0])) return false;
-                Mod customMod = ModLoader.GetMod(terms[0]);
-                if (customMod != null)
-                {
-                    ModWorld customWorld = customMod.GetModWorld(terms[1]);
-                    if (customWorld != null)
-                    {
-                        var thisField = customWorld.GetType().GetField(terms[2]);
-                        if (thisField != null)
-                        {
-                            return (bool)thisField.GetValue(customWorld);
-                        }
-                        throw new InvalidConfigException("Could not find field \"" + terms[2] + "\" in mod world \"" + terms[1] + "\" in mod \"" + terms[0] + "\"");
-                    }
-                    else
-                    {
-                        throw new InvalidConfigException("Could not find mod world \"" + terms[1] + "\" in mod \"" + terms[0] + "\"");
-                    }
-                }
-                else
-                {
-                    invalidMods.Add(terms[0], true);
-                }
-                return false;
-            }
-            throw new InvalidConfigException("Failed to parse flag \"" + condition + "\"");
-        }
-    }
     public class TaxPlayer : ModPlayer
     {
         public int taxRate = 0;
@@ -238,11 +78,12 @@ namespace BetterTaxes
                         }
 
                         // we have to check the tax rate we should apply every single time an update is due so that the tax rate updates if a boss is killed, but .GetField is super quick after the first time so this shouldn't be a huge problem for custom configs
-                        taxRate = 0;
+                        taxRate = -1;
                         foreach (KeyValuePair<string, int> entry in TaxWorld.taxes)
                         {
-                            if (entry.Value > taxRate && GateParser.Interpret(entry.Key)) taxRate = entry.Value;
+                            if (entry.Value > taxRate && ModHandler.parser.Interpret(entry.Key)) taxRate = entry.Value;
                         }
+                        if (taxRate == -1) throw new InvalidConfigException("No statement evaluated to true. To avoid this error, you should map the statement \"Base.always\" to a value to fall back on");
 
                         currentTaxes += taxRate * npcCount;
                     }

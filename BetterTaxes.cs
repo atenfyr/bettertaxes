@@ -19,7 +19,7 @@ namespace BetterTaxes
 
         public override void Load()
         {
-            new TaxConstants(); // resets all the delegates etc
+            new ModHandler(); // resets all the delegates etc
             Config.Load();
         }
     }

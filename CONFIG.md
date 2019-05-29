@@ -38,8 +38,9 @@ Make sure you always backup your custom configs.
     - `Thorium.downedDepthBoss`: Abyssion, The Forgotten One has been defeated.
     - `Thorium.downedRealityBreaker`: The Ragnarök has been defeated.
 ### Logic Gates
-- Multiple keys can be separated by a logic gate inside the same statement with "and," "or", and "not," as follows: `Base.crimson and Base.expertMode` `Base.downedMechBossAny or Base.crimson` `not Base.expertMode`
-- You can also combine logic gates, as follows: `Base.expertMode and not Base.crimson` `Base.expertMode and Base.downedMechBossAll and Base.crimson`
+- Multiple keys can be separated by a logic gate inside the same statement with "and," "or", and "not."
+- `Not` gates are always parsed before `and` gates and `or` gates, and `and` and `or` gates are parsed in the order they are written. You can use parentheses inside of your statement to circumvent this.
+- Here are some examples of logic gates: `Base.crimson and Base.expertMode` `Base.downedMechBossAny or Base.crimson` `not Base.expertMode` `Base.expertMode and not Base.crimson` `Base.expertMode and Base.downedMechBossAll and Base.crimson` `not (Base.expertMode and Thorium.downedFallenBeholder)` `not (Base.crimson and not (Thorium.downedFallenBeholder or Base.downedMoonlord))`
 ### Custom Mod Support (Exception to the List/Condition format)
 - If you would like to use a flag from another mod, the following format is used instead of the standard list/condition format: `<mod name>.<mod world>.<field>`
 - For example, `CalamityMod.CalamityWorld.downedDoG` would evaluate to true once the Devourer of Gods has been defeated, and this would be what you would use if the Calamity list did not exist.

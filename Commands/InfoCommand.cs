@@ -44,11 +44,12 @@ namespace BetterTaxes.Commands
                     if (Main.npc[i].active && !Main.npc[i].homeless && NPC.TypeToHeadIndex(Main.npc[i].type) > 0) npcCount++;
                 }
 
-                int taxRate = 0;
+                int taxRate = -1;
                 foreach (KeyValuePair<string, int> entry in TaxWorld.taxes)
                 {
-                    if (entry.Value > taxRate && GateParser.Interpret(entry.Key)) taxRate = entry.Value;
+                    if (entry.Value > taxRate && ModHandler.parser.Interpret(entry.Key)) taxRate = entry.Value;
                 }
+                if (taxRate == -1) throw new InvalidConfigException("No statement evaluated to true. To avoid this error, you should map the statement \"Base.always\" to a value to fall back on");
 
                 int rate = TaxWorld.taxTimer / 60;
                 caller.Reply("Tax rate: " + ValueToCoins(taxRate * npcCount) + " per " + TimeSpan.FromSeconds(rate / Main.dayRate).ToString(@"mm\:ss") + "\nUnadjusted tax rate: " + ValueToCoins(taxRate) + " per " + TimeSpan.FromSeconds(rate).ToString(@"mm\:ss") + " per NPC\nHoused NPC Count: " + npcCount, Color.Yellow);
