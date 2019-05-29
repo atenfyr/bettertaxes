@@ -21,7 +21,6 @@ Make sure you always backup your custom configs.
 - Here is a list of every single key with the list `Calamity`:
 	- `Calamity.downedCryogen`: Cryogen has been defeated.
 	- `Calamity.downedLeviathan`: The Leviathan has been defeated.
-	- `Calamity.downedAstrageldon`: Astrum Aureus has been defeated.
 	- `Calamity.downedStarGod`: Astrum Deus has been defeated.
 	- `Calamity.downedPlaguebringer`: The Plaguebringer Goliath has been defeated.
 	- `Calamity.downedScavenger`: The Ravager has been defeated.
@@ -52,3 +51,5 @@ Make sure you always backup your custom configs.
 - This field corresponds to the maximum amount of money in copper coins that the Tax Collector can hold at one period of time. In vanilla Terraria, this is 10 gold, or 100,000 copper. Any money earned that would put the user over the cap is discarded.
 ## AddCustomDialog
 - This field is a boolean (true or false) which corresponds to whether or not the new lines of dialog should be added to the Tax Collector's dialog pool. This is the only field that is not synced between the server and the client.
+## IsFlexible
+- This field is a boolean (true or false) which corresponds to whether or not this config file is subject to changes made by the mod. If you plan on inserting your own values into this config file, this should be set to false. Keep in mind that setting this to false will not allow the mod to make changes to your config file, such as adding fields presented by other mods or adding fields introduced in later updates.

@@ -1,7 +1,6 @@
 using System.IO;
 using System.Collections.Generic;
 using Terraria.ModLoader;
-using Terraria;
 
 namespace BetterTaxes
 {

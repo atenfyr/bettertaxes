@@ -23,7 +23,8 @@ namespace BetterTaxes
             {"Calamity.downedSCal", 5000},
         };
         public static readonly bool addCustomDialog = true;
-        public static readonly int fieldCount = 4;
+        public static readonly bool isFlexible = true;
+        public static readonly int fieldCount = 5;
     }
 
     public class InvalidConfigException : Exception
@@ -47,7 +48,8 @@ namespace BetterTaxes
         public static int taxTimer = DefaultValues.taxTimer;
         public static int taxCap = DefaultValues.taxCap;
         public static Dictionary<string, int> taxes = DefaultValues.taxes;
-        public static bool addCustomDialog = true;
+        public static bool addCustomDialog = DefaultValues.addCustomDialog;
+        public static bool isFlexible = DefaultValues.isFlexible;
 
         private static string path = Path.Combine(Main.SavePath, "Mod Configs", "BetterTaxes.json");
         private static Preferences config = new Preferences(path);
@@ -59,12 +61,32 @@ namespace BetterTaxes
             config.Put("TimeBetweenPaychecks", DefaultValues.taxTimer / 60);
             config.Put("MoneyCap", DefaultValues.taxCap);
             config.Put("AddCustomDialog", DefaultValues.addCustomDialog);
+            config.Put("IsFlexible", DefaultValues.isFlexible);
             config.Save();
 
             taxes = DefaultValues.taxes;
             taxTimer = DefaultValues.taxTimer;
             taxCap = DefaultValues.taxCap;
             addCustomDialog = DefaultValues.addCustomDialog;
+        }
+
+        public static bool AddStatement(string statement, int value)
+        {
+            if (!isFlexible || taxes.ContainsKey(statement)) return false;
+            taxes.Add(statement, value);
+            return true;
+        }
+
+        public static void Save()
+        {
+            if (!isFlexible) return;
+            config.Clear();
+            config.Put("TaxRates", taxes);
+            config.Put("TimeBetweenPaychecks", taxTimer / 60);
+            config.Put("MoneyCap", taxCap);
+            config.Put("AddCustomDialog", addCustomDialog);
+            config.Put("IsFlexible", isFlexible);
+            config.Save();
         }
 
         public static void Load()
@@ -74,6 +96,11 @@ namespace BetterTaxes
                 int currentFieldCount = config.GetAllKeys().Count;
                 if (currentFieldCount != DefaultValues.fieldCount)
                 {
+                    if (isFlexible)
+                    {
+                        Save();
+                        currentFieldCount = DefaultValues.fieldCount;
+                    }
                     if (currentFieldCount > DefaultValues.fieldCount) throw new InvalidConfigException("Config contains " + (currentFieldCount - DefaultValues.fieldCount) + " extraneous field(s)");
                     if (currentFieldCount < DefaultValues.fieldCount) throw new InvalidConfigException("Config is missing " + (DefaultValues.fieldCount - currentFieldCount) + " field(s)");
                 }
@@ -82,8 +109,9 @@ namespace BetterTaxes
                 config.Get("TimeBetweenPaychecks", ref taxTimer);
                 config.Get("MoneyCap", ref taxCap);
                 config.Get("AddCustomDialog", ref addCustomDialog);
+                config.Get("IsFlexible", ref isFlexible);
 
-                if (taxes.ContainsKey("PostWall")) // pre-1.0.0 config file, we need to do a full reset
+                if (taxes.ContainsKey("PostWall") && isFlexible) // pre-1.0.0 config file, we need to do a full reset
                 {
                     CreateConfig();
                 }
@@ -95,10 +123,21 @@ namespace BetterTaxes
 
                     foreach (KeyValuePair<string, int> entry in taxes)
                     {
-                        if (entry.Value < 0)
+                        if (entry.Value < 0) throw new InvalidConfigException("Tax value \"" + entry.Value + "\" in the flag \"" + entry.Key + "\" is too small");
+                    }
+
+                    if (isFlexible)
+                    {
+                        bool hasChanged = false;
+                        foreach (KeyValuePair<string, int> entry in DefaultValues.taxes)
                         {
-                            throw new InvalidConfigException("Tax value \"" + entry.Value + "\" in the flag \"" + entry.Key + "\" is too small");
+                            if (!taxes.ContainsKey(entry.Key))
+                            {
+                                AddStatement(entry.Key, entry.Value);
+                                hasChanged = true;
+                            }
                         }
+                        if (hasChanged) Save();
                     }
                 }
             }

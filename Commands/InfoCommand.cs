@@ -10,10 +10,7 @@ namespace BetterTaxes.Commands
     {
         public static string ValueToCoins(int num)
         {
-            if (num == 0)
-            {
-                return "0 copper";
-            }
+            if (num == 0) return "0 copper";
             return Main.ValueToCoins(num);
         }
 
@@ -58,7 +55,7 @@ namespace BetterTaxes.Commands
             }
             else
             {
-                caller.Reply("You have not yet saved the Tax Collector!", Color.OrangeRed);
+                caller.Reply("The Tax Collector has not yet been saved in this world!", Color.OrangeRed);
             }
         }
     }

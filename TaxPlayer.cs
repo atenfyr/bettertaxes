@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
@@ -10,19 +11,21 @@ namespace BetterTaxes
     public static class TaxConstants
     {
         public static readonly Dictionary<string, string[]> validLists = new Dictionary<string, string[]> {
-            { "Calamity", new string[] { "downedProvidence", "downedDoG", "downedYharon", "downedSCal", "downedBumble", "downedCryogen", "downedLeviathan", "downedAstrageldon", "downedStarGod", "downedPlaguebringer", "downedScavenger" } },
             { "Thorium", new string[] { "downedRealityBreaker", "downedPatchwerk", "downedBloom", "downedStrider", "downedFallenBeholder", "downedLich", "downedDepthBoss" } }
         };
 
         public static readonly Dictionary<string, string[]> validMods = new Dictionary<string, string[]> {
-            { "Calamity", new string[2] { "CalamityMod", "CalamityWorld" } },
             { "Thorium", new string[2] { "ThoriumMod", "ThoriumWorld" } }
         };
+
+        public static readonly Dictionary<string, Func<string, bool>> delegates = new Dictionary<string, Func<string, bool>>();
 
         public static Dictionary<string, Mod> mods = new Dictionary<string, Mod>();
 
         static TaxConstants()
         {
+            Mod calamityMod = ModLoader.GetMod("CalamityMod");
+            if (calamityMod != null) delegates.Add("Calamity", (Func<string, bool>)calamityMod.Call("Downed"));
             foreach (KeyValuePair<string, string[]> entry in validMods)
             {
                 mods.Add(entry.Key, ModLoader.GetMod(entry.Value[0]));
@@ -111,7 +114,51 @@ namespace BetterTaxes
             {
                 string chosen_list = terms[0];
                 string chosen_condition = terms[1];
-                if (!TaxConstants.validMods.ContainsKey(chosen_list)) throw new InvalidConfigException("Invalid list \"" + chosen_list + "\"");
+
+                // special case for calamity
+                if (chosen_list == "Calamity" && TaxConstants.delegates.ContainsKey(chosen_list))
+                {
+                    Func<string, bool> calamityChecker = TaxConstants.delegates[chosen_list];
+                    if (calamityChecker != null)
+                    {
+                        if (calamityChecker(chosen_condition)) return true;
+                        switch (chosen_condition)
+                        {
+                            case "downedProvidence":
+                                return calamityChecker("providence");
+                            case "downedDoG":
+                                return calamityChecker("devourerofgods");
+                            case "downedYharon":
+                                return calamityChecker("yharon");
+                            case "downedSCal":
+                                return calamityChecker("supremecalamitas");
+                            case "downedBumble":
+                                return calamityChecker("bumblebirb");
+                            case "downedCryogen":
+                                return calamityChecker("cryogen");
+                            case "downedLeviathan":
+                                return calamityChecker("leviathan");
+                            case "downedStarGod":
+                                return calamityChecker("astrumdeus");
+                            case "downedPlaguebringer":
+                                return calamityChecker("plaguebringer");
+                            case "downedScavenger":
+                                return calamityChecker("ravager");
+                        }
+                        throw new InvalidConfigException("Invalid condition \"" + chosen_condition + "\" under list \"" + chosen_list + "\"");
+                    }
+                    return false;
+                }
+
+                // delegate system
+                if (TaxConstants.delegates.ContainsKey(chosen_list))
+                {
+                    Func<string, bool> checker = TaxConstants.delegates[chosen_list];
+                    return checker != null && checker(chosen_condition);
+                }
+
+                // legacy system
+                if (!TaxConstants.validMods.ContainsKey(chosen_list)) return false;
                 if (TaxConstants.mods.ContainsKey(chosen_list) && TaxConstants.mods[chosen_list] != null)
                 {
                     ModWorld world = TaxConstants.mods[chosen_list].GetModWorld(TaxConstants.validMods[chosen_list][1]);
@@ -164,7 +211,7 @@ namespace BetterTaxes
 
         public override void PreUpdate()
         {
-            if (Main.netMode != 2 && NPC.savedTaxCollector)
+            if (Main.netMode != 2 && NPC.AnyNPCs(NPCID.TaxCollector))
             {
                 taxWait += Main.dayRate;
                 if (taxWait >= TaxWorld.taxTimer)
