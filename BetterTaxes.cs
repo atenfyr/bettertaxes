@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Terraria.ModLoader;
 
 namespace BetterTaxes
@@ -19,6 +21,7 @@ namespace BetterTaxes
 
         public override void Load()
         {
+            new TaxConstants(); // resets all the delegates etc
             Config.Load();
         }
     }

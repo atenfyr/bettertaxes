@@ -8,7 +8,7 @@ using Terraria.ModLoader.IO;
 
 namespace BetterTaxes
 {
-    public static class TaxConstants
+    public class TaxConstants
     {
         public static readonly Dictionary<string, string[]> validLists = new Dictionary<string, string[]> {
             { "Thorium", new string[] { "downedRealityBreaker", "downedPatchwerk", "downedBloom", "downedStrider", "downedFallenBeholder", "downedLich", "downedDepthBoss" } }
@@ -18,12 +18,15 @@ namespace BetterTaxes
             { "Thorium", new string[2] { "ThoriumMod", "ThoriumWorld" } }
         };
 
-        public static readonly Dictionary<string, Func<string, bool>> delegates = new Dictionary<string, Func<string, bool>>();
+        public static Dictionary<string, Func<string, bool>> delegates = new Dictionary<string, Func<string, bool>>();
 
         public static Dictionary<string, Mod> mods = new Dictionary<string, Mod>();
 
-        static TaxConstants()
+        public TaxConstants()
         {
+            delegates = new Dictionary<string, Func<string, bool>>();
+            mods = new Dictionary<string, Mod>();
+
             Mod calamityMod = ModLoader.GetMod("CalamityMod");
             if (calamityMod != null) delegates.Add("Calamity", (Func<string, bool>)calamityMod.Call("Downed"));
             foreach (KeyValuePair<string, string[]> entry in validMods)
