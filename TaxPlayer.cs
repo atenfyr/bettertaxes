@@ -10,26 +10,40 @@ namespace BetterTaxes
 {
     public class TaxConstants
     {
-        public static readonly Dictionary<string, string[]> validLists = new Dictionary<string, string[]> {
-            { "Thorium", new string[] { "downedRealityBreaker", "downedPatchwerk", "downedBloom", "downedStrider", "downedFallenBeholder", "downedLich", "downedDepthBoss" } }
+        public static readonly Dictionary<string, string[]> legacyLists = new Dictionary<string, string[]> {
+            { "Thorium", new string[7] { "downedRealityBreaker", "downedPatchwerk", "downedBloom", "downedStrider", "downedFallenBeholder", "downedLich", "downedDepthBoss" } }
         };
 
-        public static readonly Dictionary<string, string[]> validMods = new Dictionary<string, string[]> {
+        public static readonly Dictionary<string, string[]> legacyMods = new Dictionary<string, string[]> {
             { "Thorium", new string[2] { "ThoriumMod", "ThoriumWorld" } }
         };
 
-        public static Dictionary<string, Func<string, bool>> delegates = new Dictionary<string, Func<string, bool>>();
+        public static Dictionary<string, Dictionary<string, Func<bool>>> delegates = new Dictionary<string, Dictionary<string, Func<bool>>>();
+        public static Func<string, bool> calamityDelegate;
 
         public static Dictionary<string, Mod> mods = new Dictionary<string, Mod>();
 
+        public static void NewList(string list_name)
+        {
+            if (delegates.ContainsKey(list_name)) delegates.Remove(list_name);
+            delegates.Add(list_name, new Dictionary<string, Func<bool>>());
+        }
+
+        public static void NewCondition(string list_name, string condition, Func<bool> delegatef)
+        {
+            if (!delegates.ContainsKey(list_name)) NewList(list_name);
+            delegates[list_name].Add(condition, delegatef);
+        }
+
         public TaxConstants()
         {
-            delegates = new Dictionary<string, Func<string, bool>>();
+            delegates = new Dictionary<string, Dictionary<string, Func<bool>>>();
             mods = new Dictionary<string, Mod>();
 
             Mod calamityMod = ModLoader.GetMod("CalamityMod");
-            if (calamityMod != null) delegates.Add("Calamity", (Func<string, bool>)calamityMod.Call("Downed"));
-            foreach (KeyValuePair<string, string[]> entry in validMods)
+            if (calamityMod != null) calamityDelegate = (Func<string, bool>)calamityMod.Call("Downed");
+
+            foreach (KeyValuePair<string, string[]> entry in legacyMods)
             {
                 mods.Add(entry.Key, ModLoader.GetMod(entry.Value[0]));
             }
@@ -118,42 +132,46 @@ namespace BetterTaxes
                 string chosen_list = terms[0];
                 string chosen_condition = terms[1];
 
-                // special case for calamity
-                if (chosen_list == "Calamity" && TaxConstants.delegates.ContainsKey(chosen_list))
+                // delegate system
+                if (TaxConstants.delegates.ContainsKey(chosen_list))
                 {
-                    Func<string, bool> calamityChecker = TaxConstants.delegates[chosen_list];
-                    if (calamityChecker != null)
+                    Dictionary<string, Func<bool>> checkers = TaxConstants.delegates[chosen_list];
+                    if (checkers != null)
                     {
-                        if (calamityChecker(chosen_condition)) return true;
+                        if (!checkers.ContainsKey(chosen_condition)) throw new InvalidConfigException("Invalid condition \"" + chosen_condition + "\" under list \"" + chosen_list + "\"");
+                        return checkers[chosen_condition]();
+                    }
+                    return false;
+                }
+
+                // special case for calamity
+                if (chosen_list == "Calamity")
+                {
+                    if (TaxConstants.calamityDelegate != null)
+                    {
+                        if (TaxConstants.calamityDelegate(chosen_condition)) return true;
                         switch (chosen_condition) // backwards compatibility
                         {
                             case "downedProvidence":
-                                return calamityChecker("providence");
+                                return TaxConstants.calamityDelegate("providence");
                             case "downedDoG":
-                                return calamityChecker("devourerofgods");
+                                return TaxConstants.calamityDelegate("devourerofgods");
                             case "downedYharon":
-                                return calamityChecker("yharon");
+                                return TaxConstants.calamityDelegate("yharon");
                             case "downedSCal":
-                                return calamityChecker("supremecalamitas");
+                                return TaxConstants.calamityDelegate("supremecalamitas");
                         }
                         return false;
                     }
                     return false;
                 }
 
-                // delegate system
-                if (TaxConstants.delegates.ContainsKey(chosen_list))
-                {
-                    Func<string, bool> checker = TaxConstants.delegates[chosen_list];
-                    return checker != null && checker(chosen_condition);
-                }
-
                 // legacy system
-                if (!TaxConstants.validMods.ContainsKey(chosen_list)) return false;
+                if (!TaxConstants.legacyMods.ContainsKey(chosen_list)) return false;
                 if (TaxConstants.mods.ContainsKey(chosen_list) && TaxConstants.mods[chosen_list] != null)
                 {
-                    ModWorld world = TaxConstants.mods[chosen_list].GetModWorld(TaxConstants.validMods[chosen_list][1]);
-                    foreach (string boss in TaxConstants.validLists[chosen_list])
+                    ModWorld world = TaxConstants.mods[chosen_list].GetModWorld(TaxConstants.legacyMods[chosen_list][1]);
+                    foreach (string boss in TaxConstants.legacyLists[chosen_list])
                     {
                         if (boss == chosen_condition)
                         {

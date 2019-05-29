@@ -25,18 +25,8 @@ namespace BetterTaxes
 		    if (betterTaxes != null)
             {
                 // Adding a brand new list
-                betterTaxes.Call("AddList", "YourListName", (Func<string, bool>)delegate(string name)
-				{
-					switch (name)
-                    {
-                        case "YourCondition1":
-                            return YourModWorld.downedYourBoss1;
-                        case "YourCondition2":
-                            return YourModWorld.downedYourBoss2;
-                        default:
-                            return false;
-                    }
-				});
+                betterTaxes.Call("AddKey", "YourListName", "YourCondition1", (Func<bool>)delegate(){return YourModWorld.downedYourBoss1;});
+                betterTaxes.Call("AddKey", "YourListName", "YourCondition2", (Func<bool>)delegate(){return YourModWorld.downedYourBoss2;});
 
                 // Adding a statement to flexible config files
                 betterTaxes.Call("AddStatement", "YourListName.YourCondition1", 9999);
@@ -51,17 +41,18 @@ namespace BetterTaxes
             switch (given_method)
             {
                 case "AddList":
-                    if (args.Length < 3 || !(args[1] is string) || !(args[2] is Func<string, bool>)) return new ModSupportException("Usage: AddList <list name> <function taking conditions as a string and returning a boolean>");
-                    string key = (string)args[1];
-                    if (TaxConstants.delegates.ContainsKey(key)) TaxConstants.delegates.Remove(key);
-                    TaxConstants.delegates.Add(key, (Func<string, bool>)args[2]);
+                    if (args.Length < 3 || !(args[1] is string)) return new ModSupportException("Usage: AddList <list name>");
+                    TaxConstants.NewList((string)args[1]);
+                    return true;
+                case "AddKey":
+                    if (args.Length < 3 || !(args[1] is string) || !(args[2] is string) || !(args[3] is Func<bool>)) return new ModSupportException("Usage: AddKey <list name> <condition name> <function returning a boolean>");
+                    TaxConstants.NewCondition((string)args[1], (string)args[2], (Func<bool>)args[3]);
                     return true;
                 case "AddStatement":
                     if (args.Length < 3 || !(args[1] is string) || !(args[2] is int)) return new ModSupportException("Usage: AddStatement <statement> <rent in copper coins>");
                     return Config.AddStatement((string)args[1], (int)args[2]);
                 case "Save":
-                    Config.Save();
-                    return true;
+                    return Config.Save();
                 default:
                     return new ModSupportException("No method found by the name of " + given_method);
             }

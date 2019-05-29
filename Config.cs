@@ -77,9 +77,9 @@ namespace BetterTaxes
             return true;
         }
 
-        public static void Save()
+        public static bool Save()
         {
-            if (!isFlexible) return;
+            if (!isFlexible) return false;
             config.Clear();
             config.Put("TaxRates", taxes);
             config.Put("TimeBetweenPaychecks", taxTimer / 60);
@@ -87,10 +87,16 @@ namespace BetterTaxes
             config.Put("AddCustomDialog", addCustomDialog);
             config.Put("IsFlexible", isFlexible);
             config.Save();
+            return true;
         }
 
         public static void Load()
         {
+            taxes = DefaultValues.taxes;
+            taxTimer = DefaultValues.taxTimer;
+            taxCap = DefaultValues.taxCap;
+            addCustomDialog = DefaultValues.addCustomDialog;
+
             if (config.Load())
             {
                 int currentFieldCount = config.GetAllKeys().Count;
