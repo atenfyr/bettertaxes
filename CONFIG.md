@@ -19,12 +19,12 @@ Make sure you always backup your custom configs.
 	- `Base.expertMode`: The world is in expert mode.
 	- `Base.crimson`: The world generated with crimson.
 - Here is a list of every single key with the list `Calamity`:
-	- `Calamity.downedCryogen`: Cryogen has been defeated.
-	- `Calamity.downedLeviathan`: The Leviathan has been defeated.
-	- `Calamity.downedStarGod`: Astrum Deus has been defeated.
-	- `Calamity.downedPlaguebringer`: The Plaguebringer Goliath has been defeated.
-	- `Calamity.downedScavenger`: The Ravager has been defeated.
-	- `Calamity.downedBumble`: Bumblebirb has been defeated.
+	- `Calamity.cryogen`: Cryogen has been defeated.
+	- `Calamity.leviathan`: The Leviathan has been defeated.
+	- `Calamity.astrumDeus`: Astrum Deus has been defeated.
+	- `Calamity.plaguebringer`: The Plaguebringer Goliath has been defeated.
+	- `Calamity.ravager`: The Ravager has been defeated.
+	- `Calamity.bumblebirb`: Bumblebirb has been defeated.
 	- `Calamity.downedProvidence`: Providence, the Profaned Goddess has been defeated.
 	- `Calamity.downedDoG`: The Devourer of Gods has been defeated.
 	- `Calamity.downedYharon`: Yharon has been defeated.
@@ -45,6 +45,8 @@ Make sure you always backup your custom configs.
 - For example, `CalamityMod.CalamityWorld.downedDoG` would evaluate to true once the Devourer of Gods has been defeated, and this would be what you would use if the Calamity list did not exist.
 - This alternative format is still compatible with logic gates.
 - You may need to look inside the source code of the mod you wish to retrieve values from in order to determine the name of the mod's world and the name of the field you wish to check.
+### Adding Support in Your Mod
+- If you are a mod author, you may also employ the usage of Mod.Call in order to add support for your mod. See [MODAUTHORS.md](MODAUTHORS.md).
 ## TimeBetweenPaychecks
 - This field corresponds to the amount of time in seconds that is separated between paychecks, or when money is contributed to the Tax Collector's "storage." In vanilla Terraria, this is 60 seconds. Note that when the Enchanted Sundial is being used, one second corresponds to what would otherwise be a minute.
 ## MoneyCap

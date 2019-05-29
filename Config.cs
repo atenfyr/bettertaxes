@@ -133,7 +133,7 @@ namespace BetterTaxes
                         {
                             if (!taxes.ContainsKey(entry.Key))
                             {
-                                AddStatement(entry.Key, entry.Value);
+                                AddStatement(entry.Key, entry.Value); // we may change this to completely replacing the taxes field, but for now we'll leave it as such so that custom configs aren't completely reset on the release of this update
                                 hasChanged = true;
                             }
                         }

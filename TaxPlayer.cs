@@ -125,7 +125,7 @@ namespace BetterTaxes
                     if (calamityChecker != null)
                     {
                         if (calamityChecker(chosen_condition)) return true;
-                        switch (chosen_condition)
+                        switch (chosen_condition) // backwards compatibility
                         {
                             case "downedProvidence":
                                 return calamityChecker("providence");
@@ -135,20 +135,8 @@ namespace BetterTaxes
                                 return calamityChecker("yharon");
                             case "downedSCal":
                                 return calamityChecker("supremecalamitas");
-                            case "downedBumble":
-                                return calamityChecker("bumblebirb");
-                            case "downedCryogen":
-                                return calamityChecker("cryogen");
-                            case "downedLeviathan":
-                                return calamityChecker("leviathan");
-                            case "downedStarGod":
-                                return calamityChecker("astrumdeus");
-                            case "downedPlaguebringer":
-                                return calamityChecker("plaguebringer");
-                            case "downedScavenger":
-                                return calamityChecker("ravager");
                         }
-                        throw new InvalidConfigException("Invalid condition \"" + chosen_condition + "\" under list \"" + chosen_list + "\"");
+                        return false;
                     }
                     return false;
                 }
