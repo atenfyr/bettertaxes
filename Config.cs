@@ -72,7 +72,8 @@ namespace BetterTaxes
 
         public static bool AddStatement(string statement, int value)
         {
-            if (!isFlexible || taxes.ContainsKey(statement)) return false;
+            if (!isFlexible) return false;
+            if (taxes.ContainsKey(statement)) taxes.Remove(statement);
             taxes.Add(statement, value);
             return true;
         }
