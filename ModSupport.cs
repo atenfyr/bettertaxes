@@ -37,11 +37,10 @@ namespace BetterTaxes
                 case "AddStatement":
                     if (args.Length < 3 || !(args[1] is string) || !(args[2] is int)) return new ModSupportException("Usage: AddStatement <statement> <rent in copper coins>");
                     return Config.AddStatement((string)args[1], (int)args[2]);
-                case "Save":
+                case "Save": // you shouldn't typically call this unless you have a good reason
                     return Config.Save();
-                default:
-                    return new ModSupportException("No method found by the name of " + given_method);
             }
+            return new ModSupportException("No method found by the name of " + given_method);
         }
     }
 }
