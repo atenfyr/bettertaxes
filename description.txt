@@ -2,7 +2,7 @@ Overhauls the Tax Collector to be more useful with a few small changes:
     * Increases the Tax Collector's money cap to 10 platinum rather than 10 gold.
     * Increases profit depending on how far in the game you are, including support for both Calamity and Thorium. See the homepage.
     * Adds a config file stored in the save directory to modify the above values as well as the paycheck rate and money cap. When joining a server, the config file on the machine's installation of Terraria will be used and enforced.
-    * Adds a basic system in the config to add custom rent values for mods, given programming knowledge. See https://bit.ly/2VAjD3y.
+    * Adds a system in the config to add custom rent values for mods, given programming knowledge. See https://bit.ly/2VAjD3y.
 
 After every update, if you wish to receive the latest changes to the config file, you will have to delete the old config file and then reload the mod.
 The source code for this mod is available on Github - https://github.com/atenfyr/bettertaxes

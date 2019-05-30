@@ -1,5 +1,5 @@
 ﻿# Adding Support for Your Mod
-If you are a mod author and would like to add support for your mod into Better Taxes, you can use Mod.Call to achieve just this. For this article to make sense, you should read [CONFIG.md](CONFIG.md) first.
+If you are a mod author and would like to add support for your mod into Better Taxes, you can use Mod.Call to achieve just this. For this article to make sense, you should skim through [CONFIG.md](CONFIG.md) first.
 
 Here's a code snippet to give you an idea:
 
@@ -24,4 +24,4 @@ There are four "methods" supported by Better Taxes, each of which can be called 
 - `AddStatement` forcefully adds a new statement to the config file's `TaxRates` field. The second parameter is the statement to add to the config file, and the third is the rent measured in copper coins to map to the statement.
 - `Save` takes no arguments and simply saves all changes made by `AddStatement` to the disk. If you don't call this method after calling `AddStatement`, your changes will be lost on reload.
 
-All of these methods will return a boolean which corresponds to whether or not the method succeeded. Keep in mind that all calls of `AddStatement` and `Save` are ignored and automatically return false if the config file's `IsFlexible` field has been set to false.
+All of these methods will return a boolean which corresponds to whether or not the method succeeded. All calls of `AddStatement` and `Save` are ignored and automatically return false if the config file's `IsFlexible` field has been set to false.

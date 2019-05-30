@@ -20,20 +20,6 @@ namespace BetterTaxes
             }
         }
 
-        /*
-            Mod betterTaxes = ModLoader.GetMod("BetterTaxes");
-		    if (betterTaxes != null)
-            {
-                // Adding a brand new list with conditions
-                betterTaxes.Call("AddKey", "YourListName", "YourCondition1", (Func<bool>)delegate(){return YourModWorld.downedYourBoss1;});
-                betterTaxes.Call("AddKey", "YourListName", "YourCondition2", (Func<bool>)delegate(){return YourModWorld.downedYourBoss2;});
-
-                // Adding a statement to flexible config files
-                betterTaxes.Call("AddStatement", "YourListName.YourCondition1", 9999);
-                betterTaxes.Call("Save");
-            }
-        */
-
         public static object Call(params object[] args)
         {
             if (args.Length <= 0 || !(args[0] is string)) return new ModSupportException("The first parameter must be a method name");

@@ -99,6 +99,12 @@ namespace BetterTaxes
 
             if (config.Load())
             {
+                config.Get("TaxRates", ref taxes);
+                config.Get("TimeBetweenPaychecks", ref taxTimer);
+                config.Get("MoneyCap", ref taxCap);
+                config.Get("AddCustomDialog", ref addCustomDialog);
+                config.Get("IsFlexible", ref isFlexible);
+
                 int currentFieldCount = config.GetAllKeys().Count;
                 if (currentFieldCount != DefaultValues.fieldCount)
                 {
@@ -111,13 +117,7 @@ namespace BetterTaxes
                     if (currentFieldCount < DefaultValues.fieldCount) throw new InvalidConfigException("Config is missing " + (DefaultValues.fieldCount - currentFieldCount) + " field(s)");
                 }
 
-                config.Get("TaxRates", ref taxes);
-                config.Get("TimeBetweenPaychecks", ref taxTimer);
-                config.Get("MoneyCap", ref taxCap);
-                config.Get("AddCustomDialog", ref addCustomDialog);
-                config.Get("IsFlexible", ref isFlexible);
-
-                if (taxes.ContainsKey("PostWall") && isFlexible) // pre-1.0.0 config file, we need to do a full reset
+                if (taxes.ContainsKey("PostWall")) // pre-1.0.0 config file, we need to do a full reset
                 {
                     CreateConfig();
                 }

@@ -9,7 +9,7 @@ Make sure you always backup your custom configs.
 - There are three built-in lists: `Base`, `Calamity`, and `Thorium`. The `Calamity` and `Thorium` lists will always return false regardless of the condition if the corresponding mod is not enabled.
 - Here is a list of every single key with the list `Base`:
     - `Base.always`: Always set to true. Use this for a "default value."
-    - `Base.never`: Always set to false. Mostly used internally, but you can also use this for debugging.
+    - `Base.never`: Always set to false.
     - `Base.downedMechBossAny`: Any mechanical boss has been defeated.
     - `Base.downedMechBossAll`: All mechanical bosses have been defeated.
     - `Base.downedPlantBoss:` Plantera has been defeated.
@@ -40,7 +40,14 @@ Make sure you always backup your custom configs.
 ### Logic Gates
 - Multiple keys can be separated by a logic gate inside the same statement with "and," "or", and "not."
 - `Not` gates are always parsed before `and` gates and `or` gates, and `and` and `or` gates are parsed in the order they are written. You can use parentheses inside of your statement to circumvent this.
-- Here are some examples of logic gates: `Base.crimson and Base.expertMode` `Base.downedMechBossAny or Base.crimson` `not Base.expertMode` `Base.expertMode and not Base.crimson` `Base.expertMode and Base.downedMechBossAll and Base.crimson` `not (Base.expertMode and Thorium.downedFallenBeholder)` `not (Base.crimson and not (Thorium.downedFallenBeholder or Base.downedMoonlord))`
+- Here are some examples of logic gates in action:
+    - `Base.crimson and Base.expertMode`
+    - `Base.downedMechBossAny or Base.crimson`
+    - `not Base.expertMode`
+    - `Base.expertMode and not Base.crimson`
+    - `Base.expertMode and Base.downedMechBossAll and Base.crimson`
+    - `not (Base.expertMode and Thorium.downedFallenBeholder)`
+    - `not (Base.crimson and not (Thorium.downedFallenBeholder or Base.downedMoonlord))`
 ### Custom Mod Support (Exception to the List/Condition format)
 - If you would like to use a flag from another mod, the following format is used instead of the standard list/condition format: `<mod name>.<mod world>.<field>`
 - For example, `CalamityMod.CalamityWorld.downedDoG` would evaluate to true once the Devourer of Gods has been defeated, and this would be what you would use if the Calamity list did not exist.

@@ -26,19 +26,24 @@ namespace BetterTaxes
             List<string> terms = conditions.Split(' ').ToList();
 
             // gates that take 1 input
-            for (int i = 0; i < terms.Count; i++)
+            bool hasChanged = true;
+            while (hasChanged)
             {
-                switch (terms[i])
+                hasChanged = false;
+                for (int i = 0; i < terms.Count; i++)
                 {
-                    case "not":
+                    if (terms[i] == "not")
+                    {
                         terms[i] = InterpretCondition(terms[i + 1]) ? "false" : "true";
                         terms.RemoveAt(i + 1);
+                        hasChanged = true;
                         break;
+                    }
                 }
             }
 
             // gates that take 2 inputs
-            bool hasChanged = true;
+            hasChanged = true;
             while (hasChanged)
             {
                 hasChanged = false;
