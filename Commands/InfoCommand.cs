@@ -10,16 +10,13 @@ namespace BetterTaxes.Commands
     {
         public static string ValueToCoins(int num)
         {
-            if (num == 0)
-            {
-                return "0 copper";
-            }
+            if (num == 0) return "0 copper";
             return Main.ValueToCoins(num);
         }
 
         public override CommandType Type
         {
-            get { return CommandType.Chat; }
+            get { return CommandType.Chat | CommandType.Console; }
         }
 
         public override string Command
@@ -34,34 +31,33 @@ namespace BetterTaxes.Commands
 
         public override string Description
         {
-            get { return "Provides information about tax rates currently in place"; }
+            get { return "Provides information about tax rates currently in place."; }
         }
 
         public override void Action(CommandCaller caller, string input, string[] args)
         {
-            int npcCount = 0;
-            for (int i = 0; i < 200; i++)
+            if (NPC.savedTaxCollector)
             {
-                if (Main.npc[i].active && !Main.npc[i].homeless && NPC.TypeToHeadIndex(Main.npc[i].type) > 0)
+                int npcCount = 0;
+                for (int i = 0; i < 200; i++)
                 {
-                    npcCount++;
+                    if (Main.npc[i].active && !Main.npc[i].homeless && NPC.TypeToHeadIndex(Main.npc[i].type) > 0) npcCount++;
                 }
-            }
 
-            int taxRate = 0;
-            foreach (KeyValuePair<string, int> entry in TaxWorld.taxes)
+                int taxRate = -1;
+                foreach (KeyValuePair<string, int> entry in TaxWorld.taxes)
+                {
+                    if (entry.Value > taxRate && ModHandler.parser.Interpret(entry.Key)) taxRate = entry.Value;
+                }
+                if (taxRate == -1) throw new InvalidConfigException("No statement evaluated to true. To avoid this error, you should map the statement \"Base.always\" to a value to fall back on");
+
+                int rate = TaxWorld.taxTimer / 60;
+                caller.Reply("Tax rate: " + ValueToCoins(taxRate * npcCount) + " per " + TimeSpan.FromSeconds(rate / Main.dayRate).ToString(@"mm\:ss") + "\nUnadjusted tax rate: " + ValueToCoins(taxRate) + " per " + TimeSpan.FromSeconds(rate).ToString(@"mm\:ss") + " per NPC\nHoused NPC Count: " + npcCount, Color.Yellow);
+            }
+            else
             {
-                if (entry.Value > taxRate) // custom entries in config
-                {
-                    if (GateParser.Interpret(entry.Key))
-                    {
-                        taxRate = entry.Value;
-                    }
-                }
+                caller.Reply("The Tax Collector has not yet been saved in this world!", Color.OrangeRed);
             }
-
-            int rate = TaxWorld.taxTimer / 60;
-            caller.Reply("Tax rate: " + ValueToCoins(taxRate * npcCount) + " per " + TimeSpan.FromSeconds(rate / Main.dayRate).ToString(@"mm\:ss") + "\nUnadjusted tax rate: " + ValueToCoins(taxRate) + " per " + TimeSpan.FromSeconds(rate).ToString(@"mm\:ss") + " per NPC\nHoused NPC Count: " + npcCount, Color.Yellow);
         }
     }
 }

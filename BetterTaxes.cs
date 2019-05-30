@@ -12,8 +12,14 @@ namespace BetterTaxes
             };
         }
 
+        public override object Call(params object[] args)
+        {
+            return ModSupport.Call(args);
+        }
+
         public override void Load()
         {
+            new ModHandler(); // resets all the delegates etc
             Config.Load();
         }
     }
