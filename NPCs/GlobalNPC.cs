@@ -1,6 +1,5 @@
 using Terraria;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace BetterTaxes.NPCs
@@ -14,7 +13,7 @@ namespace BetterTaxes.NPCs
 
         public override void GetChat(NPC npc, ref string chat)
         {
-            if (npc.type == NPCID.TaxCollector && Config.addCustomDialog)
+            if (npc.type == NPCID.TaxCollector && TaxWorld.serverConfig.AddCustomDialog)
             {
                 int taxAverage = 0;
                 int playerCount = 0;
@@ -43,7 +42,7 @@ namespace BetterTaxes.NPCs
                 {
                     chat = "Our income right now is zero, all thanks to your mistreatment of your own citizens! Bah!";
                 }
-                if (Main.rand.Next(7) == 0 && taxAverage >= TaxWorld.taxCap/10 && taxAverage >= 500000) // more than a tenth of the cap and at least 50 gold
+                if (Main.rand.Next(7) == 0 && taxAverage >= TaxWorld.serverConfig.MoneyCap / 10 && taxAverage >= 500000) // more than a tenth of the cap and at least 50 gold
                 {
                     chat = "Bah! I've half a mind to keep all this extra coin for myself!";
                 }
@@ -55,7 +54,7 @@ namespace BetterTaxes.NPCs
                 {
                     chat = "If you're feeling genocidal, the loot some of those \"powerful monsters\" offer might contribute to the economy enough for me to extort more money from your citizens.";
                 }
-                if (Main.rand.Next(7) == 0 && TaxWorld.taxTimer <= 36000) // 10 minutes
+                if (Main.rand.Next(7) == 0 && TaxWorld.serverConfig.TimeBetweenPaychecks <= 600) // 10 minutes
                 {
                     chat = "How come you expect your money so often?";
                 }

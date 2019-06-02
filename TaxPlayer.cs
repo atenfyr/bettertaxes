@@ -63,12 +63,12 @@ namespace BetterTaxes
             if (Main.netMode != 2 && NPC.AnyNPCs(NPCID.TaxCollector))
             {
                 taxWait += Main.dayRate;
-                if (taxWait >= TaxWorld.taxTimer)
+                if (taxWait >= TaxWorld.serverConfig.TimeBetweenPaychecks*60)
                 {
                     taxWait = 0;
 
                     // we don't need to update the tax storage if we've already hit the cap
-                    if (currentTaxes < TaxWorld.taxCap)
+                    if (currentTaxes < TaxWorld.serverConfig.MoneyCap)
                     {
                         // determines the number of town NPCs in the world
                         int npcCount = 0;
@@ -79,7 +79,7 @@ namespace BetterTaxes
 
                         // we have to check the tax rate we should apply every single time an update is due so that the tax rate updates if a boss is killed, but .GetField is super quick after the first time so this shouldn't be a huge problem for custom configs
                         taxRate = -1;
-                        foreach (KeyValuePair<string, int> entry in TaxWorld.taxes)
+                        foreach (KeyValuePair<string, int> entry in TaxWorld.serverConfig.TaxRates)
                         {
                             if (entry.Value > taxRate && ModHandler.parser.Interpret(entry.Key)) taxRate = entry.Value;
                         }
@@ -88,9 +88,9 @@ namespace BetterTaxes
                         currentTaxes += taxRate * npcCount;
                     }
 
-                    if (currentTaxes > TaxWorld.taxCap)
+                    if (currentTaxes > TaxWorld.serverConfig.MoneyCap)
                     {
-                        currentTaxes = TaxWorld.taxCap;
+                        currentTaxes = TaxWorld.serverConfig.MoneyCap;
                     }
                 }
 

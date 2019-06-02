@@ -4,6 +4,9 @@ namespace BetterTaxes
 {
     class BetterTaxes : Mod
     {
+        public static string GithubUserName => "atenfyr";
+        public static string GithubProjectName => "bettertaxes";
+
         public BetterTaxes()
         {
             Properties = new ModProperties()
@@ -20,7 +23,11 @@ namespace BetterTaxes
         public override void Load()
         {
             new ModHandler(); // resets all the delegates etc
-            Config.Load();
+        }
+
+        public override void Unload()
+        {
+            TaxWorld.serverConfig = null;
         }
     }
 }
