@@ -85,22 +85,30 @@ namespace BetterTaxes
                         return true;
                     case "never":
                         return false;
+                    case "moonlord":
                     case "downedMoonlord":
                         return NPC.downedMoonlord;
+                    case "golem":
                     case "downedGolemBoss":
                         return NPC.downedGolemBoss;
+                    case "plantera":
                     case "downedPlantBoss":
                         return NPC.downedPlantBoss;
+                    case "mechAny":
                     case "downedMechBossAny":
                         return NPC.downedMechBossAny;
+                    case "mechAll":
                     case "downedMechBossAll":
                         return NPC.downedMechBoss1 && NPC.downedMechBoss2 && NPC.downedMechBoss3;
+                    case "cultist":
                     case "downedAncientCultist":
                         return NPC.downedAncientCultist;
                     case "expertMode":
                         return Main.expertMode;
                     case "crimson":
                         return WorldGen.crimson;
+                    case "corruption": // equivalent to "not Base.crimson"
+                        return !WorldGen.crimson;
                 }
                 throw new InvalidConfigException("Invalid condition \"" + terms[1] + "\" under list \"Base\"");
             }
@@ -129,12 +137,16 @@ namespace BetterTaxes
                         if (ModHandler.calamityDelegate(chosen_condition)) return true;
                         switch (chosen_condition) // backwards compatibility
                         {
+                            case "providence":
                             case "downedProvidence":
                                 return ModHandler.calamityDelegate("providence");
+                            case "dog":
                             case "downedDoG":
                                 return ModHandler.calamityDelegate("devourerofgods");
+                            case "yharon":
                             case "downedYharon":
                                 return ModHandler.calamityDelegate("yharon");
+                            case "scal":
                             case "downedSCal":
                                 return ModHandler.calamityDelegate("supremecalamitas");
                         }
@@ -145,6 +157,7 @@ namespace BetterTaxes
 
                 // legacy system
                 if (!ModHandler.legacyMods.ContainsKey(chosen_list)) return false;
+                if (ModHandler.legacySynonyms.ContainsKey(chosen_condition)) chosen_condition = ModHandler.legacySynonyms[chosen_condition];
                 if (ModHandler.mods.ContainsKey(chosen_list) && ModHandler.mods[chosen_list] != null)
                 {
                     ModWorld world = ModHandler.mods[chosen_list].GetModWorld(ModHandler.legacyMods[chosen_list][1]);

@@ -8,12 +8,6 @@ namespace BetterTaxes.Commands
 {
     public class InfoCommand : ModCommand
     {
-        public static string ValueToCoins(int num)
-        {
-            if (num == 0) return "0 copper";
-            return Main.ValueToCoins(num);
-        }
-
         public override CommandType Type
         {
             get { return CommandType.Chat | CommandType.Console; }
@@ -51,8 +45,8 @@ namespace BetterTaxes.Commands
                 }
                 if (taxRate == -1) throw new InvalidConfigException("No statement evaluated to true. To avoid this error, you should map the statement \"Base.always\" to a value to fall back on");
 
-                int rate = TaxWorld.serverConfig.TimeBetweenPaychecks;
-                caller.Reply("Tax rate: " + ValueToCoins(taxRate * npcCount) + " per " + TimeSpan.FromSeconds(rate / Main.dayRate).ToString(@"mm\:ss") + "\nUnadjusted tax rate: " + ValueToCoins(taxRate) + " per " + TimeSpan.FromSeconds(rate).ToString(@"mm\:ss") + " per NPC\nHoused NPC Count: " + npcCount, Color.Yellow);
+                long rate = TaxWorld.serverConfig.TimeBetweenPaychecks;
+                caller.Reply("Tax rate: " + UsefulThings.ValueToCoins(taxRate * npcCount) + " per " + TimeSpan.FromSeconds(rate / Main.dayRate).ToString(@"mm\:ss") + "\nUnadjusted tax rate: " + UsefulThings.ValueToCoins(taxRate) + " per " + TimeSpan.FromSeconds(rate).ToString(@"mm\:ss") + " per NPC\nHoused NPC Count: " + npcCount, Color.Yellow);
             }
             else
             {

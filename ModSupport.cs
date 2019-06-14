@@ -1,4 +1,5 @@
-﻿using System;
+﻿using log4net;
+using System;
 using Terraria;
 
 namespace BetterTaxes
@@ -39,11 +40,29 @@ namespace BetterTaxes
                     if (args.Length < 3 || !(args[1] is string) || !(args[2] is int)) throw new ModSupportException("Usage: AddStatement <statement> <rent in copper coins>");
                     return TaxWorld.serverConfig.AddStatement((string)args[1], (int)args[2]);
                 case "Save":
-                    throw new ModSupportException("The method \"Save\" was removed in BetterTaxes 2.0.0");
+                    LogManager.GetLogger("BetterTaxes").Warn("BetterTaxes.Call() warning: The method \"Save\" was removed in BetterTaxes 2.0.0 due to the limitations of tModLoader v0.11's ModConfig class.");
+                    return false;
+                case "GetConfig":
+                    if (args.Length < 2) throw new ModSupportException("Usage: GetConfig <config field>");
+                    string field = (string)args[1];
+                    switch(field)
+                    {
+                        case "TaxRates":
+                            return TaxWorld.serverConfig.TaxRates;
+                        case "TimeBetweenPaychecks":
+                            return TaxWorld.serverConfig.TimeBetweenPaychecks;
+                        case "MoneyCap":
+                            return TaxWorld.serverConfig.MoneyCap;
+                        case "AddCustomDialog":
+                            return TaxWorld.serverConfig.AddCustomDialog;
+                        case "IsFlexible":
+                            return TaxWorld.serverConfig.IsFlexible;
+                    }
+                    throw new ModSupportException("No config field found by the name of \"" + field + "\"");
                 case "SetTaxes":
-                case "ResetPlayerModData": // undocumented, implemented only to follow the guidelines specified by hamstar's Mod Helpers
+                case "ResetPlayerModData": // this alternative way of calling "SetTaxes" is implemented only to follow the guidelines specified by hamstar's Mod Helpers
                     if (args.Length < 2) throw new ModSupportException("Usage: " + given_method + " <player> [tax amount]");
-                    Player player = args[1] as Player;
+                    Player player = (Player)args[1];
                     TaxPlayer moddedPlayer = player.GetModPlayer<TaxPlayer>();
                     int newAmount = 0;
                     if (args.Length > 2) newAmount = (int)args[2];
@@ -55,7 +74,7 @@ namespace BetterTaxes
                     }
                     throw new ModSupportException("Invalid player specified");
             }
-            throw new ModSupportException("No method found by the name of " + given_method);
+            throw new ModSupportException("No method found by the name of \"" + given_method + "\"");
         }
     }
 }

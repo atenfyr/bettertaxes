@@ -13,6 +13,16 @@ namespace BetterTaxes
             { "Thorium", new string[7] { "downedRealityBreaker", "downedPatchwerk", "downedBloom", "downedStrider", "downedFallenBeholder", "downedLich", "downedDepthBoss" } }
         };
 
+        public static readonly Dictionary<string, string> legacySynonyms = new Dictionary<string, string> {
+            { "ragnarok", "downedRealityBreaker" },
+            { "patchwerk", "downedPatchwerk" },
+            { "bloom", "downedBloom" },
+            { "strider", "downedStrider" },
+            { "coznix", "downedFallenBeholder" },
+            { "lich", "downedLich" },
+            { "abyssion", "downedDepthBoss" }
+        };
+
         public static readonly Dictionary<string, string[]> legacyMods = new Dictionary<string, string[]> {
             { "Thorium", new string[2] { "ThoriumMod", "ThoriumWorld" } }
         };
@@ -68,7 +78,7 @@ namespace BetterTaxes
                     taxWait = 0;
 
                     // we don't need to update the tax storage if we've already hit the cap
-                    if (currentTaxes < TaxWorld.serverConfig.MoneyCap)
+                    if (TaxWorld.serverConfig.MoneyCap < 1 || currentTaxes < TaxWorld.serverConfig.MoneyCap)
                     {
                         // determines the number of town NPCs in the world
                         int npcCount = 0;
@@ -88,7 +98,7 @@ namespace BetterTaxes
                         currentTaxes += taxRate * npcCount;
                     }
 
-                    if (currentTaxes > TaxWorld.serverConfig.MoneyCap)
+                    if (TaxWorld.serverConfig.MoneyCap > 0 && currentTaxes > TaxWorld.serverConfig.MoneyCap)
                     {
                         currentTaxes = TaxWorld.serverConfig.MoneyCap;
                     }
@@ -113,7 +123,7 @@ namespace BetterTaxes
         public override TagCompound Save()
         {
             return new TagCompound {
-                {"taxes", currentTaxes},
+                { "taxes", currentTaxes}
             };
         }
 

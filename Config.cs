@@ -1,9 +1,10 @@
 using System;
 using System.Linq;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.Serialization;
-using System.Collections.Generic;
 using Terraria.ModLoader.Config;
+using BetterTaxes.UI;
 
 namespace BetterTaxes
 {
@@ -23,35 +24,47 @@ namespace BetterTaxes
         }
     }
 
+    public struct StaticConstants
+    {
+        public static readonly Dictionary<string, int> TaxRatesDefaults = new Dictionary<string, int> {
+            {"Base.always", 50},
+            {"Base.mechAny", 100},
+            {"Base.plantera", 200},
+            {"Base.golem", 500},
+            {"Base.moonlord", 1000},
+            {"Calamity.providence", 1250},
+            {"Thorium.ragnarok", 1500},
+            {"Calamity.dog", 1500},
+            {"Calamity.yharon", 2500},
+            {"Calamity.scal", 5000},
+        };
+    }
+
     public class Config : ModConfig
     {
         public override ConfigScope Mode => ConfigScope.ServerSide;
 
-        private static readonly Dictionary<string, int> TaxRatesDefaults = new Dictionary<string, int> {
-            {"Base.always", 50},
-            {"Base.downedMechBossAny", 100},
-            {"Base.downedPlantBoss", 200},
-            {"Base.downedGolemBoss", 500},
-            {"Base.downedMoonlord", 1000},
-            {"Calamity.downedProvidence", 1250},
-            {"Thorium.downedRealityBreaker", 1500},
-            {"Calamity.downedDoG", 1500},
-            {"Calamity.downedYharon", 2500},
-            {"Calamity.downedSCal", 5000},
-        };
-
-        [Tooltip("Maps \"statements\" to rent values, represented in copper coins. See the GitHub page.")]
+        [Tooltip("Maps \"statements\" representing game progression to rent values, represented in copper coins. See the GitHub page.")]
         public Dictionary<string, int> TaxRates;
-        [Tooltip("The amount of time in seconds between updates of the Tax Collector's money storage.")]
+
+        [Tooltip("The amount of time between updates of the Tax Collector's money storage.")]
         [DefaultValue(60)]
+        [SliderColor(183, 88, 25)]
+        [CustomModConfigItem(typeof(TimeRangeElement))]
         public int TimeBetweenPaychecks;
-        [Tooltip("The amount of money represented in copper coins that the Tax Collector can hold.")]
+
+        [Label("MoneyCap")]
+        [Tooltip("The amount of money that the Tax Collector can hold at once.")]
         [DefaultValue(10000000)]
+        [SliderColor(204, 181, 72)]
+        [CustomModConfigItem(typeof(CoinRangeElement))]
         public int MoneyCap;
-        [Tooltip("A boolean (true or false) which corresponds to whether or not the new lines of dialog should be added to the Tax Collector's dialog pool.")]
+
+        [Tooltip("Should the new lines of dialog be added to the Tax Collector's dialog pool?")]
         [DefaultValue(true)]
         public bool AddCustomDialog;
-        [Tooltip("A boolean (true or false) which corresponds to whether or not this config file is subject to automatic changes made by this mod and other mods. You should set this to true if you are making changes to the config.")]
+
+        [Tooltip("Should this config file be subject to automatic changes made by this mod and other mods?")]
         [DefaultValue(true)]
         public bool IsFlexible;
 
@@ -65,7 +78,8 @@ namespace BetterTaxes
         [OnDeserialized]
         internal void OnDeserializedMethod(StreamingContext context)
         {
-            TaxRates = TaxRates?.Count == TaxRatesDefaults.Count ? TaxRates : TaxRatesDefaults.ToDictionary(i => i.Key, i => i.Value);
+            TaxRates = TaxRates?.Count > 0 ? TaxRates : StaticConstants.TaxRatesDefaults.ToDictionary(i => i.Key, i => i.Value);
+            TimeBetweenPaychecks = TimeBetweenPaychecks > 0 ? TimeBetweenPaychecks : 60;
         }
 
         public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message)
@@ -81,19 +95,11 @@ namespace BetterTaxes
             TaxWorld.serverConfig = this;
         }
 
-        public override void OnChanged()
+        /*public override void OnChanged()
         {
-            if (TimeBetweenPaychecks < 1) throw new InvalidConfigException("Tax timer value \"" + TimeBetweenPaychecks / 60 + "\" is too small");
-            if (MoneyCap < 1) throw new InvalidConfigException("Tax cap value \"" + MoneyCap + "\" is too small");
-
-            foreach (KeyValuePair<string, int> entry in TaxRates)
-            {
-                if (entry.Value < 0) throw new InvalidConfigException("Tax value \"" + entry.Value + "\" in the flag \"" + entry.Key + "\" is too small");
-            }
-
             if (IsFlexible)
             {
-                foreach (KeyValuePair<string, int> entry in TaxRatesDefaults)
+                foreach (KeyValuePair<string, int> entry in StaticConstants.TaxRatesDefaults)
                 {
                     if (!TaxRates.ContainsKey(entry.Key))
                     {
@@ -101,7 +107,7 @@ namespace BetterTaxes
                     }
                 }
             }
-        }
+        }*/
 
         public bool AddStatement(string statement, int value)
         {

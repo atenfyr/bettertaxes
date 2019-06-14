@@ -1,6 +1,7 @@
-.vs
 bin
 obj
+wiki
+.vs
 *.png
 *.csproj
 *.csproj.user
