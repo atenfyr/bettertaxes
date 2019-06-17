@@ -10,6 +10,19 @@ namespace BetterTaxes
     {
         public Dictionary<string, bool> invalidMods = new Dictionary<string, bool>();
 
+        public int CalculateRate()
+        {
+            int taxRate = -1;
+            foreach (KeyValuePair<string, SpecialInt> entry in TaxWorld.serverConfig.TaxRates)
+            {
+                if (entry.Value > taxRate && Interpret(entry.Key)) taxRate = entry.Value;
+            }
+            if (taxRate == -1) throw new InvalidConfigException("No statement evaluated to true. To avoid this error, you should map the statement \"Base.always\" to a value to fall back on");
+
+            if (Main.expertMode) taxRate = (int)(taxRate * TaxWorld.serverConfig.ExpertModeBoost);
+            return taxRate;
+        }
+
         public bool Interpret(string conditions)
         {
             // go through parentheses

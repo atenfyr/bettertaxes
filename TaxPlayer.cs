@@ -68,7 +68,6 @@ namespace BetterTaxes
 
     public class TaxPlayer : ModPlayer
     {
-        internal int taxRate = 0;
         internal int taxWait = 0;
         public int currentTaxes = 0;
 
@@ -91,21 +90,19 @@ namespace BetterTaxes
                             if (Main.npc[i].active && !Main.npc[i].homeless && NPC.TypeToHeadIndex(Main.npc[i].type) > 0) npcCount++;
                         }
 
-                        // we have to check the tax rate we should apply every single time an update is due so that the tax rate updates if a boss is killed, but .GetField is super quick after the first time so this shouldn't be a huge problem for custom configs
-                        taxRate = -1;
-                        foreach (KeyValuePair<string, CoinValue> entry in TaxWorld.serverConfig.TaxRates)
-                        {
-                            if (entry.Value > taxRate && ModHandler.parser.Interpret(entry.Key)) taxRate = entry.Value;
-                        }
-                        if (taxRate == -1) throw new InvalidConfigException("No statement evaluated to true. To avoid this error, you should map the statement \"Base.always\" to a value to fall back on");
-
-                        //if (Main.expertMode && TaxWorld.serverConfig.IsFlexible) taxRate = (int)(taxRate * 1.5);
+                        int taxRate = ModHandler.parser.CalculateRate();
                         currentTaxes += taxRate * npcCount;
                     }
 
                     if (TaxWorld.serverConfig.MoneyCap > 0 && currentTaxes > TaxWorld.serverConfig.MoneyCap)
                     {
                         currentTaxes = TaxWorld.serverConfig.MoneyCap;
+                    }
+
+                    // if the user has set the cap to unlimited we need to check for integer overflow
+                    if (TaxWorld.serverConfig.MoneyCap < 1)
+                    {
+                        if ((long)currentTaxes > int.MaxValue) currentTaxes = int.MaxValue;
                     }
                 }
 

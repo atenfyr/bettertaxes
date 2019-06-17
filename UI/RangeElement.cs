@@ -1,15 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
-using Terraria;
+using Terraria.ModLoader.Config;
 using Terraria.ModLoader.Config.UI;
 
 namespace BetterTaxes.UI
 {
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Class)]
+    public class UnitsAttribute : Attribute
+    {
+        public Unit units;
+        public UnitsAttribute(Unit unit)
+        {
+            units = unit;
+        }
+    }
+
+    public enum Unit : byte
+    {
+        Coins,
+        Time
+    }
+
     public abstract class ChangedTextRangeElement<T> : RangeElement where T : IComparable<T>
     {
-        public int min;
-        public int max;
-        public int increment;
+        public T min;
+        public T max;
+        public T increment;
         public IList<T> tList;
 
         public override void OnBind()
@@ -20,12 +36,12 @@ namespace BetterTaxes.UI
 
             if (tList != null) TextDisplayFunction = () => TransformValue(tList[index], (index + 1).ToString());
             if (labelAttribute != null) TextDisplayFunction = () => TransformValue(GetValue(), labelAttribute.Label);
-            if (rangeAttribute != null && rangeAttribute.min is int && rangeAttribute.max is int)
+            if (rangeAttribute != null && rangeAttribute.min is T && rangeAttribute.max is T)
             {
-                min = (int)rangeAttribute.min;
-                max = (int)rangeAttribute.max;
+                min = (T)rangeAttribute.min;
+                max = (T)rangeAttribute.max;
             }
-            if (incrementAttribute != null && incrementAttribute.increment is int) increment = (int)incrementAttribute.increment;
+            if (incrementAttribute != null && incrementAttribute.increment is T) increment = (T)incrementAttribute.increment;
         }
 
         public virtual string TransformValue(T val, string label)
@@ -41,8 +57,9 @@ namespace BetterTaxes.UI
         }
     }
 
-    public class CoinRangeElement : RangeElement
+    public class SpecialIntRangeElement : RangeElement
     {
+        public Unit units;
         public int min;
         public int max;
         public int increment;
@@ -59,6 +76,7 @@ namespace BetterTaxes.UI
         public override void OnBind()
         {
             base.OnBind();
+            units = ConfigManager.GetCustomAttribute<UnitsAttribute>(memberInfo, item, list)?.units ?? Unit.Coins;
             tList = (IList<int>)list;
             TextDisplayFunction = () => TransformValue(GetValue(), memberInfo.Name);
 
@@ -75,20 +93,21 @@ namespace BetterTaxes.UI
         public string TransformValue(int val, string label)
         {
             string newLabel = label == "value" ? "rent" : label;
+            if (units == Unit.Time) return newLabel + ": " + UsefulThings.SecondsToHMS(val);
             return newLabel + ": " + UsefulThings.ValueToCoins(val, (label == "value") ? "0 copper" : "Unlimited");
         }
 
-        protected CoinValue GetValue()
+        protected SpecialInt GetValue()
         {
-            return (CoinValue)GetObject();
+            return (SpecialInt)GetObject();
         }
 
         protected void SetValue(object value)
         {
-            if (value is int t) SetObject(new CoinValue((int)value));
+            if (value is int t) SetObject(new SpecialInt((int)value));
         }
 
-        public CoinRangeElement()
+        public SpecialIntRangeElement()
         {
             min = 0;
             max = 5000;
@@ -96,27 +115,27 @@ namespace BetterTaxes.UI
         }
     }
 
-    public class TimeRangeElement : ChangedTextRangeElement<int>
+    public class BoostRangeElement : ChangedTextRangeElement<float>
     {
-        public override int NumberTicks => ((max - min) / increment) + 1;
-        public override float TickIncrement => (float)(increment) / (max - min);
+        public override int NumberTicks => (int)((max - min) / increment) + 1;
+        public override float TickIncrement => (increment) / (max - min);
 
         protected override float Proportion
         {
-            get => (GetValue() - min) / (float)(max - min);
-            set => SetValue((int)Math.Round((value * (max - min) + min) * (1f / increment)) * increment);
+            get => (GetValue() - min) / (max - min);
+            set => SetValue((float)Math.Round((value * (max - min) + min) * (1 / increment)) * increment);
         }
 
-        public override string TransformValue(int val, string label)
+        public BoostRangeElement()
         {
-            return label + ": " + UsefulThings.SecondsToHMS(val);
+            min = 0f;
+            max = 3f;
+            increment = 0.05f;
         }
 
-        public TimeRangeElement()
+        public override string TransformValue(float val, string label)
         {
-            min = 1;
-            max = 300;
-            increment = 5;
+            return label + ": " + val + "×";
         }
     }
 }
