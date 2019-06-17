@@ -149,6 +149,21 @@ namespace BetterTaxes
                             case "scal":
                             case "downedSCal":
                                 return ModHandler.calamityDelegate("supremecalamitas");
+                            case "revenge":
+                            case "revengeance":
+                                if (ModHandler.calamityMod != null)
+                                {
+                                    ModWorld calamityWorld = ModHandler.calamityMod.GetModWorld("CalamityWorld");
+                                    return (bool)calamityWorld.GetType().GetField("revenge").GetValue(calamityWorld);
+                                }
+                                return false;
+                            case "death":
+                                if (ModHandler.calamityMod != null)
+                                {
+                                    ModWorld calamityWorld = ModHandler.calamityMod.GetModWorld("CalamityWorld");
+                                    return (bool)calamityWorld.GetType().GetField("death").GetValue(calamityWorld);
+                                }
+                                return false;
                         }
                         return false;
                     }

@@ -30,20 +30,24 @@ namespace BetterTaxes
         public static Dictionary<string, Mod> mods = new Dictionary<string, Mod>();
 
         public static Dictionary<string, Dictionary<string, Func<bool>>> delegates = new Dictionary<string, Dictionary<string, Func<bool>>>();
+        public static Mod calamityMod;
         public static Func<string, bool> calamityDelegate;
 
         public static GateParser parser;
 
-        public static void NewList(string list_name)
+        public static bool NewList(string list_name)
         {
             if (delegates.ContainsKey(list_name)) delegates.Remove(list_name);
             delegates.Add(list_name, new Dictionary<string, Func<bool>>());
+            return true;
         }
 
-        public static void NewCondition(string list_name, string condition, Func<bool> delegatef)
+        public static bool NewCondition(string list_name, string condition, Func<bool> delegatef)
         {
             if (!delegates.ContainsKey(list_name)) NewList(list_name);
+            if (delegates[list_name].ContainsKey(condition)) delegates[list_name].Remove(condition);
             delegates[list_name].Add(condition, delegatef);
+            return true;
         }
 
         public ModHandler()
@@ -52,7 +56,7 @@ namespace BetterTaxes
             mods = new Dictionary<string, Mod>();
             parser = new GateParser();
 
-            Mod calamityMod = ModLoader.GetMod("CalamityMod");
+            calamityMod = ModLoader.GetMod("CalamityMod");
             if (calamityMod != null) calamityDelegate = (Func<string, bool>)calamityMod.Call("Downed");
 
             foreach (KeyValuePair<string, string[]> entry in legacyMods)
@@ -64,18 +68,18 @@ namespace BetterTaxes
 
     public class TaxPlayer : ModPlayer
     {
-        public int taxRate = 0;
+        internal int taxRate = 0;
+        internal int taxWait = 0;
         public int currentTaxes = 0;
-        public int taxWait = 0;
 
         public override void PreUpdate()
         {
             if (Main.netMode != 2 && NPC.AnyNPCs(NPCID.TaxCollector))
             {
                 taxWait += Main.dayRate;
-                if (taxWait >= TaxWorld.serverConfig.TimeBetweenPaychecks*60)
+                if (taxWait >= TaxWorld.serverConfig.TimeBetweenPaychecks * 60)
                 {
-                    taxWait = 0;
+                    taxWait -= TaxWorld.serverConfig.TimeBetweenPaychecks * 60;
 
                     // we don't need to update the tax storage if we've already hit the cap
                     if (TaxWorld.serverConfig.MoneyCap < 1 || currentTaxes < TaxWorld.serverConfig.MoneyCap)
@@ -89,12 +93,13 @@ namespace BetterTaxes
 
                         // we have to check the tax rate we should apply every single time an update is due so that the tax rate updates if a boss is killed, but .GetField is super quick after the first time so this shouldn't be a huge problem for custom configs
                         taxRate = -1;
-                        foreach (KeyValuePair<string, int> entry in TaxWorld.serverConfig.TaxRates)
+                        foreach (KeyValuePair<string, CoinValue> entry in TaxWorld.serverConfig.TaxRates)
                         {
                             if (entry.Value > taxRate && ModHandler.parser.Interpret(entry.Key)) taxRate = entry.Value;
                         }
                         if (taxRate == -1) throw new InvalidConfigException("No statement evaluated to true. To avoid this error, you should map the statement \"Base.always\" to a value to fall back on");
 
+                        //if (Main.expertMode && TaxWorld.serverConfig.IsFlexible) taxRate = (int)(taxRate * 1.5);
                         currentTaxes += taxRate * npcCount;
                     }
 
@@ -106,18 +111,6 @@ namespace BetterTaxes
 
                 player.taxMoney = currentTaxes;
             }
-        }
-
-        public override void clientClone(ModPlayer clientClone)
-        {
-            TaxPlayer clone = clientClone as TaxPlayer;
-        }
-
-        public override void SyncPlayer(int toWho, int fromWho, bool newPlayer)
-        {
-            ModPacket packet = mod.GetPacket();
-            packet.Write((byte)player.whoAmI);
-            packet.Send(toWho, fromWho);
         }
 
         public override TagCompound Save()

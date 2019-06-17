@@ -8,25 +8,10 @@ namespace BetterTaxes.Commands
 {
     public class InfoCommand : ModCommand
     {
-        public override CommandType Type
-        {
-            get { return CommandType.Chat | CommandType.Console; }
-        }
-
-        public override string Command
-        {
-            get { return "taxinfo"; }
-        }
-
-        public override string Usage
-        {
-            get { return "/taxinfo"; }
-        }
-
-        public override string Description
-        {
-            get { return "Provides information about tax rates currently in place."; }
-        }
+        public override CommandType Type => CommandType.Chat | CommandType.Console;
+        public override string Command => "taxinfo";
+        public override string Usage => "/taxinfo";
+        public override string Description => "Provides information about tax rates currently in place.";
 
         public override void Action(CommandCaller caller, string input, string[] args)
         {
@@ -39,7 +24,7 @@ namespace BetterTaxes.Commands
                 }
 
                 int taxRate = -1;
-                foreach (KeyValuePair<string, int> entry in TaxWorld.serverConfig.TaxRates)
+                foreach (KeyValuePair<string, CoinValue> entry in TaxWorld.serverConfig.TaxRates)
                 {
                     if (entry.Value > taxRate && ModHandler.parser.Interpret(entry.Key)) taxRate = entry.Value;
                 }

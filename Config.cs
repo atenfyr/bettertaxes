@@ -1,10 +1,11 @@
+using BetterTaxes.UI;
+using Newtonsoft.Json;
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.Serialization;
 using Terraria.ModLoader.Config;
-using BetterTaxes.UI;
 
 namespace BetterTaxes
 {
@@ -26,7 +27,7 @@ namespace BetterTaxes
 
     public struct StaticConstants
     {
-        public static readonly Dictionary<string, int> TaxRatesDefaults = new Dictionary<string, int> {
+        public static readonly Dictionary<string, CoinValue> TaxRatesDefaults = new Dictionary<string, CoinValue> {
             {"Base.always", 50},
             {"Base.mechAny", 100},
             {"Base.plantera", 200},
@@ -40,12 +41,78 @@ namespace BetterTaxes
         };
     }
 
+    public class CoinConverter : JsonConverter
+    {
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            CoinValue val = value as CoinValue;
+            if (val == null) val = new CoinValue(100);
+            writer.WriteValue(val.Value);
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            CoinValue val = (CoinValue)(long)reader.Value;
+            if (val == null) val = new CoinValue(100);
+            return val;
+        }
+
+        public override bool CanConvert(Type objectType)
+        {
+            return typeof(CoinValue).IsAssignableFrom(objectType);
+        }
+    }
+
+    [SliderColor(204, 181, 72)]
+    [JsonConverter(typeof(CoinConverter))]
+    [CustomModConfigItem(typeof(CoinRangeElement))]
+    public class CoinValue : IComparable<CoinValue>
+    {
+        [JsonIgnore]
+        public int Value { get; set; }
+
+        public CoinValue(int value)
+        {
+            Value = value;
+        }
+
+        public static implicit operator CoinValue(int value)
+        {
+            return new CoinValue(value);
+        }
+
+        public static implicit operator int(CoinValue value)
+        {
+            return value.Value;
+        }
+
+        public static explicit operator CoinValue(long value)
+        {
+            return new CoinValue((int)value);
+        }
+
+        public static explicit operator long(CoinValue value)
+        {
+            return value.Value;
+        }
+
+        public int CompareTo(CoinValue that)
+        {
+            return Value.CompareTo(that.Value);
+        }
+
+        public bool Equals(CoinValue other)
+        {
+            return Value == other.Value;
+        }
+    }
+
     public class Config : ModConfig
     {
         public override ConfigScope Mode => ConfigScope.ServerSide;
 
-        [Tooltip("Maps \"statements\" representing game progression to rent values, represented in copper coins. See the GitHub page.")]
-        public Dictionary<string, int> TaxRates;
+        [Tooltip("Maps \"statements\" representing game progression to rent per NPC. See the GitHub page.")]
+        public Dictionary<string, CoinValue> TaxRates;
 
         [Tooltip("The amount of time between updates of the Tax Collector's money storage.")]
         [DefaultValue(60)]
@@ -55,10 +122,10 @@ namespace BetterTaxes
 
         [Label("MoneyCap")]
         [Tooltip("The amount of money that the Tax Collector can hold at once.")]
+        [Range(0, 10000000)]
+        [Increment(100000)]
         [DefaultValue(10000000)]
-        [SliderColor(204, 181, 72)]
-        [CustomModConfigItem(typeof(CoinRangeElement))]
-        public int MoneyCap;
+        public CoinValue MoneyCap;
 
         [Tooltip("Should the new lines of dialog be added to the Tax Collector's dialog pool?")]
         [DefaultValue(true)]

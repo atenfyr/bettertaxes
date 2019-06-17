@@ -7,9 +7,9 @@ namespace BetterTaxes.UI
 {
     public abstract class ChangedTextRangeElement<T> : RangeElement where T : IComparable<T>
     {
-        public T min;
-        public T max;
-        public T increment;
+        public int min;
+        public int max;
+        public int increment;
         public IList<T> tList;
 
         public override void OnBind()
@@ -20,12 +20,12 @@ namespace BetterTaxes.UI
 
             if (tList != null) TextDisplayFunction = () => TransformValue(tList[index], (index + 1).ToString());
             if (labelAttribute != null) TextDisplayFunction = () => TransformValue(GetValue(), labelAttribute.Label);
-            if (rangeAttribute != null && rangeAttribute.min is T && rangeAttribute.max is T)
+            if (rangeAttribute != null && rangeAttribute.min is int && rangeAttribute.max is int)
             {
-                min = (T)rangeAttribute.min;
-                max = (T)rangeAttribute.max;
+                min = (int)rangeAttribute.min;
+                max = (int)rangeAttribute.max;
             }
-            if (incrementAttribute != null && incrementAttribute.increment is T) increment = (T)incrementAttribute.increment;
+            if (incrementAttribute != null && incrementAttribute.increment is int) increment = (int)incrementAttribute.increment;
         }
 
         public virtual string TransformValue(T val, string label)
@@ -37,12 +37,16 @@ namespace BetterTaxes.UI
 
         protected virtual void SetValue(object value)
         {
-            if (value is T t) SetObject(Utils.Clamp(t, min, max));
+            if (value is T t) SetObject(value);
         }
     }
 
-    public class CoinRangeElement : ChangedTextRangeElement<int>
+    public class CoinRangeElement : RangeElement
     {
+        public int min;
+        public int max;
+        public int increment;
+        public IList<int> tList;
         public override int NumberTicks => ((max - min) / increment) + 1;
         public override float TickIncrement => (float)increment / (max - min);
 
@@ -52,17 +56,43 @@ namespace BetterTaxes.UI
             set => SetValue((int)Math.Round((value * (max - min) + min) * (1f / increment)) * increment);
         }
 
-        public override string TransformValue(int val, string label)
+        public override void OnBind()
+        {
+            base.OnBind();
+            tList = (IList<int>)list;
+            TextDisplayFunction = () => TransformValue(GetValue(), memberInfo.Name);
+
+            if (tList != null) TextDisplayFunction = () => TransformValue(tList[index], (index + 1).ToString());
+            if (labelAttribute != null) TextDisplayFunction = () => TransformValue(GetValue(), labelAttribute.Label);
+            if (rangeAttribute != null && rangeAttribute.min is int && rangeAttribute.max is int)
+            {
+                min = (int)rangeAttribute.min;
+                max = (int)rangeAttribute.max;
+            }
+            if (incrementAttribute != null && incrementAttribute.increment is int) increment = (int)incrementAttribute.increment;
+        }
+
+        public string TransformValue(int val, string label)
         {
             string newLabel = label == "value" ? "rent" : label;
-            return newLabel + ": " + UsefulThings.ValueToCoins(val, "Unlimited");
+            return newLabel + ": " + UsefulThings.ValueToCoins(val, (label == "value") ? "0 copper" : "Unlimited");
+        }
+
+        protected CoinValue GetValue()
+        {
+            return (CoinValue)GetObject();
+        }
+
+        protected void SetValue(object value)
+        {
+            if (value is int t) SetObject(new CoinValue((int)value));
         }
 
         public CoinRangeElement()
         {
             min = 0;
-            max = 10000000;
-            increment = 100000;
+            max = 5000;
+            increment = 50;
         }
     }
 
