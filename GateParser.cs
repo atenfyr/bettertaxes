@@ -13,6 +13,10 @@ namespace BetterTaxes
         public int CalculateRate()
         {
             int taxRate = -1;
+            foreach (KeyValuePair<string, int> entry in ModHandler.customStatements)
+            {
+                if (entry.Value > taxRate && Interpret(entry.Key)) taxRate = entry.Value;
+            }
             foreach (KeyValuePair<string, SpecialInt> entry in TaxWorld.serverConfig.TaxRates)
             {
                 if (entry.Value > taxRate && Interpret(entry.Key)) taxRate = entry.Value;

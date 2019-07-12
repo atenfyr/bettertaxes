@@ -185,13 +185,5 @@ namespace BetterTaxes
         {
             TaxWorld.serverConfig = this;
         }
-
-        public bool AddStatement(string statement, int value)
-        {
-            if (!IsFlexible) return false;
-            if (TaxRates.ContainsKey(statement)) TaxRates.Remove(statement);
-            TaxRates.Add(statement, value);
-            return true;
-        }
     }
 }

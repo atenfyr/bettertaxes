@@ -34,6 +34,7 @@ namespace BetterTaxes
         public static Mod calamityMod;
         public static Func<string, bool> calamityDelegate;
 
+        public static Dictionary<string, int> customStatements = new Dictionary<string, int>();
         public static GateParser parser;
 
         public static bool NewList(string list_name)
@@ -50,6 +51,14 @@ namespace BetterTaxes
             delegates[list_name].Add(condition, delegatef);
             return true;
         }
+
+        public static bool AddStatement(string statement, int value)
+        {
+            if (!TaxWorld.serverConfig.IsFlexible) return false;
+            if (customStatements.ContainsKey(statement)) customStatements.Remove(statement);
+            customStatements.Add(statement, value);
+            return true;
+        }   
 
         public ModHandler()
         {

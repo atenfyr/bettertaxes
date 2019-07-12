@@ -5,5 +5,5 @@ homepage = https://forums.terraria.org/index.php?threads/better-taxes.76764/
 hideCode = true
 hideResources = true
 includeSource = false
-buildIgnore = *.csproj, *.user, *.sln, *.md, obj\*, bin\*
+buildIgnore = *.csproj, *.user, *.sln, *.md, Properties\*, obj\*, bin\*
 includePDB = true

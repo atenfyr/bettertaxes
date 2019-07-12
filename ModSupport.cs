@@ -52,7 +52,7 @@ namespace BetterTaxes
                     return ModHandler.NewCondition((string)args[1], (string)args[2], (Func<bool>)args[3]);
                 case "AddStatement":
                     if (args.Length < 3 || !(args[1] is string) || !(args[2] is int)) throw new InvalidSyntaxException("AddStatement <statement> <rent in copper coins>");
-                    return TaxWorld.serverConfig.AddStatement((string)args[1], (int)args[2]);
+                    return ModHandler.AddStatement((string)args[1], (int)args[2]);
                 case "Save":
                     LogManager.GetLogger("BetterTaxes").Warn("BetterTaxes.Call() warning: The method \"Save\" was removed in BetterTaxes 2.0.0 due to the limitations of tModLoader v0.11's ModConfig class.");
                     return false;
