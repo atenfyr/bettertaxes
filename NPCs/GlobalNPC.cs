@@ -58,6 +58,10 @@ namespace BetterTaxes.NPCs
                 {
                     chat = "How come you expect your money so often?";
                 }
+                if (Main.rand.Next(7) == 0 && TaxWorld.serverConfig.EnableAutoCollect && !BankHandler.LastCheckBank)
+                {
+                    chat = "If you were to give me something to put your coin into, like a piggy bank, you wouldn't have to talk to me anymore!";
+                }
             }
         }
     }

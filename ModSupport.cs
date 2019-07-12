@@ -67,12 +67,24 @@ namespace BetterTaxes
                             return TaxWorld.serverConfig.TimeBetweenPaychecks;
                         case "MoneyCap":
                             return TaxWorld.serverConfig.MoneyCap;
+                        case "EnableAutoCollect":
+                            return TaxWorld.serverConfig.EnableAutoCollect;
                         case "AddCustomDialog":
                             return TaxWorld.serverConfig.AddCustomDialog;
+                        case "ExpertModeBoost":
+                            return TaxWorld.serverConfig.ExpertModeBoost;
                         case "IsFlexible":
                             return TaxWorld.serverConfig.IsFlexible;
                     }
                     throw new ModSupportException("No config field found by the name of \"" + field + "\"");
+                case "GetPaycheck":
+                    return ModHandler.parser.CalculateRate();
+                case "GetTaxes":
+                    if (args.Length < 2) throw new InvalidSyntaxException("GetTaxes <player>");
+                    Player playerG = (Player)args[1];
+                    TaxPlayer moddedPlayerG = playerG.GetModPlayer<TaxPlayer>();
+                    if (moddedPlayerG != null) return moddedPlayerG.currentTaxes;
+                    throw new ModSupportException("Invalid player specified");
                 case "SetTaxes":
                 case "ResetPlayerModData": // this alternative way of calling "SetTaxes" is implemented only to follow the guidelines specified by hamstar's Mod Helpers
                     if (args.Length < 2) throw new InvalidSyntaxException(given_method + " <player> [tax amount]");

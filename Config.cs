@@ -45,8 +45,7 @@ namespace BetterTaxes
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            SpecialInt val = value as SpecialInt;
-            if (val == null) val = new SpecialInt(100);
+            if (!(value is SpecialInt val)) val = new SpecialInt(100);
             writer.WriteValue(val.Value);
         }
 
@@ -128,6 +127,10 @@ namespace BetterTaxes
         [DefaultValue(true)]
         public bool AddCustomDialog;
 
+        [Tooltip("Should the Tax Collector place his stored money into any personal storage tile in his room at midnight?")]
+        [DefaultValue(true)]
+        public bool EnableAutoCollect;
+
         [Tooltip("The amount of time between updates of the Tax Collector's money storage.")]
         [DefaultValue(60)]
         [SliderColor(183, 88, 25)]
@@ -137,12 +140,12 @@ namespace BetterTaxes
         public SpecialInt TimeBetweenPaychecks;
 
         [Tooltip("The amount of money that the Tax Collector can hold at once.")]
-        [Range(0, 10000000)]
-        [Increment(100000)]
-        [DefaultValue(10000000)]
+        [Range(0, 100000000)]
+        [Increment(1000000)]
+        [DefaultValue(50000000)]
         public SpecialInt MoneyCap;
 
-        [Tooltip("The amount to multiply tax rates by in an expert mode world.")]
+        [Tooltip("The amount to multiply tax rates by in an expert mode world. Set to 1 to disable.")]
         [DefaultValue(1.5f)]
         [SliderColor(135, 206, 250)]
         [CustomModConfigItem(typeof(BoostRangeElement))]
@@ -169,7 +172,7 @@ namespace BetterTaxes
                     }
                 }
             }
-            TimeBetweenPaychecks = TimeBetweenPaychecks > 0 ? TimeBetweenPaychecks : (SpecialInt)60;
+            TimeBetweenPaychecks = TimeBetweenPaychecks > 0 ? TimeBetweenPaychecks : (SpecialInt)1;
         }
 
         public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message)

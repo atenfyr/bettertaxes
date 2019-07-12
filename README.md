@@ -1,6 +1,6 @@
 # Better Taxes
 Overhauls the Tax Collector to be more useful with two small changes:
-* Increases the Tax Collector's money cap to 10 platinum rather than 10 gold.
+* Increases the Tax Collector's money cap to 50 platinum rather than 10 gold.
 * Increases profit depending on how far in the game you are:
     * At the start, rent is 50 copper a minute per NPC, or 6.3 gold an hour with 21 NPCs. (This is the vanilla amount regardless of progression.)
     * After defeating any mechanical boss, rent raises to 1 silver a minute per NPC, or 12.6 gold an hour with 21 NPCs.

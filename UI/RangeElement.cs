@@ -128,13 +128,14 @@ namespace BetterTaxes.UI
 
         public BoostRangeElement()
         {
-            min = 0f;
-            max = 3f;
+            min = 1f;
+            max = 4f;
             increment = 0.05f;
         }
 
         public override string TransformValue(float val, string label)
         {
+            if (val == 1) return label + ": Disabled";
             return label + ": " + val + "×";
         }
     }

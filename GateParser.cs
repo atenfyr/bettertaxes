@@ -116,6 +116,7 @@ namespace BetterTaxes
                     case "cultist":
                     case "downedAncientCultist":
                         return NPC.downedAncientCultist;
+                    case "expert":
                     case "expertMode":
                         return Main.expertMode;
                     case "crimson":
