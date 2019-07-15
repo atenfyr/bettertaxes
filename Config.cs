@@ -145,7 +145,7 @@ namespace BetterTaxes
         [DefaultValue(50000000)]
         public SpecialInt MoneyCap;
 
-        [Tooltip("The amount to multiply tax rates by in an expert mode world. Set to 1 to disable.")]
+        [Tooltip("The amount to multiply tax rates by in an expert mode world.")]
         [DefaultValue(1.5f)]
         [SliderColor(135, 206, 250)]
         [CustomModConfigItem(typeof(BoostRangeElement))]

@@ -1,6 +1,7 @@
 Overhauls the Tax Collector to be more useful with a few small changes:
     * Increases the Tax Collector's money cap to 50 platinum rather than 10 gold.
     * Increases profit depending on how far in the game you are, including support for both Calamity and Thorium. See the homepage.
+    * Adds the ability for the Tax Collector to automatically place his earnings into a Piggy Bank, Safe, or Defender's Forge placed in his room at midnight every day.
     * Adds a config file stored in the save directory to modify the above values as well as the paycheck rate and money cap. When joining a server, the config file on the machine's installation of Terraria will be used and enforced.
     * Adds a system in the config to add custom rent values for mods, given programming knowledge.
     * Adds a few extra things the Tax Collector can say.
