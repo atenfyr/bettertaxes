@@ -12,7 +12,7 @@ Overhauls the Tax Collector to be more useful with two small changes:
         * After defeating the Devourer of Gods, rent raises to 15 silver a minute per NPC, or 1.98 platinum an hour with 22 NPCs.
         * After defeating Yharon, rent raises to 25 silver a minute per NPC, or 3.3 platinum an hour with 22 NPCs.
         * After defeating Supreme Calamitas, rent raises to 50 silver a minute per NPC, or 6.6 platinum an hour with 22 NPCs.
-    * If Thorium is installed and the Ragnarök has been defeated, rent raises to 15 silver a minute per NPC, or 1.98 platinum an hour with 22 NPCs. If downed bosses in Calamity would increase rent to higher than this, they do so.
+    * If Thorium is installed and the RagnarÃ¶k has been defeated, rent raises to 15 silver a minute per NPC, or 1.98 platinum an hour with 22 NPCs. If downed bosses in Calamity would increase rent to higher than this, they do so.
     * If expert mode is enabled, the Tax Collector will give 1.5x the amount of money specified above.
 * Adds a config file to modify the above values as well as the paycheck rate and money cap.
 * Adds a system in the config to add custom rent values for mods. See [the wiki](https://github.com/atenfyr/bettertaxes/wiki) for more information.
