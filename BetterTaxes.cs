@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.IO;
 using Terraria;
 using Terraria.ModLoader;
@@ -82,6 +84,8 @@ namespace BetterTaxes
         {
             TaxWorld.serverConfig = null;
             ModHandler.calamityMod = null;
+            ModHandler.delegates = new Dictionary<string, Dictionary<string, Func<bool>>>();
+            ModHandler.mods = new Dictionary<string, Mod>();
         }
     }
 }
