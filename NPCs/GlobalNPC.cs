@@ -8,7 +8,7 @@ namespace BetterTaxes.NPCs
     {
         public override void OnChatButtonClicked(NPC npc, bool firstButton)
         {
-            if (firstButton && Main.netMode != 2) Main.LocalPlayer.GetModPlayer<TaxPlayer>().currentTaxes = 0;
+            if (npc.type == NPCID.TaxCollector && firstButton && Main.netMode != 2) Main.LocalPlayer.GetModPlayer<TaxPlayer>().currentTaxes = 0;
         }
 
         public override void GetChat(NPC npc, ref string chat)
