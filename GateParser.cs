@@ -10,6 +10,24 @@ namespace BetterTaxes
     {
         public Dictionary<string, bool> invalidMods = new Dictionary<string, bool>();
 
+        public int CalculateRate()
+        {
+            int taxRate = -1;
+            foreach (KeyValuePair<string, int> entry in ModHandler.customStatements)
+            {
+                if (entry.Value > taxRate && Interpret(entry.Key)) taxRate = entry.Value;
+            }
+            foreach (KeyValuePair<string, SpecialInt> entry in TaxWorld.serverConfig.TaxRates)
+            {
+                if (entry.Value > taxRate && Interpret(entry.Key)) taxRate = entry.Value;
+            }
+            if (taxRate == -1) throw new InvalidConfigException("No statement evaluated to true. To avoid this error, you should map the statement \"Base.always\" to a value to fall back on");
+
+            if (Main.expertMode) taxRate = (int)(taxRate * TaxWorld.serverConfig.ExpertModeBoost);
+            if (taxRate < 0) throw new InvalidConfigException("Tax rate cannot be negative");
+            return taxRate;
+        }
+
         public bool Interpret(string conditions)
         {
             // go through parentheses
@@ -85,22 +103,31 @@ namespace BetterTaxes
                         return true;
                     case "never":
                         return false;
+                    case "moonlord":
                     case "downedMoonlord":
                         return NPC.downedMoonlord;
+                    case "golem":
                     case "downedGolemBoss":
                         return NPC.downedGolemBoss;
+                    case "plantera":
                     case "downedPlantBoss":
                         return NPC.downedPlantBoss;
+                    case "mechAny":
                     case "downedMechBossAny":
                         return NPC.downedMechBossAny;
+                    case "mechAll":
                     case "downedMechBossAll":
                         return NPC.downedMechBoss1 && NPC.downedMechBoss2 && NPC.downedMechBoss3;
+                    case "cultist":
                     case "downedAncientCultist":
                         return NPC.downedAncientCultist;
+                    case "expert":
                     case "expertMode":
                         return Main.expertMode;
                     case "crimson":
                         return WorldGen.crimson;
+                    case "corruption": // equivalent to "not Base.crimson"
+                        return !WorldGen.crimson;
                 }
                 throw new InvalidConfigException("Invalid condition \"" + terms[1] + "\" under list \"Base\"");
             }
@@ -129,14 +156,33 @@ namespace BetterTaxes
                         if (ModHandler.calamityDelegate(chosen_condition)) return true;
                         switch (chosen_condition) // backwards compatibility
                         {
+                            case "providence":
                             case "downedProvidence":
                                 return ModHandler.calamityDelegate("providence");
+                            case "dog":
                             case "downedDoG":
                                 return ModHandler.calamityDelegate("devourerofgods");
+                            case "yharon":
                             case "downedYharon":
                                 return ModHandler.calamityDelegate("yharon");
+                            case "scal":
                             case "downedSCal":
                                 return ModHandler.calamityDelegate("supremecalamitas");
+                            case "revenge":
+                            case "revengeance":
+                                if (ModHandler.calamityMod != null)
+                                {
+                                    ModWorld calamityWorld = ModHandler.calamityMod.GetModWorld("CalamityWorld");
+                                    return (bool)calamityWorld.GetType().GetField("revenge").GetValue(calamityWorld);
+                                }
+                                return false;
+                            case "death":
+                                if (ModHandler.calamityMod != null)
+                                {
+                                    ModWorld calamityWorld = ModHandler.calamityMod.GetModWorld("CalamityWorld");
+                                    return (bool)calamityWorld.GetType().GetField("death").GetValue(calamityWorld);
+                                }
+                                return false;
                         }
                         return false;
                     }
@@ -145,6 +191,7 @@ namespace BetterTaxes
 
                 // legacy system
                 if (!ModHandler.legacyMods.ContainsKey(chosen_list)) return false;
+                if (ModHandler.legacySynonyms.ContainsKey(chosen_condition)) chosen_condition = ModHandler.legacySynonyms[chosen_condition];
                 if (ModHandler.mods.ContainsKey(chosen_list) && ModHandler.mods[chosen_list] != null)
                 {
                     ModWorld world = ModHandler.mods[chosen_list].GetModWorld(ModHandler.legacyMods[chosen_list][1]);

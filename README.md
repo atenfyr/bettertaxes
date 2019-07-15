@@ -1,6 +1,6 @@
 # Better Taxes
 Overhauls the Tax Collector to be more useful with two small changes:
-* Increases the Tax Collector's money cap to 10 platinum rather than 10 gold.
+* Increases the Tax Collector's money cap to 50 platinum rather than 10 gold.
 * Increases profit depending on how far in the game you are:
     * At the start, rent is 50 copper a minute per NPC, or 6.3 gold an hour with 21 NPCs. (This is the vanilla amount regardless of progression.)
     * After defeating any mechanical boss, rent raises to 1 silver a minute per NPC, or 12.6 gold an hour with 21 NPCs.
@@ -13,5 +13,7 @@ Overhauls the Tax Collector to be more useful with two small changes:
         * After defeating Yharon, rent raises to 25 silver a minute per NPC, or 3.3 platinum an hour with 22 NPCs.
         * After defeating Supreme Calamitas, rent raises to 50 silver a minute per NPC, or 6.6 platinum an hour with 22 NPCs.
     * If Thorium is installed and the Ragnarök has been defeated, rent raises to 15 silver a minute per NPC, or 1.98 platinum an hour with 22 NPCs. If downed bosses in Calamity would increase rent to higher than this, they do so.
-* Adds a config file stored in the save directory to modify the above values as well as the paycheck rate and money cap. When joining a server, the config file on the machine's installation of Terraria will be used and enforced.
-* Adds a system in the config to add custom rent values for mods, given programming knowledge. See [the wiki](https://github.com/atenfyr/bettertaxes/wiki) for more information.
+    * If expert mode is enabled, the Tax Collector will give 1.5x the amount of money specified above.
+* Adds a config file to modify the above values as well as the paycheck rate and money cap.
+* Adds a system in the config to add custom rent values for mods. See [the wiki](https://github.com/atenfyr/bettertaxes/wiki) for more information.
+* Adds a few extra things the Tax Collector can say.
