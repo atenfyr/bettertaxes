@@ -54,7 +54,7 @@ namespace BetterTaxes
                 case BetterTaxesMessageType.ForceSetTaxes:
                     int playerNum = reader.ReadInt32();
                     int newTaxValue = reader.ReadInt32();
-                    Main.player[playerNum].GetModPlayer<TaxPlayer>().currentTaxes = newTaxValue;
+                    Main.player[playerNum].taxMoney = newTaxValue;
                     if (Main.netMode == 2)
                     {
                         var packet = GetPacket();

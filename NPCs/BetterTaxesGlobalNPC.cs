@@ -1,16 +1,13 @@
+using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace BetterTaxes.NPCs
 {
-    public class CustomDialog : GlobalNPC
+    public class BetterTaxesGlobalNPC : GlobalNPC
     {
-        public override void OnChatButtonClicked(NPC npc, bool firstButton)
-        {
-            if (npc.type == NPCID.TaxCollector && firstButton && Main.netMode != 2) Main.LocalPlayer.GetModPlayer<TaxPlayer>().currentTaxes = 0;
-        }
-
+        private static int[] permanentlyHomelessNPCs = new int[] { NPCID.OldMan, NPCID.TravellingMerchant, NPCID.SkeletonMerchant };
         public override void GetChat(NPC npc, ref string chat)
         {
             if (npc.type == NPCID.TaxCollector && TaxWorld.serverConfig.AddCustomDialog)
@@ -30,6 +27,7 @@ namespace BetterTaxes.NPCs
                 int homelessNpcCount = 0;
                 for (int i = 0; i < 200; i++)
                 {
+                    if (permanentlyHomelessNPCs.Contains(Main.npc[i].type)) continue;
                     if (Main.npc[i].active && NPC.TypeToHeadIndex(Main.npc[i].type) > 0) npcCount++;
                     if (Main.npc[i].homeless) homelessNpcCount++;
                 }

@@ -121,6 +121,8 @@ namespace BetterTaxes
                     case "cultist":
                     case "downedAncientCultist":
                         return NPC.downedAncientCultist;
+
+                    // miscellaneous
                     case "expert":
                     case "expertMode":
                         return Main.expertMode;
@@ -130,6 +132,22 @@ namespace BetterTaxes
                         return !WorldGen.crimson;
                 }
                 throw new InvalidConfigException("Invalid condition \"" + terms[1] + "\" under list \"Base\"");
+            }
+            else if (terms.Length == 2 && terms[0] == "Invasion")
+            {
+                switch (terms[1])
+                {
+                    case "goblins":
+                        return NPC.downedGoblins;
+                    case "frost":
+                    case "frostLegion":
+                        return NPC.downedFrost;
+                    case "pirates":
+                        return NPC.downedPirates;
+                    case "martians":
+                        return NPC.downedMartians;
+                }
+                throw new InvalidConfigException("Invalid condition \"" + terms[1] + "\" under list \"Misc\"");
             }
             else if (terms.Length == 2)
             {
