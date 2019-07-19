@@ -45,10 +45,10 @@ namespace BetterTaxes
             switch (given_method)
             {
                 case "AddList":
-                    if (args.Length < 3 || !(args[1] is string)) throw new InvalidSyntaxException("AddList <list name>");
+                    if (args.Length < 2 || !(args[1] is string)) throw new InvalidSyntaxException("AddList <list name>");
                     return ModHandler.NewList((string)args[1]);
                 case "AddKey":
-                    if (args.Length < 3 || !(args[1] is string) || !(args[2] is string) || !(args[3] is Func<bool>)) throw new InvalidSyntaxException("AddKey <list name> <condition name> <function returning a boolean>");
+                    if (args.Length < 4 || !(args[1] is string) || !(args[2] is string) || !(args[3] is Func<bool>)) throw new InvalidSyntaxException("AddKey <list name> <condition name> <function returning a boolean>");
                     return ModHandler.NewCondition((string)args[1], (string)args[2], (Func<bool>)args[3]);
                 case "AddStatement":
                     if (args.Length < 3 || !(args[1] is string) || !(args[2] is int)) throw new InvalidSyntaxException("AddStatement <statement> <rent in copper coins>");
@@ -80,25 +80,17 @@ namespace BetterTaxes
                 case "GetPaycheck":
                     return ModHandler.parser.CalculateRate();
                 case "GetTaxes":
+                    LogManager.GetLogger("BetterTaxes").Warn("BetterTaxes.Call() warning: The method \"GetTaxes\" was deprecated in BetterTaxes 2.1.0, as the output is now always equivalent to Player.taxMoney.");
                     if (args.Length < 2) throw new InvalidSyntaxException("GetTaxes <player>");
-                    Player playerG = (Player)args[1];
-                    TaxPlayer moddedPlayerG = playerG.GetModPlayer<TaxPlayer>();
-                    if (moddedPlayerG != null) return moddedPlayerG.currentTaxes;
-                    throw new ModSupportException("Invalid player specified");
+                    return ((Player)args[1]).taxMoney;
                 case "SetTaxes":
                 case "ResetPlayerModData": // this alternative way of calling "SetTaxes" is implemented only to follow the guidelines specified by hamstar's Mod Helpers
+                    LogManager.GetLogger("BetterTaxes").Warn("BetterTaxes.Call() warning: The method \"" + given_method + "\" was deprecated in BetterTaxes 2.1.0, as the result is now always equivalent to setting Player.taxMoney.");
                     if (args.Length < 2) throw new InvalidSyntaxException(given_method + " <player> [tax amount]");
-                    Player player = (Player)args[1];
-                    TaxPlayer moddedPlayer = player.GetModPlayer<TaxPlayer>();
                     int newAmount = 0;
                     if (args.Length > 2) newAmount = (int)args[2];
-                    if (moddedPlayer != null)
-                    {
-                        moddedPlayer.currentTaxes = newAmount;
-                        player.taxMoney = newAmount;
-                        return true;
-                    }
-                    throw new ModSupportException("Invalid player specified");
+                    ((Player)args[1]).taxMoney = newAmount;
+                    return true;
             }
             throw new ModSupportException("Unknown method name: " + given_method);
         }

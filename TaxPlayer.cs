@@ -1,260 +1,80 @@
-using System;
-using System.Collections.Generic;
+using MonoMod.Cil;
 using System.Linq;
+using System.Reflection;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.IO;
+using static Mono.Cecil.Cil.OpCodes;
 
 namespace BetterTaxes
 {
-    public class ModHandler
-    {
-        public static readonly Dictionary<string, string[]> legacyLists = new Dictionary<string, string[]> {
-            { "Thorium", new string[7] { "downedRealityBreaker", "downedPatchwerk", "downedBloom", "downedStrider", "downedFallenBeholder", "downedLich", "downedDepthBoss" } }
-        };
-
-        public static readonly Dictionary<string, string> legacySynonyms = new Dictionary<string, string> {
-            { "ragnarok", "downedRealityBreaker" },
-            { "patchwerk", "downedPatchwerk" },
-            { "bloom", "downedBloom" },
-            { "strider", "downedStrider" },
-            { "coznix", "downedFallenBeholder" },
-            { "lich", "downedLich" },
-            { "abyssion", "downedDepthBoss" }
-        };
-
-        public static readonly Dictionary<string, string[]> legacyMods = new Dictionary<string, string[]> {
-            { "Thorium", new string[2] { "ThoriumMod", "ThoriumWorld" } }
-        };
-
-        public static Dictionary<string, Mod> mods = new Dictionary<string, Mod>();
-
-        public static Dictionary<string, Dictionary<string, Func<bool>>> delegates = new Dictionary<string, Dictionary<string, Func<bool>>>();
-        public static Mod calamityMod;
-        public static Func<string, bool> calamityDelegate;
-
-        public static Dictionary<string, int> customStatements = new Dictionary<string, int>();
-        public static GateParser parser;
-
-        public static bool NewList(string list_name)
-        {
-            if (delegates.ContainsKey(list_name)) delegates.Remove(list_name);
-            delegates.Add(list_name, new Dictionary<string, Func<bool>>());
-            return true;
-        }
-
-        public static bool NewCondition(string list_name, string condition, Func<bool> delegatef)
-        {
-            if (!delegates.ContainsKey(list_name)) NewList(list_name);
-            if (delegates[list_name].ContainsKey(condition)) delegates[list_name].Remove(condition);
-            delegates[list_name].Add(condition, delegatef);
-            return true;
-        }
-
-        public static bool AddStatement(string statement, int value)
-        {
-            if (!TaxWorld.serverConfig.IsFlexible) return false;
-            if (customStatements.ContainsKey(statement)) customStatements.Remove(statement);
-            customStatements.Add(statement, value);
-            return true;
-        }   
-
-        public ModHandler()
-        {
-            delegates = new Dictionary<string, Dictionary<string, Func<bool>>>();
-            mods = new Dictionary<string, Mod>();
-            parser = new GateParser();
-
-            calamityMod = ModLoader.GetMod("CalamityMod");
-            if (calamityMod != null) calamityDelegate = (Func<string, bool>)calamityMod.Call("Downed");
-
-            foreach (KeyValuePair<string, string[]> entry in legacyMods)
-            {
-                mods.Add(entry.Key, ModLoader.GetMod(entry.Value[0]));
-            }
-        }
-    }
-
-    public static class BankHandler
-    {
-        public static bool LastCheckBank = false;
-        public static ushort[] SafeTypes = new ushort[] { TileID.PiggyBank, TileID.Safes, TileID.DefendersForge };
-        public static int HasBank(int x, int y)
-        {
-            if (!WorldGen.StartRoomCheck(x, y)) return -1;
-            for (int k = WorldGen.roomY1; k <= WorldGen.roomY2; k++)
-            {
-                for (int j = WorldGen.roomX1; j <= WorldGen.roomX2; j++)
-                {
-                    if (Main.tile[j, k] != null && Main.tile[j, k].active())
-                    {
-                        ushort type = Main.tile[j, k].type;
-                        if (SafeTypes.Contains(type)) return type;
-                    }
-                }
-            }
-
-            return -1;
-        }
-
-        public static bool CheckIfFull(Chest bank, int type, int amount)
-        {
-            Item data = new Item();
-            data.SetDefaults(type);
-            int maxStack = data.maxStack;
-            data = null;
-
-            foreach (Item item in bank.item)
-            {
-                if (item.type == 0 || (item.type == type && item.stack < maxStack)) return false;
-            }
-            return true;
-        }
-
-        public static bool AddItem(Chest bank, int slot, int type, int amount)
-        {
-            if (amount < 1) return false;
-            if (slot < 0) slot += bank.item.Length;
-            if (slot > (bank.item.Length - 1)) slot -= bank.item.Length;
-            if (CheckIfFull(bank, type, amount)) return false;
-            if (bank.item[slot].type == 0)
-            {
-                bank.item[slot].SetDefaults(type);
-                bank.item[slot].stack = amount;
-                return true;
-            }
-            else if (bank.item[slot].type == type)
-            {
-                if (bank.item[slot].stack + amount >= bank.item[slot].maxStack)
-                {
-                    int remainder = (bank.item[slot].stack + amount) % 100;
-
-                    int newType = type;
-                    int newAmount = bank.item[slot].stack + amount - remainder;
-                    if (type > 70 && type < 74)
-                    {
-                        newType++;
-                        newAmount /= 100;
-                    }
-
-                    bank.item[slot].stack = remainder;
-                    return AddItem(bank, slot + 1, newType, newAmount);
-                }
-                else
-                {
-                    bank.item[slot].stack += amount;
-                }
-            }
-            else
-            {
-                return AddItem(bank, slot + 1, type, amount);
-            }
-            return true;
-        }
-
-        public static int AddCoins(Chest bank, int amount)
-        {
-            int allCoins = amount;
-            int[] coinsArr = Utils.CoinsSplit(amount);
-            int type = 71;
-            int factor = 1;
-            for (int i = 0; i < coinsArr.Length; i++)
-            {
-                int amn = coinsArr[i];
-
-                if (amn > 0)
-                {
-                    bool hasSolved = false;
-                    for (int j = 0; j < bank.item.Length; j++)
-                    {
-                        if (bank.item[j].type == type)
-                        {
-                            if (AddItem(bank, j, type, amn)) allCoins -= amn * factor;
-                            hasSolved = true;
-                            break;
-                        }
-                    }
-
-                    if (!hasSolved)
-                    {
-                        for (int j = 0; j < bank.item.Length; j++)
-                        {
-                            if (bank.item[j].type == 0)
-                            {
-                                if (AddItem(bank, j, type, amn)) allCoins -= amn * factor;
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                type++;
-                factor *= 100;
-            }
-            return allCoins;
-        }
-    }
-
     public class TaxPlayer : ModPlayer
     {
-        internal int taxWait = 0;
-        internal int autoCollectWait = 0;
         internal bool hasAlreadyDone = false;
-        public int currentTaxes = 0;
+
+        public override bool Autoload(ref string name)
+        {
+            IL.Terraria.Player.CollectTaxes += HookAdjustTaxes;
+            return base.Autoload(ref name);
+        }
+
+        // this is where we adjust the cap and rent values
+        public void HookAdjustTaxes(ILContext il)
+        {
+            var c = new ILCursor(il).Goto(0);
+            if (!c.TryGotoNext(i => i.MatchLdsfld(typeof(NPC).GetField(nameof(NPC.taxCollector))))) return;
+
+            var label = il.DefineLabel();
+
+            // set num1 (rent value) to the result of ModHandler.parser.CalculateRate()
+            c.Emit(Ldsfld, typeof(ModHandler).GetField(nameof(ModHandler.parser)));
+            c.Emit(Callvirt, typeof(GateParser).GetMethod(nameof(GateParser.CalculateRate)));
+            c.Emit(Stloc_0);
+
+            // set num2 (cap value) to TaxWorld.serverConfig.MoneyCap
+            c.Emit(Ldsfld, typeof(TaxWorld).GetField(nameof(TaxWorld.serverConfig)));
+            c.Emit(Ldfld, typeof(Config).GetField(nameof(Config.MoneyCap)));
+            MethodInfo implicitCastMethod = typeof(SpecialInt)
+                .GetMethods(BindingFlags.Static | BindingFlags.Public)
+                .Where(m => m.Name == "op_Implicit")
+                .Where(m => m.ReturnType == typeof(int))
+                .Where(m => m.GetParameters().Length == 1 && m.GetParameters()[0].ParameterType == typeof(SpecialInt))
+                .FirstOrDefault();
+            c.Emit(Call, implicitCastMethod); // cast TaxWorld.serverConfig.MoneyCap from SpecialInt to int
+            c.Emit(Stloc_1);
+
+            // if the cap is 0 or negative (aka no cap) set it to the maximum value we can possibly store
+            c.Emit(Ldloc_1);
+            c.Emit(Ldc_I4, 1);
+            c.Emit(Bge_S, label);
+            c.Emit(Ldc_I4, int.MaxValue);
+            c.Emit(Stloc_1);
+
+            c.MarkLabel(label);
+        }
 
         public override void PreUpdate()
         {
-            if (Main.netMode != 2 && NPC.AnyNPCs(NPCID.TaxCollector))
+            if (Main.netMode != 2)
             {
-                taxWait += Main.dayRate;
-                if (taxWait >= TaxWorld.serverConfig.TimeBetweenPaychecks * 60)
-                {
-                    taxWait -= TaxWorld.serverConfig.TimeBetweenPaychecks * 60;
-
-                    // we don't need to update the tax storage if we've already hit the cap
-                    if (TaxWorld.serverConfig.MoneyCap < 1 || currentTaxes < TaxWorld.serverConfig.MoneyCap)
-                    {
-                        // determines the number of town NPCs in the world
-                        int npcCount = 0;
-                        for (int i = 0; i < 200; i++)
-                        {
-                            if (Main.npc[i].active && !Main.npc[i].homeless && NPC.TypeToHeadIndex(Main.npc[i].type) > 0) npcCount++;
-                        }
-
-                        int taxRate = ModHandler.parser.CalculateRate();
-                        currentTaxes += taxRate * npcCount;
-                    }
-
-                    if (TaxWorld.serverConfig.MoneyCap > 0 && currentTaxes > TaxWorld.serverConfig.MoneyCap)
-                    {
-                        currentTaxes = TaxWorld.serverConfig.MoneyCap;
-                    }
-
-                    // if the user has set the cap to unlimited we need to check for integer overflow
-                    if (TaxWorld.serverConfig.MoneyCap < 1)
-                    {
-                        if ((long)currentTaxes > int.MaxValue) currentTaxes = int.MaxValue;
-                    }
-                }
+                Player.taxRate = TaxWorld.serverConfig.TimeBetweenPaychecks * 60;
 
                 if (hasAlreadyDone && Main.dayTime) hasAlreadyDone = false;
-                if (TaxWorld.serverConfig.EnableAutoCollect && !Main.dayTime && Main.time >= 16200 && currentTaxes > 0 && !hasAlreadyDone)
+                if (TaxWorld.serverConfig.EnableAutoCollect && !Main.dayTime && Main.time >= 16200 && player.taxMoney > 0 && !hasAlreadyDone)
                 { 
-                    int collector = NPC.FindFirstNPC(NPCID.TaxCollector);
-                    int bankType = BankHandler.HasBank(Main.npc[collector].homeTileX, Main.npc[collector].homeTileY - 1);
+                    int bankType = BankHandler.HasBank();
                     if (bankType >= 0)
                     {
                         switch (bankType)
                         {
                             case TileID.PiggyBank:
-                                currentTaxes = BankHandler.AddCoins(player.bank, currentTaxes);
+                                player.taxMoney = BankHandler.AddCoins(player.bank, player.taxMoney);
                                 break;
                             case TileID.Safes:
-                                currentTaxes = BankHandler.AddCoins(player.bank2, currentTaxes);
+                                player.taxMoney = BankHandler.AddCoins(player.bank2, player.taxMoney);
                                 break;
                             case TileID.DefendersForge:
-                                currentTaxes = BankHandler.AddCoins(player.bank3, currentTaxes);
+                                player.taxMoney = BankHandler.AddCoins(player.bank3, player.taxMoney);
                                 break;
                         }
                         BankHandler.LastCheckBank = true;
@@ -265,21 +85,7 @@ namespace BetterTaxes
                         BankHandler.LastCheckBank = false;
                     }
                 }
-
-                player.taxMoney = currentTaxes;
             }
-        }
-
-        public override TagCompound Save()
-        {
-            return new TagCompound {
-                { "taxes", currentTaxes}
-            };
-        }
-
-        public override void Load(TagCompound tag)
-        {
-            currentTaxes = tag.GetInt("taxes");
         }
     }
 }
