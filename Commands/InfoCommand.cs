@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -17,12 +16,7 @@ namespace BetterTaxes.Commands
         {
             if (NPC.savedTaxCollector)
             {
-                int npcCount = 0;
-                for (int i = 0; i < 200; i++)
-                {
-                    if (Main.npc[i].active && !Main.npc[i].homeless && NPC.TypeToHeadIndex(Main.npc[i].type) > 0) npcCount++;
-                }
-
+                int npcCount = ModHandler.parser.CalculateNPCCount();
                 int taxRate = ModHandler.parser.CalculateRate();
                 long rate = TaxWorld.serverConfig.TimeBetweenPaychecks;
                 caller.Reply("Tax rate: " + UsefulThings.ValueToCoins(taxRate * npcCount) + " per " + TimeSpan.FromSeconds(rate / Main.dayRate).ToString(@"mm\:ss") + "\nUnadjusted tax rate: " + UsefulThings.ValueToCoins(taxRate) + " per " + TimeSpan.FromSeconds(rate).ToString(@"mm\:ss") + " per NPC\nHoused NPC Count: " + npcCount, Color.Yellow);

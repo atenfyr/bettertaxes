@@ -1,13 +1,58 @@
+using MonoMod.Cil;
+using System;
 using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Mono.Cecil.Cil.OpCodes;
 
 namespace BetterTaxes.NPCs
 {
+    internal static class DialogUtils
+    {
+        internal static int[] permanentlyHomelessNPCs = new int[] { NPCID.OldMan, NPCID.TravellingMerchant, NPCID.SkeletonMerchant };
+
+        internal static bool CheckIfModExists(string name)
+        {
+            return ModLoader.GetMod(name) != null;
+        }
+    }
+
     public class BetterTaxesGlobalNPC : GlobalNPC
     {
-        private static int[] permanentlyHomelessNPCs = new int[] { NPCID.OldMan, NPCID.TravellingMerchant, NPCID.SkeletonMerchant };
+        public override bool Autoload(ref string name)
+        {
+            IL.Terraria.Main.GUIChatDrawInner += HookAdjustButton;
+            return base.Autoload(ref name);
+        }
+
+        private void HookAdjustButton(ILContext il)
+        {
+            var c = new ILCursor(il).Goto(0);
+            if (!c.TryGotoNext(i => i.MatchLdcI4(NPCID.TaxCollector))) return;
+
+            c.Index += 2;
+            ILLabel label = il.DefineLabel();
+            c.EmitDelegate<Func<bool>>(() => TaxWorld.serverConfig.AddCustomDialog);
+            c.Emit(Brfalse_S, label);
+            c.Emit(Ldstr, "Status");
+            c.Emit(Stloc_S, (byte)10);
+            c.MarkLabel(label);
+        }
+
+        public override void OnChatButtonClicked(NPC npc, bool firstButton)
+        {
+            if (npc.type == NPCID.TaxCollector && !firstButton)
+            {
+                Main.PlaySound(12, -1, -1, 1, 1f, 0f);
+
+                int rawTax = ModHandler.parser.CalculateRate();
+                int adjustedTax = rawTax * ModHandler.parser.CalculateNPCCount();
+                double rate = TaxWorld.serverConfig.TimeBetweenPaychecks / Main.dayRate;
+                Main.npcChatText = $"Well, rent's getting charged at {UsefulThings.ValueToCoinsWithColor(rawTax)} {UsefulThings.SecondsToHMSCasual((int)rate)} per citizen, which is netting you {UsefulThings.ValueToCoinsWithColor(adjustedTax * (3600 / rate))} an hour. Does that answer your question?";
+            }
+        }
+
         public override void GetChat(NPC npc, ref string chat)
         {
             if (npc.type == NPCID.TaxCollector && TaxWorld.serverConfig.AddCustomDialog)
@@ -27,7 +72,7 @@ namespace BetterTaxes.NPCs
                 int homelessNpcCount = 0;
                 for (int i = 0; i < 200; i++)
                 {
-                    if (permanentlyHomelessNPCs.Contains(Main.npc[i].type)) continue;
+                    if (DialogUtils.permanentlyHomelessNPCs.Contains(Main.npc[i].type)) continue;
                     if (Main.npc[i].active && NPC.TypeToHeadIndex(Main.npc[i].type) > 0) npcCount++;
                     if (Main.npc[i].homeless) homelessNpcCount++;
                 }
@@ -44,11 +89,11 @@ namespace BetterTaxes.NPCs
                 {
                     chat = "Bah! I've half a mind to keep all this extra coin for myself!";
                 }
-                if (Main.rand.Next(7) == 0 && NPC.downedMechBossAny) // a mechanical boss has been killed
+                if (Main.rand.Next(7) == 0 && TaxWorld.serverConfig.TaxRates.ContainsKey("Base.mechAny") && NPC.downedMechBossAny) // a mechanical boss has been killed
                 {
                     chat = "More money for the both of us, thanks to your mass murder of \"monsters!\"";
                 }
-                if (Main.rand.Next(7) == 0 && !NPC.downedMechBossAny) // we haven't killed a mechanical boss yet
+                if (Main.rand.Next(7) == 0 && TaxWorld.serverConfig.TaxRates.ContainsKey("Base.mechAny") && !NPC.downedMechBossAny) // we haven't killed a mechanical boss yet
                 {
                     chat = "If you're feeling genocidal, the loot some of those \"powerful monsters\" offer might contribute to the economy enough for me to extort more money from your citizens.";
                 }
@@ -59,6 +104,10 @@ namespace BetterTaxes.NPCs
                 if (Main.rand.Next(7) == 0 && TaxWorld.serverConfig.EnableAutoCollect && !BankHandler.LastCheckBank)
                 {
                     chat = "If you were to give me something to put your coin into, like a piggy bank, you wouldn't have to talk to me anymore!";
+                }
+                if (Main.rand.Next(7) == 0 && DialogUtils.CheckIfModExists("VendingMachines"))
+                {
+                    chat = "You would never harvest my soul, would you?";
                 }
             }
         }
