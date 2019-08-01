@@ -1,7 +1,10 @@
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace BetterTaxes
@@ -12,6 +15,24 @@ namespace BetterTaxes
         {
             if (num < 1) return zeroString;
             return Main.ValueToCoins(num);
+        }
+
+        public static string ValueToCoinsWithColor(double num, string zeroString = "0 copper")
+        {
+            if (double.IsPositiveInfinity(num)) return "[c/" + Colors.CoinPlatinum.Hex3() + ":a lot of money]";
+            if (double.IsNegativeInfinity(num)) return "[c/" + Colors.CoinCopper.Hex3() + ":not a lot of money]";
+            if (double.IsNaN(num)) return "[c/" + Colors.CoinGold.Hex3() + ":something]";
+            return ValueToCoinsWithColor((int)num, zeroString);
+        }
+
+        public static string ValueToCoinsWithColor(int num, string zeroString = "0 copper")
+        {
+            string data = ValueToCoins(num, zeroString);
+            data = Regex.Replace(data, @"(\d+ platinum)", "[c/" + Colors.CoinPlatinum.Hex3() + ":$1]");
+            data = Regex.Replace(data, @"(\d+ gold)", "[c/" + Colors.CoinGold.Hex3() + ":$1]");
+            data = Regex.Replace(data, @"(\d+ silver)", "[c/" + Colors.CoinSilver.Hex3() + ":$1]");
+            data = Regex.Replace(data, @"(\d+ copper)", "[c/" + Colors.CoinCopper.Hex3() + ":$1]");
+            return data;
         }
 
         public static string SecondsToHMS(int num, string zeroString = "0 seconds")
@@ -29,6 +50,17 @@ namespace BetterTaxes
 
             return res.TrimEnd();
         }
+
+        public static string SecondsToHMSCasual(int num, string zeroString = "a tick")
+        {
+            if (num < 1) return zeroString;
+
+            string data = SecondsToHMS(num, zeroString);
+            if (data == "1 second") return "a second";
+            if (data == "1 minute") return "a minute";
+            if (data == "1 hour") return "an hour";
+            return "every " + data;
+        }
     }
 
     internal enum BetterTaxesMessageType : byte
@@ -36,10 +68,13 @@ namespace BetterTaxes
         ForceSetTaxes
     }
 
-    class BetterTaxes : Mod
+    public class BetterTaxes : Mod
     {
         public static string GithubUserName => "atenfyr";
         public static string GithubProjectName => "bettertaxes";
+
+        internal static BetterTaxes Instance;
+        internal Mod herosMod;
 
         public BetterTaxes()
         {
@@ -77,15 +112,41 @@ namespace BetterTaxes
 
         public override void Load()
         {
-            new ModHandler(); // resets all the delegates etc
+            Instance = this;
+            herosMod = ModLoader.GetMod("HEROsMod");
         }
 
         public override void Unload()
         {
+            Instance = null;
             TaxWorld.serverConfig = null;
             ModHandler.calamityMod = null;
+            ModHandler.calamityDelegate = null;
+            ModHandler.parser = null;
             ModHandler.delegates = new Dictionary<string, Dictionary<string, Func<bool>>>();
             ModHandler.mods = new Dictionary<string, Mod>();
+            ModHandler.customStatements = new Dictionary<string, int>();
+        }
+
+        public override void PostSetupContent()
+        {
+            new ModHandler(); // resets all the delegates etc
+            try
+            {
+                if (herosMod != null)
+                {
+                    HerosIntegration(herosMod);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn("BetterTaxes.PostSetupContent() error: " + ex.StackTrace + ex.Message);
+            }
+        }
+
+        private void HerosIntegration(Mod herosMod)
+        {
+            herosMod.Call("AddPermission", "ModifyBTConfig", "Modify Better Taxes Config");
         }
     }
 }

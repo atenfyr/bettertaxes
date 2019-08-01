@@ -93,7 +93,7 @@ namespace BetterTaxes.UI
         public string TransformValue(int val, string label)
         {
             string newLabel = label == "value" ? "rent" : label;
-            if (units == Unit.Time) return newLabel + ": " + UsefulThings.SecondsToHMS(val);
+            if (units == Unit.Time) return newLabel + ": " + UsefulThings.SecondsToHMS(val, "1 tick");
             return newLabel + ": " + UsefulThings.ValueToCoins(val, (label == "value") ? "0 copper" : "Unlimited");
         }
 
@@ -109,7 +109,7 @@ namespace BetterTaxes.UI
 
         public SpecialIntRangeElement()
         {
-            min = 0;
+            min = 1;
             max = 5000;
             increment = 50;
         }

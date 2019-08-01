@@ -24,14 +24,11 @@ namespace BetterTaxes
             { "Thorium", new string[2] { "ThoriumMod", "ThoriumWorld" } }
         };
 
-        public static Dictionary<string, Mod> mods = new Dictionary<string, Mod>();
+        internal static Dictionary<string, Mod> mods = new Dictionary<string, Mod>();
+        internal static Dictionary<string, Dictionary<string, Func<bool>>> delegates = new Dictionary<string, Dictionary<string, Func<bool>>>();
 
-        public static Dictionary<string, Dictionary<string, Func<bool>>> delegates = new Dictionary<string, Dictionary<string, Func<bool>>>();
-        public static Mod calamityMod;
-        public static Func<string, bool> calamityDelegate;
-
-        public static Dictionary<string, int> customStatements = new Dictionary<string, int>();
         public static GateParser parser;
+        public static Dictionary<string, int> customStatements = new Dictionary<string, int>();
 
         public static bool NewList(string list_name)
         {
@@ -56,19 +53,31 @@ namespace BetterTaxes
             return true;
         }
 
+        internal static bool hasCheckedForCalamity = false;
+        internal static Mod calamityMod;
+        internal static Func<string, bool> calamityDelegate;
+        internal static Func<string, bool> calamityDelegate2;
+        internal static bool CheckForCalamity(bool setFlag = true)
+        {
+            if (hasCheckedForCalamity) return calamityDelegate != null && calamityDelegate2 != null;
+            hasCheckedForCalamity = setFlag;
+            calamityMod = ModLoader.GetMod("CalamityMod");
+            if (calamityMod != null)
+            {
+                calamityDelegate = (Func<string, bool>)calamityMod.Call("Downed");
+                calamityDelegate2 = (Func<string, bool>)calamityMod.Call("Difficulty");
+            }
+            return calamityDelegate != null && calamityDelegate2 != null;
+        }
+
         public ModHandler()
         {
             delegates = new Dictionary<string, Dictionary<string, Func<bool>>>();
             mods = new Dictionary<string, Mod>();
             parser = new GateParser();
 
-            calamityMod = ModLoader.GetMod("CalamityMod");
-            if (calamityMod != null) calamityDelegate = (Func<string, bool>)calamityMod.Call("Downed");
-
-            foreach (KeyValuePair<string, string[]> entry in legacyMods)
-            {
-                mods.Add(entry.Key, ModLoader.GetMod(entry.Value[0]));
-            }
+            hasCheckedForCalamity = false;
+            hasCheckedForCalamity = CheckForCalamity(false); // if we find it here, we don't need to check again later to see if loading messed up
         }
     }
 }

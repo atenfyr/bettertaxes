@@ -1,5 +1,6 @@
 ﻿using log4net;
 using System;
+using System.Reflection;
 using Terraria;
 
 namespace BetterTaxes
@@ -59,7 +60,9 @@ namespace BetterTaxes
                 case "GetConfig":
                     if (args.Length < 2) throw new InvalidSyntaxException("GetConfig <config field>");
                     string field = (string)args[1];
-                    switch(field)
+                    FieldInfo data = TaxWorld.serverConfig.GetType().GetField(field);
+                    if (data != null) return data.GetValue(null);
+                    /*switch(field)
                     {
                         case "TaxRates":
                             return TaxWorld.serverConfig.TaxRates;
@@ -75,7 +78,7 @@ namespace BetterTaxes
                             return TaxWorld.serverConfig.ExpertModeBoost;
                         case "IsFlexible":
                             return TaxWorld.serverConfig.IsFlexible;
-                    }
+                    }*/
                     throw new ModSupportException("No config field found by the name of \"" + field + "\"");
                 case "GetPaycheck":
                     return ModHandler.parser.CalculateRate();

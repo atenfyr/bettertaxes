@@ -4,6 +4,6 @@ namespace BetterTaxes
 {
     public class TaxWorld : ModWorld
     {
-        public static Config serverConfig;
+        public static BetterTaxesConfig serverConfig;
     }
 }

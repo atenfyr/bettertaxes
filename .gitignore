@@ -3,7 +3,3 @@ obj
 wiki
 .vs
 Properties
-*.png
-*.csproj
-*.csproj.user
-*.sln
