@@ -15,7 +15,6 @@
     <None Include="README.md" />
     <None Include="wiki\Adding_Support_For_Your_Mod.md" />
     <None Include="wiki\Config_File_Format.md" />
-    <None Include="wiki\Migrating_to_BetterTaxes_2.0.0.md" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="build.txt" />

@@ -22,27 +22,11 @@ namespace BetterTaxes
             }
             foreach (KeyValuePair<string, SpecialInt> entry in TaxWorld.serverConfig.TaxRates)
             {
-                if (entry.Value > taxRate && Interpret(entry.Key)) taxRate = entry.Value;
-            }
-            if (taxRate == -1) throw new InvalidConfigException("No statement evaluated to true. To avoid this error, you should map the statement \"Base.always\" to a value to fall back on");
-
-            if (Main.expertMode && TaxWorld.serverConfig.ExpertModeBoost >= 0) taxRate = (int)(taxRate * TaxWorld.serverConfig.ExpertModeBoost);
-            return taxRate;
-        }
-
-        public int CalculateHighestRate()
-        {
-            int taxRate = -1;
-            if (TaxWorld.serverConfig.IsFlexible)
-            {
-                foreach (KeyValuePair<string, int> entry in ModHandler.customStatements)
+                if (entry.Value > taxRate && Interpret(entry.Key))
                 {
-                    if (entry.Value > taxRate) taxRate = entry.Value;
+                    taxRate = entry.Value;
+
                 }
-            }
-            foreach (KeyValuePair<string, int> entry in ModHandler.customStatements)
-            {
-                if (entry.Value > taxRate) taxRate = entry.Value;
             }
             if (taxRate == -1) throw new InvalidConfigException("No statement evaluated to true. To avoid this error, you should map the statement \"Base.always\" to a value to fall back on");
 
@@ -240,9 +224,10 @@ namespace BetterTaxes
                 {
                     if (!ModHandler.hasCheckedForCalamity) ModHandler.CheckForCalamity();
 
-                    if (ModHandler.calamityDelegate != null && ModHandler.calamityDelegate2 != null)
+                    if (ModHandler.calamityDelegate != null)
                     {
                         if (ModHandler.calamityDelegate(chosen_condition)) return true;
+
                         switch (chosen_condition) // backwards compatibility
                         {
                             case "downedProvidence":
@@ -254,16 +239,19 @@ namespace BetterTaxes
                             case "downedSCal":
                                 return ModHandler.calamityDelegate("supremecalamitas");
                         }
+                    }
 
+                    if (ModHandler.calamityDelegate2 != null)
+                    {
                         if (ModHandler.calamityDelegate2(chosen_condition)) return true;
+
                         switch (chosen_condition) // backwards compatibility
                         {
                             case "revenge":
                                 return ModHandler.calamityDelegate2("revengeance");
                         }
-
-                        return false;
                     }
+
                     return false;
                 }
 

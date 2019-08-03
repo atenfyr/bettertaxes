@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Terraria;
 using Terraria.ModLoader;
 
 namespace BetterTaxes
@@ -30,26 +31,26 @@ namespace BetterTaxes
         public static GateParser parser;
         public static Dictionary<string, int> customStatements = new Dictionary<string, int>();
 
-        public static bool NewList(string list_name)
+        public static bool NewList(string listName)
         {
-            if (delegates.ContainsKey(list_name)) delegates.Remove(list_name);
-            delegates.Add(list_name, new Dictionary<string, Func<bool>>());
+            if (delegates.ContainsKey(listName)) delegates.Remove(listName);
+            delegates.Add(listName, new Dictionary<string, Func<bool>>());
             return true;
         }
 
-        public static bool NewCondition(string list_name, string condition, Func<bool> delegatef)
+        public static bool NewCondition(string listName, string conditionName, Func<bool> deleg)
         {
-            if (!delegates.ContainsKey(list_name)) NewList(list_name);
-            if (delegates[list_name].ContainsKey(condition)) delegates[list_name].Remove(condition);
-            delegates[list_name].Add(condition, delegatef);
+            if (!delegates.ContainsKey(listName)) NewList(listName);
+            if (delegates[listName].ContainsKey(conditionName)) delegates[listName].Remove(conditionName);
+            delegates[listName].Add(conditionName, deleg);
             return true;
         }
 
-        public static bool AddStatement(string statement, int value)
+        public static bool AddStatement(string statement, int rent)
         {
             if (!TaxWorld.serverConfig.IsFlexible) return false;
             if (customStatements.ContainsKey(statement)) customStatements.Remove(statement);
-            customStatements.Add(statement, value);
+            customStatements.Add(statement, rent);
             return true;
         }
 
@@ -59,15 +60,17 @@ namespace BetterTaxes
         internal static Func<string, bool> calamityDelegate2;
         internal static bool CheckForCalamity(bool setFlag = true)
         {
-            if (hasCheckedForCalamity) return calamityDelegate != null && calamityDelegate2 != null;
+            if (hasCheckedForCalamity) return calamityDelegate != null;
             hasCheckedForCalamity = setFlag;
             calamityMod = ModLoader.GetMod("CalamityMod");
             if (calamityMod != null)
             {
-                calamityDelegate = (Func<string, bool>)calamityMod.Call("Downed");
-                calamityDelegate2 = (Func<string, bool>)calamityMod.Call("Difficulty");
+                object obj = calamityMod.Call("Downed");
+                if (obj != null) calamityDelegate = (Func<string, bool>)obj;
+                obj = calamityMod.Call("Difficulty");
+                if (obj != null) calamityDelegate2 = (Func<string, bool>)obj;
             }
-            return calamityDelegate != null && calamityDelegate2 != null;
+            return calamityDelegate != null;
         }
 
         public ModHandler()

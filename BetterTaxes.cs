@@ -1,7 +1,8 @@
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using Terraria;
 using Terraria.ID;
@@ -107,12 +108,21 @@ namespace BetterTaxes
 
         public override object Call(params object[] args)
         {
-            return ModSupport.Call(args);
+            if (!(args[0] is string)) throw new ModSupportException("First parameter must be a method name");
+            string given_method = (string)args[0];
+            object[] newArgs = args.Skip(1).ToArray();
+
+            MethodInfo func = typeof(BetterTaxesAPI).GetMethod(given_method, BindingFlags.Public | BindingFlags.Static, null, newArgs.Select(obj => obj.GetType()).ToArray(), null);
+            var attr = (ObsoleteAttribute[])func.GetCustomAttributes(typeof(ObsoleteAttribute), false);
+            if (attr.Length > 0) throw new ModSupportException(attr[0].Message);
+            if (func != null) return func.Invoke(typeof(BetterTaxesAPI), newArgs);
+            throw new ModSupportException("Could not find method \"" + given_method + "\" with the arguments specified");
         }
 
         public override void Load()
         {
             Instance = this;
+            new ModHandler();
             herosMod = ModLoader.GetMod("HEROsMod");
         }
 
@@ -130,7 +140,6 @@ namespace BetterTaxes
 
         public override void PostSetupContent()
         {
-            new ModHandler(); // resets all the delegates etc
             try
             {
                 if (herosMod != null)

@@ -274,17 +274,7 @@ namespace BetterTaxes
         internal void OnDeserializedMethod(StreamingContext context)
         {
             if (TaxRates == null) TaxRates = StaticConstants.TaxRatesDefaults.ToDictionary(i => i.Key, i => i.Value);
-            if (IsFlexible)
-            {
-                if (TaxRates.Count == 0) TaxRates = StaticConstants.TaxRatesDefaults.ToDictionary(i => i.Key, i => i.Value);
-                foreach (KeyValuePair<string, SpecialInt> entry in StaticConstants.TaxRatesDefaults)
-                {
-                    if (!TaxRates.ContainsKey(entry.Key))
-                    {
-                        TaxRates.Add(entry.Key, entry.Value);
-                    }
-                }
-            }
+            if (IsFlexible && TaxRates.Count == 0) TaxRates = StaticConstants.TaxRatesDefaults.ToDictionary(i => i.Key, i => i.Value);
             if (MoneyCap > 2000000000) MoneyCap = 2000000000;
         }
 
