@@ -13,7 +13,6 @@
   <ItemGroup>
     <None Include=".gitignore" />
     <None Include="README.md" />
-    <None Include="wiki\Adding_Support_For_Your_Mod.md" />
     <None Include="wiki\Config_File_Format.md" />
   </ItemGroup>
   <ItemGroup>

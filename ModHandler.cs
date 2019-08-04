@@ -65,10 +65,18 @@ namespace BetterTaxes
             calamityMod = ModLoader.GetMod("CalamityMod");
             if (calamityMod != null)
             {
-                object obj = calamityMod.Call("Downed");
-                if (obj != null) calamityDelegate = (Func<string, bool>)obj;
-                obj = calamityMod.Call("Difficulty");
-                if (obj != null) calamityDelegate2 = (Func<string, bool>)obj;
+                try
+                {
+                    object obj = calamityMod.Call("Downed");
+                    if (obj != null && !(obj is Exception)) calamityDelegate = (Func<string, bool>)obj;
+                    obj = calamityMod.Call("Difficulty");
+                    if (obj != null && !(obj is Exception)) calamityDelegate2 = (Func<string, bool>)obj;
+                }
+                catch (Exception ex)
+                {
+                    BetterTaxes.Instance.Logger.Warn("Error when checking for calamity: " + ex.Message);
+                }
+                
             }
             return calamityDelegate != null;
         }
