@@ -193,6 +193,7 @@ namespace BetterTaxes
             }
         }
 
+        [DefaultDictionaryKeyValue("")]
         [Header("Configuration")]
         [Tooltip("Maps \"statements\" representing game progression to rent per NPC. See the GitHub page.")]
         public Dictionary<string, SpecialInt> TaxRates
