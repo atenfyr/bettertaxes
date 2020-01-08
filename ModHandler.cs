@@ -74,7 +74,7 @@ namespace BetterTaxes
                 }
                 catch (Exception ex)
                 {
-                    BetterTaxes.Instance.Logger.Warn("Error when checking for calamity: " + ex.Message);
+                    BetterTaxes.Instance.Logger.Warn("Error when checking for Calamity: " + ex.Message);
                 }
                 
             }

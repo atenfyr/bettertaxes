@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Terraria.Localization;
 using Terraria.ModLoader.Config;
 using Terraria.ModLoader.Config.UI;
 
@@ -93,8 +94,8 @@ namespace BetterTaxes.UI
         public string TransformValue(int val, string label)
         {
             string newLabel = label == "value" ? "rent" : label;
-            if (units == Unit.Time) return newLabel + ": " + UsefulThings.SecondsToHMS(val, "1 tick");
-            return newLabel + ": " + UsefulThings.ValueToCoins(val, (label == "value") ? "0 copper" : "Unlimited");
+            if (units == Unit.Time) return newLabel + ": " + UsefulThings.SecondsToHMS(val, "1 " + Language.GetTextValue("Mods.BetterTaxes.Config.Tick"));
+            return newLabel + ": " + UsefulThings.ValueToCoins(val, (label == "value") ? ("0 " + Language.GetTextValue("LegacyInterface.18")) : Language.GetTextValue("Mods.BetterTaxes.Config.Unlimited"));
         }
 
         protected SpecialInt GetValue()
@@ -135,7 +136,7 @@ namespace BetterTaxes.UI
 
         public override string TransformValue(float val, string label)
         {
-            if (val == 1) return label + ": Disabled";
+            if (val == 1) return label + ": " + Language.GetTextValue("Mods.BetterTaxes.Config.Disabled");
             return label + ": " + val + "×";
         }
     }

@@ -8,8 +8,6 @@ namespace BetterTaxes
 {
     public class TaxPlayer : ModPlayer
     {
-        internal bool hasAlreadyDone = false;
-
         public override bool Autoload(ref string name)
         {
             IL.Terraria.Player.CollectTaxes += HookAdjustTaxes;
@@ -35,15 +33,14 @@ namespace BetterTaxes
             c.Emit(Stloc_1);
         }
 
-        public override void PreUpdate()
+        public override void PostUpdate()
         {
             if (Main.netMode != 2)
             {
                 Player.taxRate = (TaxWorld.serverConfig.TimeBetweenPaychecks < 1) ? 1 : (TaxWorld.serverConfig.TimeBetweenPaychecks * 60);
 
-                if (hasAlreadyDone && Main.dayTime) hasAlreadyDone = false;
-                if (TaxWorld.serverConfig.EnableAutoCollect && !Main.dayTime && Main.time >= 16200 && player.taxMoney > 0 && !hasAlreadyDone)
-                { 
+                if (TaxWorld.serverConfig.EnableAutoCollect && !Main.dayTime && Main.time == 16200 && player.taxMoney > 0)
+                {
                     bool[] bankType = BankHandler.HasBank();
 
                     bool succeeded = false;
@@ -59,7 +56,6 @@ namespace BetterTaxes
                     {
                         BankHandler.LastCheckBank = false;
                     }
-                    hasAlreadyDone = true;
                 }
             }
         }

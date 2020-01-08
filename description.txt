@@ -1,4 +1,4 @@
-Overhauls the Tax Collector to be more useful with a few small changes:
+Overhauls the Tax Collector to be more useful with a few changes:
     * Increases the Tax Collector's money cap to 50 platinum rather than 10 gold.
     * Increases profit depending on how far in the game you are, including support for both Calamity and Thorium. See the homepage.
     * Adds the ability for the Tax Collector to automatically place his earnings into a Piggy Bank, Safe, or Defender's Forge placed in his room at midnight every day.

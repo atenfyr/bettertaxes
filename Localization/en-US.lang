@@ -1,0 +1,42 @@
+Better Taxes's language file for the coolest kids on the block
+
+-- Dialog --
+Dialog.0=Do you expect me to charge the homeless rent? Bah!
+Dialog.1=Our income right now is zero, all thanks to your mistreatment of your own citizens! Bah!
+Dialog.2=Bah! I've half a mind to keep all this extra coin for myself!
+Dialog.3=More money for the both of us, thanks to your mass murder of "monsters!"
+Dialog.4=If you're feeling genocidal, the loot some of those "powerful monsters" offer might contribute to the economy enough for me to extort more money from your citizens.
+Dialog.5=How come you expect your money so often?
+Dialog.6=If you were to give me something to put your coin into, like a piggy bank, you wouldn't have to talk to me anymore!
+Dialog.7=You would never harvest my soul, would you?
+
+-- Status --
+Status.StatusMessage=Well, rent's getting charged at %1 every %2 per citizen, which is netting you %3 an hour. Does that answer your question?
+Status.Status=Status
+
+Status.ALotOfMoney=a lot of money
+Status.NotALotOfMoney=not a lot of money
+Status.Unknown=something
+
+-- Config --
+Config.ClassicD=The classic Better Taxes experience with basic support for Calamity and Thorium.
+Config.VanillaD=Replicates the Tax Collector's behavior in vanilla Terraria.
+Config.TaxRatesD=Maps "statements" representing game progression to rent per NPC. See the GitHub page.
+Config.IsFlexibleD=Should this config file be subject to automatic changes made by this mod and other mods?
+Config.AddCustomDialogD=Should the new lines of dialog be added to the Tax Collector's dialog pool?
+Config.EnableAutoCollectD=Should the Tax Collector place his stored money into any personal storage tile in his room at midnight?
+Config.TimeBetweenPaychecksD=The amount of time between updates of the Tax Collector's money storage.
+Config.MoneyCapD=The amount of money that the Tax Collector can hold at once.
+Config.ExpertModeBoostD=The amount to multiply tax rates by in an expert mode world.
+
+Config.NoPerms=You can't perform this action because you don't have the "%1" permission.
+
+Config.Hour=hour
+Config.Hours=hours
+Config.Minute=minute
+Config.Minutes=minutes
+Config.Second=second
+Config.Seconds=seconds
+Config.Tick=tick
+Config.Unlimited=Unlimited
+Config.Disabled=Disabled

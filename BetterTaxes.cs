@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace BetterTaxes
@@ -14,53 +15,57 @@ namespace BetterTaxes
     {
         public static string ValueToCoins(int num, string zeroString = "0 copper")
         {
+            if (zeroString == "0 copper") zeroString = "0 " + Language.GetTextValue("LegacyInterface.18");
             if (num < 1) return zeroString;
             return Main.ValueToCoins(num);
         }
 
         public static string ValueToCoinsWithColor(double num, string zeroString = "0 copper")
         {
-            if (double.IsPositiveInfinity(num)) return "[c/" + Colors.CoinPlatinum.Hex3() + ":a lot of money]";
-            if (double.IsNegativeInfinity(num)) return "[c/" + Colors.CoinCopper.Hex3() + ":not a lot of money]";
-            if (double.IsNaN(num)) return "[c/" + Colors.CoinGold.Hex3() + ":something]";
+            if (zeroString == "0 copper") zeroString = "0 " + Language.GetTextValue("LegacyInterface.18");
+            if (double.IsPositiveInfinity(num)) return "[c/" + Colors.CoinPlatinum.Hex3() + ":" + Language.GetTextValue("Mods.BetterTaxes.Status.ALotOfMoney") + "]";
+            if (double.IsNegativeInfinity(num)) return "[c/" + Colors.CoinCopper.Hex3() + ":" + Language.GetTextValue("Mods.BetterTaxes.Status.NotALotOfMoney") + "]";
+            if (double.IsNaN(num)) return "[c/" + Colors.CoinGold.Hex3() + ":" + Language.GetTextValue("Mods.BetterTaxes.Status.Unknown") + "]";
             return ValueToCoinsWithColor((int)num, zeroString);
         }
 
         public static string ValueToCoinsWithColor(int num, string zeroString = "0 copper")
         {
+            if (zeroString == "0 copper") zeroString = "0 " + Language.GetTextValue("LegacyInterface.18");
             string data = ValueToCoins(num, zeroString);
-            data = Regex.Replace(data, @"(\d+ platinum)", "[c/" + Colors.CoinPlatinum.Hex3() + ":$1]");
-            data = Regex.Replace(data, @"(\d+ gold)", "[c/" + Colors.CoinGold.Hex3() + ":$1]");
-            data = Regex.Replace(data, @"(\d+ silver)", "[c/" + Colors.CoinSilver.Hex3() + ":$1]");
-            data = Regex.Replace(data, @"(\d+ copper)", "[c/" + Colors.CoinCopper.Hex3() + ":$1]");
+            data = Regex.Replace(data, @"(\d+ " + Language.GetTextValue("LegacyInterface.15") + ")", "[c/" + Colors.CoinPlatinum.Hex3() + ":$1]");
+            data = Regex.Replace(data, @"(\d+ " + Language.GetTextValue("LegacyInterface.16") + ")", "[c/" + Colors.CoinGold.Hex3() + ":$1]");
+            data = Regex.Replace(data, @"(\d+ " + Language.GetTextValue("LegacyInterface.17") + ")", "[c/" + Colors.CoinSilver.Hex3() + ":$1]");
+            data = Regex.Replace(data, @"(\d+ " + Language.GetTextValue("LegacyInterface.18") + ")", "[c/" + Colors.CoinCopper.Hex3() + ":$1]");
             return data;
         }
 
         public static string SecondsToHMS(int num, string zeroString = "0 seconds")
         {
+            if (zeroString == "0 seconds") zeroString = "0 " + Language.GetTextValue("Mods.BetterTaxes.Config.Seconds");
             if (num < 1) return zeroString;
 
             string res = "";
             int hours = num / 3600;
-            if (hours > 0) res += hours + $" hour{(hours == 1 ? "" : "s")} ";
+            if (hours == 1) res += hours + " " + Language.GetTextValue("Mods.BetterTaxes.Config.Hour") + " ";
+            if (hours > 1) res += hours + " " + Language.GetTextValue("Mods.BetterTaxes.Config.Hours") + " ";
             num %= 3600;
             int minutes = num / 60;
-            if (minutes > 0) res += minutes + $" minute{(minutes == 1 ? "" : "s")} ";
+            if (minutes == 1) res += minutes + " " + Language.GetTextValue("Mods.BetterTaxes.Config.Minute") + " ";
+            if (minutes > 1) res += minutes + " " + Language.GetTextValue("Mods.BetterTaxes.Config.Minutes") + " ";
             num %= 60;
-            if (num > 0) res += num + $" second{(num == 1 ? "" : "s")} ";
+            if (num == 1) res += num + " " + Language.GetTextValue("Mods.BetterTaxes.Config.Second") + " ";
+            if (num > 1) res += num + " " + Language.GetTextValue("Mods.BetterTaxes.Config.Seconds") + " ";
 
             return res.TrimEnd();
         }
 
-        public static string SecondsToHMSCasual(int num, string zeroString = "a tick")
+        public static string SecondsToHMSCasual(int num, string zeroString = "1 tick")
         {
+            if (zeroString == "1 tick") zeroString = "1 " + Language.GetTextValue("Mods.BetterTaxes.Config.Tick");
             if (num < 1) return zeroString;
 
-            string data = SecondsToHMS(num, zeroString);
-            if (data == "1 second") return "a second";
-            if (data == "1 minute") return "a minute";
-            if (data == "1 hour") return "an hour";
-            return "every " + data;
+            return SecondsToHMS(num, zeroString);
         }
     }
 

@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using static Mono.Cecil.Cil.OpCodes;
 
@@ -35,21 +36,22 @@ namespace BetterTaxes.NPCs
             ILLabel label = il.DefineLabel();
             c.EmitDelegate<Func<bool>>(() => TaxWorld.serverConfig.AddCustomDialog);
             c.Emit(Brfalse_S, label);
-            c.Emit(Ldstr, "Status");
+            c.EmitDelegate<Func<string>>(() => Language.GetTextValue("Mods.BetterTaxes.Status.Status"));
             c.Emit(Stloc_S, (byte)10);
             c.MarkLabel(label);
         }
 
         public override void OnChatButtonClicked(NPC npc, bool firstButton)
         {
-            if (npc.type == NPCID.TaxCollector && !firstButton)
+            if (npc.type == NPCID.TaxCollector && !firstButton && TaxWorld.serverConfig.AddCustomDialog)
             {
                 Main.PlaySound(12, -1, -1, 1, 1f, 0f);
 
                 int rawTax = ModHandler.parser.CalculateRate();
                 int adjustedTax = rawTax * ModHandler.parser.CalculateNPCCount();
                 double rate = TaxWorld.serverConfig.TimeBetweenPaychecks / Main.dayRate;
-                Main.npcChatText = $"Well, rent's getting charged at {UsefulThings.ValueToCoinsWithColor(rawTax)} {UsefulThings.SecondsToHMSCasual((int)rate)} per citizen, which is netting you {UsefulThings.ValueToCoinsWithColor(adjustedTax * (3600 / rate))} an hour. Does that answer your question?";
+                Main.npcChatText = Language.GetTextValue("Mods.BetterTaxes.Status.StatusMessage").Replace(@"%1", UsefulThings.ValueToCoinsWithColor(rawTax)).Replace(@"%2", UsefulThings.SecondsToHMSCasual((int)rate)).Replace(@"%3", UsefulThings.ValueToCoinsWithColor(adjustedTax * (3600 / rate)));
+                //Main.npcChatText = $"Well, rent's getting charged at {UsefulThings.ValueToCoinsWithColor(rawTax)} every {UsefulThings.SecondsToHMSCasual((int)rate)} per citizen, which is netting you {UsefulThings.ValueToCoinsWithColor(adjustedTax * (3600 / rate))} an hour. Does that answer your question?";
             }
         }
 
@@ -57,16 +59,14 @@ namespace BetterTaxes.NPCs
         {
             if (npc.type == NPCID.TaxCollector && TaxWorld.serverConfig.AddCustomDialog)
             {
-                int taxAverage = 0;
                 int playerCount = 0;
+                int taxAmount = Main.LocalPlayer.taxMoney;
                 for (int i = 0; i < 255; i++)
                 {
                     Player user = Main.player[i];
                     if (!user.active) continue;
                     playerCount++;
-                    taxAverage += user.taxMoney;
                 }
-                taxAverage /= playerCount;
 
                 int npcCount = 0;
                 int homelessNpcCount = 0;
@@ -79,35 +79,35 @@ namespace BetterTaxes.NPCs
 
                 if (Main.rand.Next(7) == 0 && (float)homelessNpcCount/npcCount >= 0.5) // at least half the population is homeless
                 {
-                    chat = "Do you expect me to charge the homeless rent? Bah!";
+                    chat = Language.GetTextValue("Mods.BetterTaxes.Dialog.0");
                 }
                 if (Main.rand.Next(7) == 0 && homelessNpcCount == npcCount) // everyone is homeless
                 {
-                    chat = "Our income right now is zero, all thanks to your mistreatment of your own citizens! Bah!";
+                    chat = Language.GetTextValue("Mods.BetterTaxes.Dialog.1");
                 }
-                if (Main.rand.Next(7) == 0 && taxAverage >= TaxWorld.serverConfig.MoneyCap / 10 && taxAverage >= 500000) // more than a tenth of the cap and at least 50 gold
+                if (Main.rand.Next(7) == 0 && taxAmount >= TaxWorld.serverConfig.MoneyCap / 10 && taxAmount >= 500000) // more than a tenth of the cap and at least 50 gold
                 {
-                    chat = "Bah! I've half a mind to keep all this extra coin for myself!";
+                    chat = Language.GetTextValue("Mods.BetterTaxes.Dialog.2");
                 }
                 if (Main.rand.Next(7) == 0 && TaxWorld.serverConfig.TaxRates.ContainsKey("Base.mechAny") && NPC.downedMechBossAny) // a mechanical boss has been killed
                 {
-                    chat = "More money for the both of us, thanks to your mass murder of \"monsters!\"";
+                    chat = Language.GetTextValue("Mods.BetterTaxes.Dialog.3");
                 }
                 if (Main.rand.Next(7) == 0 && TaxWorld.serverConfig.TaxRates.ContainsKey("Base.mechAny") && !NPC.downedMechBossAny) // we haven't killed a mechanical boss yet
                 {
-                    chat = "If you're feeling genocidal, the loot some of those \"powerful monsters\" offer might contribute to the economy enough for me to extort more money from your citizens.";
+                    chat = Language.GetTextValue("Mods.BetterTaxes.Dialog.4");
                 }
-                if (Main.rand.Next(7) == 0 && TaxWorld.serverConfig.TimeBetweenPaychecks <= 600) // 10 minutes
+                if (Main.rand.Next(7) == 0 && TaxWorld.serverConfig.TimeBetweenPaychecks <= 1440) // 24 *minutes*
                 {
-                    chat = "How come you expect your money so often?";
+                    chat = Language.GetTextValue("Mods.BetterTaxes.Dialog.5");
                 }
                 if (Main.rand.Next(7) == 0 && TaxWorld.serverConfig.EnableAutoCollect && !BankHandler.LastCheckBank)
                 {
-                    chat = "If you were to give me something to put your coin into, like a piggy bank, you wouldn't have to talk to me anymore!";
+                    chat = Language.GetTextValue("Mods.BetterTaxes.Dialog.6");
                 }
                 if (Main.rand.Next(7) == 0 && DialogUtils.CheckIfModExists("VendingMachines"))
                 {
-                    chat = "You would never harvest my soul, would you?";
+                    chat = Language.GetTextValue("Mods.BetterTaxes.Dialog.7");
                 }
             }
         }

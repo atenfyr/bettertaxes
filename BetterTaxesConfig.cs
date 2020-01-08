@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using Terraria;
+using Terraria.Localization;
 using Terraria.ModLoader.Config;
 
 namespace BetterTaxes
@@ -147,7 +148,7 @@ namespace BetterTaxes
         [Header("Presets")]
         [JsonIgnore]
         [Label("Classic")]
-        [Tooltip("The classic Better Taxes experience, with basic support for Calamity and Thorium.")]
+        [Tooltip("$Mods.BetterTaxes.Config.ClassicD")]
         public bool ClassicPreset
         {
             get
@@ -171,7 +172,7 @@ namespace BetterTaxes
 
         [JsonIgnore]
         [Label("Vanilla")]
-        [Tooltip("Replicates the Tax Collector's behavior in vanilla Terraria.")]
+        [Tooltip("$Mods.BetterTaxes.Config.VanillaD")]
         public bool VanillaPreset
         {
             get
@@ -195,14 +196,14 @@ namespace BetterTaxes
 
         [DefaultDictionaryKeyValue("")]
         [Header("Configuration")]
-        [Tooltip("Maps \"statements\" representing game progression to rent per NPC. See the GitHub page.")]
+        [Tooltip("$Mods.BetterTaxes.Config.TaxRatesD")]
         public Dictionary<string, SpecialInt> TaxRates
         {
             get;
             set;
         }
 
-        [Tooltip("Should this config file be subject to automatic changes made by this mod and other mods?")]
+        [Tooltip("$Mods.BetterTaxes.Config.IsFlexibleD")]
         [DefaultValue(true)]
         public bool IsFlexible
         {
@@ -210,7 +211,7 @@ namespace BetterTaxes
             set;
         }
 
-        [Tooltip("Should the new lines of dialog be added to the Tax Collector's dialog pool?")]
+        [Tooltip("$Mods.BetterTaxes.Config.AddCustomDialogD")]
         [DefaultValue(true)]
         public bool AddCustomDialog
         {
@@ -218,7 +219,7 @@ namespace BetterTaxes
             set;
         }
 
-        [Tooltip("Should the Tax Collector place his stored money into any personal storage tile in his room at midnight?")]
+        [Tooltip("$Mods.BetterTaxes.Config.EnableAutoCollectD")]
         [DefaultValue(true)]
         public bool EnableAutoCollect
         {
@@ -226,7 +227,7 @@ namespace BetterTaxes
             set;
         }
 
-        [Tooltip("The amount of time between updates of the Tax Collector's money storage.")]
+        [Tooltip("$Mods.BetterTaxes.Config.TimeBetweenPaychecksD")]
         [DefaultValue(60)]
         [SliderColor(183, 88, 25)]
         [Range(1, 300)]
@@ -238,7 +239,7 @@ namespace BetterTaxes
             set;
         }
 
-        [Tooltip("The amount of money that the Tax Collector can hold at once.")]
+        [Tooltip("$Mods.BetterTaxes.Config.MoneyCapD")]
         [Range(0, 100000000)]
         [Increment(1000000)]
         [DefaultValue(50000000)]
@@ -248,7 +249,7 @@ namespace BetterTaxes
             set;
         }
 
-        [Tooltip("The amount to multiply tax rates by in an expert mode world.")]
+        [Tooltip("$Mods.BetterTaxes.Config.ExpertModeBoostD")]
         [DefaultValue(1.5f)]
         [SliderColor(135, 206, 250)]
         [CustomModConfigItem(typeof(BoostRangeElement))]
@@ -287,7 +288,7 @@ namespace BetterTaxes
                 object data = BetterTaxes.Instance.herosMod.Call("HasPermission", whoAmI, "ModifyBTConfig");
                 if (data is bool) theBool = (bool)data;
 
-                if (!theBool) message = "You lack the \"Modify Better Taxes Config\" permission.";
+                if (!theBool) message = Language.GetTextValue("Mods.BetterTaxes.Config.NoPerms").Replace(@"%1", "Modify Better Taxes Config");
                 return theBool;
             }
             return true;

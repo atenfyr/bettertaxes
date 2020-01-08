@@ -22,10 +22,12 @@ namespace BetterTaxes
             bool[] data = new bool[SafeTypes.Length];
 
             if (!WorldGen.StartRoomCheck(x, y)) return data;
+            int iters = 0;
             for (int k = WorldGen.roomY1; k <= WorldGen.roomY2; k++)
             {
                 for (int j = WorldGen.roomX1; j <= WorldGen.roomX2; j++)
                 {
+                    if (++iters > 100000) throw new Exception("we got ourselves a problem error code \"cool kid\" please report thanks");
                     if (Main.tile[j, k] != null && Main.tile[j, k].active())
                     {
                         ushort type = Main.tile[j, k].type;
