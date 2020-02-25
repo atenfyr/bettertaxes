@@ -222,37 +222,7 @@ namespace BetterTaxes
                 // special case for calamity
                 if (chosen_list == "Calamity")
                 {
-                    if (!ModHandler.hasCheckedForCalamity) ModHandler.CheckForCalamity();
-
-                    if (ModHandler.calamityDelegate != null)
-                    {
-                        if (ModHandler.calamityDelegate(chosen_condition)) return true;
-
-                        switch (chosen_condition) // backwards compatibility
-                        {
-                            case "downedProvidence":
-                                return ModHandler.calamityDelegate("providence");
-                            case "downedDoG":
-                                return ModHandler.calamityDelegate("devourerofgods");
-                            case "downedYharon":
-                                return ModHandler.calamityDelegate("yharon");
-                            case "downedSCal":
-                                return ModHandler.calamityDelegate("supremecalamitas");
-                        }
-                    }
-
-                    if (ModHandler.calamityDelegate2 != null)
-                    {
-                        if (ModHandler.calamityDelegate2(chosen_condition)) return true;
-
-                        switch (chosen_condition) // backwards compatibility
-                        {
-                            case "revenge":
-                                return ModHandler.calamityDelegate2("revengeance");
-                        }
-                    }
-
-                    return false;
+                    return ModHandler.RunConditionByCalamity(chosen_condition);
                 }
 
                 // legacy system

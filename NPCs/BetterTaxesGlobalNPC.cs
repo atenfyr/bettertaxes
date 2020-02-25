@@ -59,14 +59,7 @@ namespace BetterTaxes.NPCs
         {
             if (npc.type == NPCID.TaxCollector && TaxWorld.serverConfig.AddCustomDialog)
             {
-                int playerCount = 0;
                 int taxAmount = Main.LocalPlayer.taxMoney;
-                for (int i = 0; i < 255; i++)
-                {
-                    Player user = Main.player[i];
-                    if (!user.active) continue;
-                    playerCount++;
-                }
 
                 int npcCount = 0;
                 int homelessNpcCount = 0;
@@ -97,7 +90,7 @@ namespace BetterTaxes.NPCs
                 {
                     chat = Language.GetTextValue("Mods.BetterTaxes.Dialog.4");
                 }
-                if (Main.rand.Next(7) == 0 && TaxWorld.serverConfig.TimeBetweenPaychecks <= 1440) // 24 *minutes*
+                if (Main.rand.Next(7) == 0 && TaxWorld.serverConfig.TimeBetweenPaychecks <= 1440) // 24 *minutes* (or one in-game day)
                 {
                     chat = Language.GetTextValue("Mods.BetterTaxes.Dialog.5");
                 }

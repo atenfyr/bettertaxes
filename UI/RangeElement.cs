@@ -93,7 +93,7 @@ namespace BetterTaxes.UI
 
         public string TransformValue(int val, string label)
         {
-            string newLabel = label == "value" ? "rent" : label;
+            string newLabel = label == "value" ? Language.GetTextValue("Mods.BetterTaxes.Config.Rent") : label;
             if (units == Unit.Time) return newLabel + ": " + UsefulThings.SecondsToHMS(val, "1 " + Language.GetTextValue("Mods.BetterTaxes.Config.Tick"));
             return newLabel + ": " + UsefulThings.ValueToCoins(val, (label == "value") ? ("0 " + Language.GetTextValue("LegacyInterface.18")) : Language.GetTextValue("Mods.BetterTaxes.Config.Unlimited"));
         }

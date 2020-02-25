@@ -27,7 +27,7 @@ namespace BetterTaxes
             // set num2 (cap value) to TaxWorld.serverConfig.MoneyCap
             c.EmitDelegate<Func<int>>(() =>
             {
-                if (TaxWorld.serverConfig.MoneyCap < 1) return 2000000000;
+                if (TaxWorld.serverConfig.MoneyCap < 1) return 2000000000; // for unlimited mode, the absolute cap is 2147483647 but then the math gets a bit weird so we limit it to 2000000000
                 return TaxWorld.serverConfig.MoneyCap;
             });
             c.Emit(Stloc_1);
@@ -39,7 +39,7 @@ namespace BetterTaxes
             {
                 Player.taxRate = (TaxWorld.serverConfig.TimeBetweenPaychecks < 1) ? 1 : (TaxWorld.serverConfig.TimeBetweenPaychecks * 60);
 
-                if (TaxWorld.serverConfig.EnableAutoCollect && !Main.dayTime && Main.time == 16200 && player.taxMoney > 0)
+                if (TaxWorld.serverConfig.EnableAutoCollect && !Main.dayTime && Main.time == 16200 && player.taxMoney > 0) // doesn't work with enchanted sundial but that's okay, it'll do it all the next day
                 {
                     bool[] bankType = BankHandler.HasBank();
 

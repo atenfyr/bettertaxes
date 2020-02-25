@@ -13,7 +13,7 @@ namespace BetterTaxes
 {
     public class InvalidConfigException : Exception
     {
-        public static readonly string messageFormat = "Malformed config: {0}. See https://github.com/atenfyr/bettertaxes/blob/master/CONFIG.md for more information.";
+        public static readonly string messageFormat = "Malformed config: {0}. See https://github.com/atenfyr/bettertaxes/wiki/Config-File-Format for more information.";
         public InvalidConfigException()
         {
         }
@@ -48,6 +48,10 @@ namespace BetterTaxes
         }
     }
 
+    /*
+        SpecialInt only exists because I wanted to implement a slider which displays the correct units within ModConfig's DictionaryElement, but there's no way to do that without making a custom slider class, and you can't apply the attribute for the custom slider class onto int because int is a primitive
+        The only way to circumvent this was to make a class which replicated the behavior of int so that I could apply attributes to it, which is why SpecialInt exists
+    */
     [SliderColor(204, 181, 72)]
     [JsonConverter(typeof(SpecialIntConverter))]
     [CustomModConfigItem(typeof(SpecialIntRangeElement))]

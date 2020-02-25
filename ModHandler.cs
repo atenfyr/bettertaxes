@@ -54,31 +54,36 @@ namespace BetterTaxes
             return true;
         }
 
-        internal static bool hasCheckedForCalamity = false;
         internal static Mod calamityMod;
-        internal static Func<string, bool> calamityDelegate;
-        internal static Func<string, bool> calamityDelegate2;
-        internal static bool CheckForCalamity(bool setFlag = true)
+        internal static bool hasCheckedForCalamity = false;
+        public static bool RunConditionByCalamity(string condition)
         {
-            if (hasCheckedForCalamity) return calamityDelegate != null;
-            hasCheckedForCalamity = setFlag;
-            calamityMod = ModLoader.GetMod("CalamityMod");
-            if (calamityMod != null)
+            if (calamityMod == null && !hasCheckedForCalamity)
             {
-                try
-                {
-                    object obj = calamityMod.Call("Downed");
-                    if (obj != null && !(obj is Exception)) calamityDelegate = (Func<string, bool>)obj;
-                    obj = calamityMod.Call("Difficulty");
-                    if (obj != null && !(obj is Exception)) calamityDelegate2 = (Func<string, bool>)obj;
-                }
-                catch (Exception ex)
-                {
-                    BetterTaxes.Instance.Logger.Warn("Error when checking for Calamity: " + ex.Message);
-                }
-                
+                calamityMod = ModLoader.GetMod("CalamityMod");
+                hasCheckedForCalamity = true;
             }
-            return calamityDelegate != null;
+            if (calamityMod == null) return false;
+
+            if ((bool)calamityMod.Call("Downed", condition)) return true;
+            if ((bool)calamityMod.Call("Difficulty", condition)) return true;
+            
+            // backwards compatibility
+            switch (condition) 
+            {
+                case "downedProvidence":
+                    return RunConditionByCalamity("providence");
+                case "downedDoG":
+                    return RunConditionByCalamity("devourerofgods");
+                case "downedYharon":
+                    return RunConditionByCalamity("yharon");
+                case "downedSCal":
+                    return RunConditionByCalamity("supremecalamitas");
+                case "revenge":
+                    return RunConditionByCalamity("revengeance");
+            }
+
+            return false;
         }
 
         public ModHandler()
@@ -86,9 +91,6 @@ namespace BetterTaxes
             delegates = new Dictionary<string, Dictionary<string, Func<bool>>>();
             mods = new Dictionary<string, Mod>();
             parser = new GateParser();
-
-            hasCheckedForCalamity = false;
-            hasCheckedForCalamity = CheckForCalamity(false); // if we find it here, we don't need to check again later to see if loading messed up
         }
     }
 }

@@ -136,7 +136,6 @@ namespace BetterTaxes
             Instance = null;
             TaxWorld.serverConfig = null;
             ModHandler.calamityMod = null;
-            ModHandler.calamityDelegate = null;
             ModHandler.parser = null;
             ModHandler.delegates = new Dictionary<string, Dictionary<string, Func<bool>>>();
             ModHandler.mods = new Dictionary<string, Mod>();
