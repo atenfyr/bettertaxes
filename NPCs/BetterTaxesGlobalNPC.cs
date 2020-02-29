@@ -70,38 +70,76 @@ namespace BetterTaxes.NPCs
                     if (Main.npc[i].homeless) homelessNpcCount++;
                 }
 
-                if (Main.rand.Next(7) == 0 && (float)homelessNpcCount/npcCount >= 0.5) // at least half the population is homeless
+                if (Main.rand.Next(2) == 0)
                 {
-                    chat = Language.GetTextValue("Mods.BetterTaxes.Dialog.0");
+                    bool hasChosenDialog = false;
+                    while (!hasChosenDialog)
+                    {
+                        int chosenDialog = Main.rand.Next(9); // 0 - 8
+                        switch(chosenDialog)
+                        {
+                            case 0:
+                                if ((float)homelessNpcCount / npcCount >= 0.5) // at least half the population is homeless
+                                {
+                                    chat = Language.GetTextValue("Mods.BetterTaxes.Dialog.0"); hasChosenDialog = true;
+                                }
+                                break;
+                            case 1:
+                                if (homelessNpcCount == npcCount) // everyone is homeless
+                                {
+                                    chat = Language.GetTextValue("Mods.BetterTaxes.Dialog.1"); hasChosenDialog = true;
+                                }
+                                break;
+                            case 2:
+                                if (taxAmount >= TaxWorld.serverConfig.MoneyCap / 10 && taxAmount >= 500000) // more than a tenth of the cap and at least 50 gold
+                                {
+                                    chat = Language.GetTextValue("Mods.BetterTaxes.Dialog.2"); hasChosenDialog = true;
+                                }
+                                break;
+                            case 3:
+                                if (TaxWorld.serverConfig.TaxRates.ContainsKey("Base.mechAny") && NPC.downedMechBossAny) // a mechanical boss has been killed
+                                {
+                                    chat = Language.GetTextValue("Mods.BetterTaxes.Dialog.3"); hasChosenDialog = true;
+                                }
+                                break;
+                            case 4:
+                                if (TaxWorld.serverConfig.TaxRates.ContainsKey("Base.mechAny") && !NPC.downedMechBossAny) // we haven't killed a mechanical boss yet
+                                {
+                                    chat = Language.GetTextValue("Mods.BetterTaxes.Dialog.4"); hasChosenDialog = true;
+                                }
+                                break;
+                            case 5:
+                                if (TaxWorld.serverConfig.TimeBetweenPaychecks <= 1440) // 24 *minutes* (or one in-game day)
+                                {
+                                    chat = Language.GetTextValue("Mods.BetterTaxes.Dialog.5"); hasChosenDialog = true;
+                                }
+                                break;
+                            case 6:
+                                if (TaxWorld.serverConfig.EnableAutoCollect && !BankHandler.LastCheckBank) // player doesn't have autocollection set up
+                                {
+                                    chat = Language.GetTextValue("Mods.BetterTaxes.Dialog.6"); hasChosenDialog = true;
+                                }
+                                break;
+                            case 7:
+                                if (DialogUtils.CheckIfModExists("VendingMachines")) // has vending machines mod
+                                {
+                                    chat = Language.GetTextValue("Mods.BetterTaxes.Dialog.7"); hasChosenDialog = true;
+                                }
+                                break;
+                            case 8:
+                                if (Main.xMas) // currently christmas season!
+                                {
+                                    chat = Language.GetTextValue("Mods.BetterTaxes.Dialog.8"); hasChosenDialog = true;
+                                }
+                                break;
+                            default:
+                                chat = Language.GetTextValue("tModLoader.DefaultTownNPCChat"); hasChosenDialog = true;
+                                break;
+                        }
+
+                    }
                 }
-                if (Main.rand.Next(7) == 0 && homelessNpcCount == npcCount) // everyone is homeless
-                {
-                    chat = Language.GetTextValue("Mods.BetterTaxes.Dialog.1");
-                }
-                if (Main.rand.Next(7) == 0 && taxAmount >= TaxWorld.serverConfig.MoneyCap / 10 && taxAmount >= 500000) // more than a tenth of the cap and at least 50 gold
-                {
-                    chat = Language.GetTextValue("Mods.BetterTaxes.Dialog.2");
-                }
-                if (Main.rand.Next(7) == 0 && TaxWorld.serverConfig.TaxRates.ContainsKey("Base.mechAny") && NPC.downedMechBossAny) // a mechanical boss has been killed
-                {
-                    chat = Language.GetTextValue("Mods.BetterTaxes.Dialog.3");
-                }
-                if (Main.rand.Next(7) == 0 && TaxWorld.serverConfig.TaxRates.ContainsKey("Base.mechAny") && !NPC.downedMechBossAny) // we haven't killed a mechanical boss yet
-                {
-                    chat = Language.GetTextValue("Mods.BetterTaxes.Dialog.4");
-                }
-                if (Main.rand.Next(7) == 0 && TaxWorld.serverConfig.TimeBetweenPaychecks <= 1440) // 24 *minutes* (or one in-game day)
-                {
-                    chat = Language.GetTextValue("Mods.BetterTaxes.Dialog.5");
-                }
-                if (Main.rand.Next(7) == 0 && TaxWorld.serverConfig.EnableAutoCollect && !BankHandler.LastCheckBank)
-                {
-                    chat = Language.GetTextValue("Mods.BetterTaxes.Dialog.6");
-                }
-                if (Main.rand.Next(7) == 0 && DialogUtils.CheckIfModExists("VendingMachines"))
-                {
-                    chat = Language.GetTextValue("Mods.BetterTaxes.Dialog.7");
-                }
+
             }
         }
     }

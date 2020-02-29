@@ -14,17 +14,10 @@ namespace BetterTaxes.Commands
 
         public override void Action(CommandCaller caller, string input, string[] args)
         {
-            if (NPC.savedTaxCollector)
-            {
-                int npcCount = ModHandler.parser.CalculateNPCCount();
-                int taxRate = ModHandler.parser.CalculateRate();
-                long rate = TaxWorld.serverConfig.TimeBetweenPaychecks;
-                caller.Reply("Tax rate: " + UsefulThings.ValueToCoins(taxRate * npcCount) + " per " + TimeSpan.FromSeconds(rate / Main.dayRate).ToString(@"mm\:ss") + "\nUnadjusted tax rate: " + UsefulThings.ValueToCoins(taxRate) + " per " + TimeSpan.FromSeconds(rate).ToString(@"mm\:ss") + " per NPC\nHoused NPC Count: " + npcCount, Color.Yellow);
-            }
-            else
-            {
-                caller.Reply("The Tax Collector has not yet been saved in this world!", Color.OrangeRed);
-            }
+            int npcCount = ModHandler.parser.CalculateNPCCount();
+            int taxRate = ModHandler.parser.CalculateRate();
+            long rate = TaxWorld.serverConfig.TimeBetweenPaychecks;
+            caller.Reply("Tax rate: " + UsefulThings.ValueToCoins(taxRate * npcCount) + " per " + TimeSpan.FromSeconds(rate / Main.dayRate).ToString(@"mm\:ss") + "\nUnadjusted tax rate: " + UsefulThings.ValueToCoins(taxRate) + " per " + TimeSpan.FromSeconds(rate).ToString(@"mm\:ss") + " per NPC\nHoused NPC Count: " + npcCount, Color.Yellow);
         }
     }
 }

@@ -12,8 +12,14 @@ namespace BetterTaxes
 
         public static bool[] HasBank()
         {
-            int collector = NPC.FindFirstNPC(NPCID.TaxCollector);
-            if (collector >= 0 && !Main.npc[collector].homeless) return HasBank(Main.npc[collector].homeTileX, Main.npc[collector].homeTileY - 1);
+            if (Main.netMode != 1)
+            {
+                int collector = NPC.FindFirstNPC(NPCID.TaxCollector);
+                if (collector >= 0 && !Main.npc[collector].homeless)
+                {
+                    if (Main.npc[collector].homeTileX > 10 && Main.npc[collector].homeTileY > 10 && Main.npc[collector].homeTileX < Main.maxTilesX - 10 && Main.npc[collector].homeTileY < Main.maxTilesY) return HasBank(Main.npc[collector].homeTileX, Main.npc[collector].homeTileY - 1);
+                }
+            }
             return new bool[SafeTypes.Length];
         }
 
@@ -21,21 +27,22 @@ namespace BetterTaxes
         {
             bool[] data = new bool[SafeTypes.Length];
 
-            if (!WorldGen.StartRoomCheck(x, y)) return data;
-            int iters = 0;
-            for (int k = WorldGen.roomY1; k <= WorldGen.roomY2; k++)
+            bool succeededRoomCheck = false;
+            try
             {
-                for (int j = WorldGen.roomX1; j <= WorldGen.roomX2; j++)
-                {
-                    if (++iters > 100000) throw new Exception("we got ourselves a problem error code \"cool kid\" please report thanks");
-                    if (Main.tile[j, k] != null && Main.tile[j, k].active())
-                    {
-                        ushort type = Main.tile[j, k].type;
-                        if (SafeTypes.Contains(type)) data[Array.IndexOf(SafeTypes, type)] = true;
-                    }
-                }
+                succeededRoomCheck = WorldGen.StartRoomCheck(x, y); // this seems to have some problems in some scenarios, so we catch it just in case to avoid outright error
             }
+            catch (Exception e)
+            {
+                BetterTaxes.Instance.Logger.Warn("Failed to check the Tax Collector's house (please report): " + e.ToString());
+                return data;
+            }
+            if (!succeededRoomCheck) return data;
 
+            for (int i = 0; i < SafeTypes.Length; i++)
+            {
+                data[i] = WorldGen.houseTile[SafeTypes[i]];
+            }
             return data;
         }
 

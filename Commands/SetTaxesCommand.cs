@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -88,19 +87,34 @@ namespace BetterTaxes.Commands
 
     /*public class DebugCommand : ModCommand
     {
-        public override CommandType Type => CommandType.World;
+        public override CommandType Type => CommandType.World | CommandType.Console;
         public override string Command => "debug";
-        public override string Usage => "";
-        public override string Description => "";
+        public override string Usage => "a";
+        public override string Description => "b";
 
         public override void Action(CommandCaller caller, string input, string[] args)
         {
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-            ModHandler.parser.CalculateRate();
-            sw.Stop();
+            Main.dayTime = false;
+            Main.time = 16200-(Main.dayRate*60);
+            caller.Reply(Main.time.ToString());
 
-            caller.Reply(sw.Elapsed.TotalMilliseconds + " ms");
+            if (Main.netMode == 2)
+            {
+                NetMessage.SendData(MessageID.WorldData);
+            }
+        }
+    }
+
+    public class DebugTCommand : ModCommand
+    {
+        public override CommandType Type => CommandType.Chat;
+        public override string Command => "debug2";
+        public override string Usage => "a";
+        public override string Description => "b";
+
+        public override void Action(CommandCaller caller, string input, string[] args)
+        {
+            caller.Reply(Main.xMas.ToString());
         }
     }*/
 }

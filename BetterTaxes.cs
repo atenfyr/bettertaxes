@@ -140,6 +140,7 @@ namespace BetterTaxes
             ModHandler.delegates = new Dictionary<string, Dictionary<string, Func<bool>>>();
             ModHandler.mods = new Dictionary<string, Mod>();
             ModHandler.customStatements = new Dictionary<string, int>();
+            ModHandler.hasCheckedForCalamity = false;
         }
 
         public override void PostSetupContent()

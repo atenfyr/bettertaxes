@@ -22,15 +22,12 @@ namespace BetterTaxes
             }
             foreach (KeyValuePair<string, SpecialInt> entry in TaxWorld.serverConfig.TaxRates)
             {
-                if (entry.Value > taxRate && Interpret(entry.Key))
-                {
-                    taxRate = entry.Value;
-
-                }
+                if (entry.Value > taxRate && Interpret(entry.Key)) taxRate = entry.Value;
             }
             if (taxRate == -1) throw new InvalidConfigException("No statement evaluated to true. To avoid this error, you should map the statement \"Base.always\" to a value to fall back on");
 
-            if (Main.expertMode && TaxWorld.serverConfig.ExpertModeBoost >= 0) taxRate = (int)(taxRate * TaxWorld.serverConfig.ExpertModeBoost);
+            if (Main.expertMode && TaxWorld.serverConfig.ExpertModeBoost >= 0) taxRate = (int)(taxRate * TaxWorld.serverConfig.ExpertModeBoost); // Expert mode boost
+            if (Main.xMas) taxRate = (int)(taxRate * 1.25); // Christmas boost
             return taxRate;
         }
 
@@ -244,7 +241,7 @@ namespace BetterTaxes
                 }
                 return false;
             }
-            else if (terms.Length == 3) // note that this will probably add some lag to world start times
+            else if (terms.Length == 3) // This probably shouldn't be used, it's much faster and neater for mods to use BetterTaxes's Mod.Call API. I only keep this here for backwards compatibility
             {
                 if (invalidMods.ContainsKey(terms[0])) return false;
                 Mod customMod = ModLoader.GetMod(terms[0]);

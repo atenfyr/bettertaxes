@@ -41,12 +41,10 @@ namespace BetterTaxes
 
                 if (TaxWorld.serverConfig.EnableAutoCollect && !Main.dayTime && Main.time == 16200 && player.taxMoney > 0) // doesn't work with enchanted sundial but that's okay, it'll do it all the next day
                 {
-                    bool[] bankType = BankHandler.HasBank();
-
                     bool succeeded = false;
-                    if (bankType[0] && !succeeded) succeeded = BankHandler.AddCoins(player.bank, player.taxMoney);
-                    if (bankType[1] && !succeeded) succeeded = BankHandler.AddCoins(player.bank2, player.taxMoney);
-                    if (bankType[2] && !succeeded) succeeded = BankHandler.AddCoins(player.bank3, player.taxMoney);
+                    if (TaxWorld.ClientBanksList[0] && !succeeded) succeeded = BankHandler.AddCoins(player.bank, player.taxMoney);
+                    if (TaxWorld.ClientBanksList[1] && !succeeded) succeeded = BankHandler.AddCoins(player.bank2, player.taxMoney);
+                    if (TaxWorld.ClientBanksList[2] && !succeeded) succeeded = BankHandler.AddCoins(player.bank3, player.taxMoney);
                     if (succeeded)
                     {
                         player.taxMoney = 0;
