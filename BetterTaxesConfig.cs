@@ -50,7 +50,7 @@ namespace BetterTaxes
 
     /*
         SpecialInt only exists because I wanted to implement a slider which displays the correct units within ModConfig's DictionaryElement, but there's no way to do that without making a custom slider class, and you can't apply the attribute for the custom slider class onto int because int is a primitive
-        The only way to circumvent this was to make a class which replicated the behavior of int so that I could apply attributes to it, which is why SpecialInt exists
+        The only way to circumvent this was to make a class which replicated the behavior of int so that I could apply attributes to it
     */
     [SliderColor(204, 181, 72)]
     [JsonConverter(typeof(SpecialIntConverter))]
@@ -157,19 +157,18 @@ namespace BetterTaxes
         {
             get
             {
-                return StaticConstants.Equals(TaxRates, StaticConstants.TaxRatesDefaults) && IsFlexible && AddCustomDialog && EnableAutoCollect && (TimeBetweenPaychecks == 60) && (MoneyCap == Item.buyPrice(50, 0, 0, 0)) && (ExpertModeBoost == 1.5f);
+                return StaticConstants.Equals(TaxRates, GetTaxDefaults()) && AddCustomDialog && EnableAutoCollect && (TimeBetweenPaychecks == 60) && (MoneyCap == Item.buyPrice(50, 0, 0, 0)) && (ExpertModeBoost == 1.5f);
             }
             set
             {
                 if (value)
                 {
-                    IsFlexible = true;
                     AddCustomDialog = true;
                     EnableAutoCollect = true;
                     TimeBetweenPaychecks = 60;
                     MoneyCap = Item.buyPrice(50, 0, 0, 0);
                     ExpertModeBoost = 1.5f;
-                    TaxRates = StaticConstants.TaxRatesDefaults.ToDictionary(i => i.Key, i => i.Value);
+                    TaxRates = GetTaxDefaults();
                 }
             }
         }
@@ -181,13 +180,12 @@ namespace BetterTaxes
         {
             get
             {
-                return StaticConstants.Equals(TaxRates, StaticConstants.VanillaTaxRatesDefaults) && !IsFlexible && !AddCustomDialog && !EnableAutoCollect && (TimeBetweenPaychecks == 60) && (MoneyCap == Item.buyPrice(0, 10, 0, 0)) && (ExpertModeBoost == 1f);
+                return StaticConstants.Equals(TaxRates, StaticConstants.VanillaTaxRatesDefaults) && !AddCustomDialog && !EnableAutoCollect && (TimeBetweenPaychecks == 60) && (MoneyCap == Item.buyPrice(0, 10, 0, 0)) && (ExpertModeBoost == 1f);
             }
             set
             {
                 if (value)
                 {
-                    IsFlexible = false;
                     AddCustomDialog = false;
                     EnableAutoCollect = false;
                     TimeBetweenPaychecks = 60;
@@ -202,14 +200,6 @@ namespace BetterTaxes
         [Header("Configuration")]
         [Tooltip("$Mods.BetterTaxes.Config.TaxRatesD")]
         public Dictionary<string, SpecialInt> TaxRates
-        {
-            get;
-            set;
-        }
-
-        [Tooltip("$Mods.BetterTaxes.Config.IsFlexibleD")]
-        [DefaultValue(true)]
-        public bool IsFlexible
         {
             get;
             set;
@@ -276,12 +266,33 @@ namespace BetterTaxes
             return clone;
         }
 
+        public Dictionary<string, SpecialInt> GetTaxDefaults()
+        {
+            Dictionary<string, SpecialInt> result = StaticConstants.TaxRatesDefaults.ToDictionary(i => i.Key, i => i.Value);
+
+            // Here we go ahead and put every single new field we know about into the config and their recommended values, if they exist
+            foreach (KeyValuePair<string, Dictionary<string, Func<bool>>> entry in ModHandler.delegates)
+            {
+                if (entry.Key == "Calamity" || entry.Key == "Thorium") continue; // We already have hardcoded recommended values for these lists
+                foreach (KeyValuePair<string, Func<bool>> entry2 in entry.Value)
+                {
+                    string statement = entry.Key + "." + entry2.Key;
+                    ModHandler.customStatements.TryGetValue(statement, out int determinedValue);
+                    if (determinedValue > -1) result.Add(statement, determinedValue);
+                }
+            }
+
+            return result;
+        }
+
         [OnDeserialized]
         internal void OnDeserializedMethod(StreamingContext context)
         {
-            if (TaxRates == null) TaxRates = StaticConstants.TaxRatesDefaults.ToDictionary(i => i.Key, i => i.Value);
-            if (IsFlexible && TaxRates.Count == 0) TaxRates = StaticConstants.TaxRatesDefaults.ToDictionary(i => i.Key, i => i.Value);
+            if (TaxRates == null || TaxRates.Count == 0) TaxRates = GetTaxDefaults();
             if (MoneyCap > 2000000000) MoneyCap = 2000000000;
+
+            var sortedResults = from entry in TaxRates orderby entry.Value ascending select entry;
+            TaxRates = sortedResults.ToDictionary(pair => pair.Key, pair => pair.Value);
         }
 
         public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message)

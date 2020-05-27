@@ -2,24 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
-using Terraria.ModLoader;
 
 namespace BetterTaxes
 {
     public class GateParser
     {
-        public Dictionary<string, bool> invalidMods = new Dictionary<string, bool>();
-
         public int CalculateRate()
         {
             int taxRate = -1;
-            if (TaxWorld.serverConfig.IsFlexible)
-            {
-                foreach (KeyValuePair<string, int> entry in ModHandler.customStatements)
-                {
-                    if (entry.Value > taxRate && Interpret(entry.Key)) taxRate = entry.Value;
-                }
-            }
             foreach (KeyValuePair<string, SpecialInt> entry in TaxWorld.serverConfig.TaxRates)
             {
                 if (entry.Value > taxRate && Interpret(entry.Key)) taxRate = entry.Value;
@@ -27,26 +17,14 @@ namespace BetterTaxes
             if (taxRate == -1) throw new InvalidConfigException("No statement evaluated to true. To avoid this error, you should map the statement \"Base.always\" to a value to fall back on");
 
             if (Main.expertMode && TaxWorld.serverConfig.ExpertModeBoost >= 0) taxRate = (int)(taxRate * TaxWorld.serverConfig.ExpertModeBoost); // Expert mode boost
-            if (Main.xMas) taxRate = (int)(taxRate * 1.25); // Christmas boost
+            if (Main.xMas) taxRate = (int)(taxRate * 1.1); // Christmas boost
             return taxRate;
-        }
-
-        public int CalculateNPCCount()
-        {
-            int npcCount = 0;
-            for (int i = 0; i < 200; i++)
-            {
-                if (Main.npc[i].active && !Main.npc[i].homeless && NPC.TypeToHeadIndex(Main.npc[i].type) > 0) npcCount++;
-            }
-            return npcCount;
         }
 
         public static readonly char[] validOpenBrackets = new char[] { '(', '[', '{' };
         public static readonly char[] validCloseBrackets = new char[] { ')', ']', '}' };
         public bool Interpret(string conditions)
         {
-            if (!conditions.Contains("(") && !conditions.Contains(")")) return InterpretGates(conditions);
-
             // 1st pass: make sure everything is valid
             Stack<int> bracketStack = new Stack<int>();
             for (int i = 0; i < conditions.Length; i++)
@@ -188,13 +166,17 @@ namespace BetterTaxes
                 switch (terms[1])
                 {
                     case "goblins":
+                    case "downedGoblins":
                         return NPC.downedGoblins;
                     case "frost":
                     case "frostLegion":
+                    case "downedFrost":
                         return NPC.downedFrost;
                     case "pirates":
+                    case "downedPirates":
                         return NPC.downedPirates;
                     case "martians":
+                    case "downedMartians":
                         return NPC.downedMartians;
                 }
                 throw new InvalidConfigException("Invalid condition \"" + terms[1] + "\" under list \"Invasion\"");
@@ -217,52 +199,7 @@ namespace BetterTaxes
                 }
 
                 // special case for calamity
-                if (chosen_list == "Calamity")
-                {
-                    return ModHandler.RunConditionByCalamity(chosen_condition);
-                }
-
-                // legacy system
-                if (!ModHandler.legacyMods.ContainsKey(chosen_list))
-                {
-                    return false;
-                }
-                else if (!ModHandler.mods.ContainsKey(chosen_list))
-                {
-                    ModHandler.mods.Add(chosen_list, ModLoader.GetMod(ModHandler.legacyMods[chosen_list][0]));
-                }
-
-                if (ModHandler.legacySynonyms.ContainsKey(chosen_condition)) chosen_condition = ModHandler.legacySynonyms[chosen_condition];
-                if (ModHandler.mods.ContainsKey(chosen_list) && ModHandler.mods[chosen_list] != null)
-                {
-                    ModWorld world = ModHandler.mods[chosen_list].GetModWorld(ModHandler.legacyMods[chosen_list][1]);
-                    if (ModHandler.legacyLists[chosen_list].Contains(chosen_condition)) return (bool)world.GetType().GetField(chosen_condition).GetValue(world);
-                    throw new InvalidConfigException("Invalid condition \"" + chosen_condition + "\" under list \"" + chosen_list + "\"");
-                }
-                return false;
-            }
-            else if (terms.Length == 3) // This probably shouldn't be used, it's much faster and neater for mods to use BetterTaxes's Mod.Call API. I only keep this here for backwards compatibility
-            {
-                if (invalidMods.ContainsKey(terms[0])) return false;
-                Mod customMod = ModLoader.GetMod(terms[0]);
-                if (customMod != null)
-                {
-                    ModWorld customWorld = customMod.GetModWorld(terms[1]);
-                    if (customWorld != null)
-                    {
-                        var thisField = customWorld.GetType().GetField(terms[2]);
-                        if (thisField != null) return (bool)thisField.GetValue(customWorld);
-                        throw new InvalidConfigException("Could not find field \"" + terms[2] + "\" in mod world \"" + terms[1] + "\" in mod \"" + terms[0] + "\"");
-                    }
-                    else
-                    {
-                        throw new InvalidConfigException("Could not find mod world \"" + terms[1] + "\" in mod \"" + terms[0] + "\"");
-                    }
-                }
-                else
-                {
-                    invalidMods.Add(terms[0], true);
-                }
+                if (chosen_list == "Calamity") return ModHandler.RunConditionByCalamity(chosen_condition);
                 return false;
             }
             throw new InvalidConfigException("Failed to parse key \"" + condition + "\"");

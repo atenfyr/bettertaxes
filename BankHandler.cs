@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Terraria;
 using Terraria.ID;
 
@@ -7,20 +6,24 @@ namespace BetterTaxes
 {
     public static class BankHandler
     {
-        public static bool LastCheckBank = false;
+        public static bool LastCheckBank = true;
         public static readonly ushort[] SafeTypes = new ushort[] { TileID.PiggyBank, TileID.Safes, TileID.DefendersForge };
 
         public static bool[] HasBank()
         {
-            if (Main.netMode != 1)
+            bool[] data = new bool[SafeTypes.Length];
+            if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 int collector = NPC.FindFirstNPC(NPCID.TaxCollector);
                 if (collector >= 0 && !Main.npc[collector].homeless)
                 {
-                    if (Main.npc[collector].homeTileX > 10 && Main.npc[collector].homeTileY > 10 && Main.npc[collector].homeTileX < Main.maxTilesX - 10 && Main.npc[collector].homeTileY < Main.maxTilesY) return HasBank(Main.npc[collector].homeTileX, Main.npc[collector].homeTileY - 1);
+                    if (Main.npc[collector].homeTileX > 10 && Main.npc[collector].homeTileY > 10 && Main.npc[collector].homeTileX < Main.maxTilesX - 10 && Main.npc[collector].homeTileY < Main.maxTilesY)
+                    {
+                        data = HasBank(Main.npc[collector].homeTileX, Main.npc[collector].homeTileY - 1);
+                    }
                 }
             }
-            return new bool[SafeTypes.Length];
+            return data;
         }
 
         public static bool[] HasBank(int x, int y)
@@ -34,7 +37,7 @@ namespace BetterTaxes
             }
             catch (Exception e)
             {
-                BetterTaxes.Instance.Logger.Warn("Failed to check the Tax Collector's house (please report): " + e.ToString());
+                BetterTaxes.Instance.Logger.Warn("Failed to check for the Tax Collector's house (please report): " + e.ToString());
                 return data;
             }
             if (!succeededRoomCheck) return data;
@@ -46,6 +49,7 @@ namespace BetterTaxes
             return data;
         }
 
+#pragma warning disable ChangeMagicNumberToID // Change magic numbers into appropriate ID values
         internal static void DoCoins(Chest bank, int i)
         {
             if (bank.item[i].stack != 100 || (bank.item[i].type != 71 && bank.item[i].type != 72 && bank.item[i].type != 73))
@@ -211,4 +215,5 @@ namespace BetterTaxes
             return true;
         }
     }
+#pragma warning restore ChangeMagicNumberToID // Change magic numbers into appropriate ID values
 }

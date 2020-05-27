@@ -10,11 +10,8 @@ namespace BetterTaxes
         {
             // Adding a brand new list with conditions
             betterTaxes.Call("AddList", "YourListName"); // redundant
-            betterTaxes.Call("AddKey", "YourListName", "YourCondition1", (Func<bool>)delegate(){return YourModWorld.downedYourBoss1;});
-            betterTaxes.Call("AddKey", "YourListName", "YourCondition2", (Func<bool>)delegate(){return YourModWorld.downedYourBoss2;});
-    
-            // Adding a statement to flexible config files
-            betterTaxes.Call("AddStatement", "YourListName.YourCondition1", 9999);
+            betterTaxes.Call("AddKey", "YourListName", "YourCondition1", (Func<bool>)delegate(){return YourModWorld.downedYourBoss1;}, Item.buyPrice(0, 10, 0, 0));
+            betterTaxes.Call("AddKey", "YourListName", "YourCondition2", (Func<bool>)delegate(){return YourModWorld.downedYourBoss2;}, Item.buyPrice(1, 0, 0, 0));
         }
     */
 
@@ -32,17 +29,11 @@ namespace BetterTaxes
         /// </summary>
         /// <param name="listName">The name of the list.</param>
         /// <param name="conditionName">The name of the condition.</param>
-        /// <param name="deleg">A delegate function which returns a boolean corresponding to whether or not condition is true.</param>
+        /// <param name="deleg">A delegate function which returns a boolean corresponding to whether or not the condition is true.</param>
+        /// <param name="recommended">The recommended value of this key in copper coins. If this is set to -1, the condition will not be shown to the user.</param>
         /// <returns>A boolean representing whether or not the operation succeeded.</returns>
-        public static bool AddKey(string listName, string conditionName, Func<bool> deleg) => ModHandler.NewCondition(listName, conditionName, deleg);
-
-        /// <summary>
-        /// Creates a new statement in the config file if its IsFlexible field is set to true.
-        /// </summary>
-        /// <param name="statement">The statement to add to the config file.</param>
-        /// <param name="rent">The amount of amount of money per NPC represented in copper coins to give per minute if the given statement is true.</param>
-        /// <returns>A boolean representing whether or not the operation succeeded.</returns>
-        public static bool AddStatement(string statement, int rent) => ModHandler.AddStatement(statement, rent);
+        public static bool AddKey(string listName, string conditionName, Func<bool> deleg, int recommended) => ModHandler.NewCondition(listName, conditionName, deleg, recommended);
+        public static bool AddKey(string listName, string conditionName, Func<bool> deleg) => ModHandler.NewCondition(listName, conditionName, deleg, 0);
 
         /// <summary>
         /// Gets the value of a requested field in the config file.
@@ -68,6 +59,9 @@ namespace BetterTaxes
         /// </summary>
         /// <returns>An integer equal to the amount of money per NPC represented in copper coins being given per minute.</returns>
         public static int GetPaycheck() => ModHandler.parser.CalculateRate();
+
+        [Obsolete("\"AddStatement\" has been replaced with the fourth parameter of \"AddKey\" as of BetterTaxes 2.4.0.")]
+        public static bool AddStatement(string statement, int rent) => ModHandler.AddRecommended(statement, rent);
 
         [Obsolete("The method \"Save\" was removed in BetterTaxes 2.0.0 due to the limitations of tModLoader v0.11's ModConfig class.")]
         public static bool Save() => false;

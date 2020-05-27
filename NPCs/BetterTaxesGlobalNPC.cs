@@ -31,8 +31,9 @@ namespace BetterTaxes.NPCs
         {
             var c = new ILCursor(il).Goto(0);
             if (!c.TryGotoNext(i => i.MatchLdcI4(NPCID.TaxCollector))) return;
+            if (!c.TryGotoNext(i => i.Match(Bne_Un))) return;
 
-            c.Index += 2;
+            c.Index++;
             ILLabel label = il.DefineLabel();
             c.EmitDelegate<Func<bool>>(() => TaxWorld.serverConfig.AddCustomDialog);
             c.Emit(Brfalse_S, label);
@@ -45,13 +46,12 @@ namespace BetterTaxes.NPCs
         {
             if (npc.type == NPCID.TaxCollector && !firstButton && TaxWorld.serverConfig.AddCustomDialog)
             {
-                Main.PlaySound(12, -1, -1, 1, 1f, 0f);
+                Main.PlaySound(SoundID.MenuTick, -1, -1, 1, 1f, 0f);
 
                 int rawTax = ModHandler.parser.CalculateRate();
-                int adjustedTax = rawTax * ModHandler.parser.CalculateNPCCount();
+                int adjustedTax = rawTax * UsefulThings.CalculateNPCCount();
                 double rate = TaxWorld.serverConfig.TimeBetweenPaychecks / Main.dayRate;
                 Main.npcChatText = Language.GetTextValue("Mods.BetterTaxes.Status.StatusMessage").Replace(@"%1", UsefulThings.ValueToCoinsWithColor(rawTax)).Replace(@"%2", UsefulThings.SecondsToHMSCasual((int)rate)).Replace(@"%3", UsefulThings.ValueToCoinsWithColor(adjustedTax * (3600 / rate)));
-                //Main.npcChatText = $"Well, rent's getting charged at {UsefulThings.ValueToCoinsWithColor(rawTax)} every {UsefulThings.SecondsToHMSCasual((int)rate)} per citizen, which is netting you {UsefulThings.ValueToCoinsWithColor(adjustedTax * (3600 / rate))} an hour. Does that answer your question?";
             }
         }
 

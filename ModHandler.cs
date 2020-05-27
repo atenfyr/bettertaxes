@@ -7,7 +7,7 @@ namespace BetterTaxes
 {
     public class ModHandler
     {
-        public static readonly Dictionary<string, string[]> legacyLists = new Dictionary<string, string[]> {
+        /*public static readonly Dictionary<string, string[]> legacyLists = new Dictionary<string, string[]> {
             { "Thorium", new string[7] { "downedRealityBreaker", "downedPatchwerk", "downedBloom", "downedStrider", "downedFallenBeholder", "downedLich", "downedDepthBoss" } }
         };
 
@@ -23,9 +23,8 @@ namespace BetterTaxes
 
         public static readonly Dictionary<string, string[]> legacyMods = new Dictionary<string, string[]> {
             { "Thorium", new string[2] { "ThoriumMod", "ThoriumWorld" } }
-        };
+        };*/
 
-        internal static Dictionary<string, Mod> mods = new Dictionary<string, Mod>();
         internal static Dictionary<string, Dictionary<string, Func<bool>>> delegates = new Dictionary<string, Dictionary<string, Func<bool>>>();
 
         public static GateParser parser;
@@ -38,19 +37,19 @@ namespace BetterTaxes
             return true;
         }
 
-        public static bool NewCondition(string listName, string conditionName, Func<bool> deleg)
+        public static bool NewCondition(string listName, string conditionName, Func<bool> deleg, int recommended)
         {
             if (!delegates.ContainsKey(listName)) NewList(listName);
             if (delegates[listName].ContainsKey(conditionName)) delegates[listName].Remove(conditionName);
             delegates[listName].Add(conditionName, deleg);
+            AddRecommended(listName + "." + conditionName, recommended);
             return true;
         }
 
-        public static bool AddStatement(string statement, int rent)
+        public static bool AddRecommended(string statement, int recommended)
         {
-            if (!TaxWorld.serverConfig.IsFlexible) return false;
             if (customStatements.ContainsKey(statement)) customStatements.Remove(statement);
-            customStatements.Add(statement, rent);
+            customStatements.Add(statement, recommended);
             return true;
         }
 
@@ -89,7 +88,6 @@ namespace BetterTaxes
         public ModHandler()
         {
             delegates = new Dictionary<string, Dictionary<string, Func<bool>>>();
-            mods = new Dictionary<string, Mod>();
             parser = new GateParser();
         }
     }

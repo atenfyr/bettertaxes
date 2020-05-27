@@ -1,5 +1,5 @@
 author = Atenfyr
-version = 2.3.2
+version = 2.4.0
 displayName = Better Taxes
 homepage = https://forums.terraria.org/index.php?threads/better-taxes.76764/
 hideCode = true

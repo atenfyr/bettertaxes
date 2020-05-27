@@ -1,5 +1,6 @@
 using System.IO;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace BetterTaxes
@@ -31,13 +32,15 @@ namespace BetterTaxes
 
         public override void PostUpdate()
         {
-            if (Main.netMode == 1) return;
-
-            if (Main.dayTime && hasSynced) hasSynced = false;
-            if (serverConfig.EnableAutoCollect && !hasSynced && !Main.dayTime && Main.time >= 15000 && Main.time < 16200) // 20-second updating window
+            if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                ClientBanksList = BankHandler.HasBank();
-                hasSynced = true;
+                if (Main.dayTime && hasSynced) hasSynced = false;
+                if (serverConfig.EnableAutoCollect && !hasSynced && !Main.dayTime && Main.time >= 15000 && Main.time < 16200)
+                {
+                    ClientBanksList = BankHandler.HasBank();
+                    if (Main.netMode == NetmodeID.Server) NetMessage.SendData(MessageID.WorldData);
+                    hasSynced = true;
+                }
             }
         }
     }

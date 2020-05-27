@@ -6,7 +6,7 @@ Better Taxes overhauls the Tax Collector to be more useful with some small chang
     * After defeating any mechanical boss, rent raises to 1 silver a minute per NPC, or 12.6 gold an hour with 21 NPCs.
     * After defeating Plantera, rent raises to 2 silver a minute per NPC, or 25.2 gold an hour with 21 NPCs.
     * After defeating Golem, rent raises to 5 silver a minute per NPC, or 63 gold an hour with 21 NPCs.
-    * After defeating the Moon Lord, rent raises to 10 silver a minute per NPC, or 1.2 platinum an hour with 21 NPCs.
+    * After defeating the Moon Lord, rent raises to 10 silver a minute per NPC, or 1.26 platinum an hour with 21 NPCs.
     * There are four extra tiers with Calamity installed:
         * After defeating Providence, rent raises to 12.5 silver a minute per NPC, or 1.65 platinum an hour with 22 NPCs.
         * After defeating the Devourer of Gods, rent raises to 15 silver a minute per NPC, or 1.98 platinum an hour with 22 NPCs.

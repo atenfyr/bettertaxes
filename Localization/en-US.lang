@@ -20,12 +20,12 @@ Status.NotALotOfMoney=not a lot of money
 Status.Unknown=something
 
 -- Config --
-Config.ClassicD=The classic Better Taxes experience with basic support for Calamity and Thorium.
+Config.ClassicD=The classic Better Taxes experience, with basic support for Calamity and Thorium.
 Config.VanillaD=Replicates the Tax Collector's behavior in vanilla Terraria.
 Config.TaxRatesD=Maps "statements" representing game progression to rent per NPC. See the GitHub page.
 Config.IsFlexibleD=Should this config file be subject to automatic changes made by this mod and other mods?
 Config.AddCustomDialogD=Should the new lines of dialog be added to the Tax Collector's dialog pool?
-Config.EnableAutoCollectD=Should the Tax Collector place his stored money into any personal storage tile in his room at midnight?
+Config.EnableAutoCollectD=Should the Tax Collector place his stored money into any personal storage item in his room at midnight?
 Config.TimeBetweenPaychecksD=The amount of time between updates of the Tax Collector's money storage.
 Config.MoneyCapD=The amount of money that the Tax Collector can hold at once.
 Config.ExpertModeBoostD=The amount to multiply tax rates by in an expert mode world.

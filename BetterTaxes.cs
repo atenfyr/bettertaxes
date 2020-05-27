@@ -67,11 +67,16 @@ namespace BetterTaxes
 
             return SecondsToHMS(num, zeroString);
         }
-    }
 
-    internal enum BetterTaxesMessageType : byte
-    {
-        ForceSetTaxes
+        public static int CalculateNPCCount()
+        {
+            int npcCount = 0;
+            for (int i = 0; i < 200; i++)
+            {
+                if (Main.npc[i].active && !Main.npc[i].homeless && NPC.TypeToHeadIndex(Main.npc[i].type) > 0) npcCount++;
+            }
+            return npcCount;
+        }
     }
 
     public class BetterTaxes : Mod
@@ -87,30 +92,6 @@ namespace BetterTaxes
             Properties = ModProperties.AutoLoadAll;
         }
 
-        public override void HandlePacket(BinaryReader reader, int whoAmI)
-        {
-            BetterTaxesMessageType msgType = (BetterTaxesMessageType)reader.ReadByte();
-            switch (msgType)
-            {
-                case BetterTaxesMessageType.ForceSetTaxes:
-                    int playerNum = reader.ReadInt32();
-                    int newTaxValue = reader.ReadInt32();
-                    Main.player[playerNum].taxMoney = newTaxValue;
-                    if (Main.netMode == 2)
-                    {
-                        var packet = GetPacket();
-                        packet.Write((byte)BetterTaxesMessageType.ForceSetTaxes);
-                        packet.Write(playerNum);
-                        packet.Write(newTaxValue);
-                        packet.Send(playerNum);
-                    }
-                    break;
-                default:
-                    Logger.WarnFormat("BetterTaxes.HandlePacket() warning: Unknown message type: {0}", msgType);
-                    break;
-            }
-        }
-
         public override object Call(params object[] args)
         {
             if (!(args[0] is string)) throw new ModSupportException("First parameter must be a method name");
@@ -119,7 +100,7 @@ namespace BetterTaxes
 
             MethodInfo func = typeof(BetterTaxesAPI).GetMethod(given_method, BindingFlags.Public | BindingFlags.Static, null, newArgs.Select(obj => obj.GetType()).ToArray(), null);
             var attr = (ObsoleteAttribute[])func.GetCustomAttributes(typeof(ObsoleteAttribute), false);
-            if (attr.Length > 0) throw new ModSupportException(attr[0].Message);
+            if (attr.Length > 0) Logger.Warn("Deprecated method warning: " + attr[0].Message);
             if (func != null) return func.Invoke(typeof(BetterTaxesAPI), newArgs);
             throw new ModSupportException("Could not find method \"" + given_method + "\" with the arguments specified");
         }
@@ -128,7 +109,6 @@ namespace BetterTaxes
         {
             Instance = this;
             new ModHandler();
-            herosMod = ModLoader.GetMod("HEROsMod");
         }
 
         public override void Unload()
@@ -138,13 +118,29 @@ namespace BetterTaxes
             ModHandler.calamityMod = null;
             ModHandler.parser = null;
             ModHandler.delegates = new Dictionary<string, Dictionary<string, Func<bool>>>();
-            ModHandler.mods = new Dictionary<string, Mod>();
             ModHandler.customStatements = new Dictionary<string, int>();
             ModHandler.hasCheckedForCalamity = false;
         }
 
         public override void PostSetupContent()
         {
+            // Thorium support
+            Mod thoriumMod = ModLoader.GetMod("ThoriumMod");
+            if (thoriumMod != null)
+            {
+                ModWorld thoriumWorld = thoriumMod.GetModWorld("ThoriumWorld");
+                Call("AddList", "Thorium");
+                Call("AddKey", "Thorium", "ragnarok", (Func<bool>)delegate () { return (bool)thoriumWorld.GetType().GetField("downedRealityBreaker").GetValue(thoriumWorld); });
+                Call("AddKey", "Thorium", "patchwerk", (Func<bool>)delegate () { return (bool)thoriumWorld.GetType().GetField("downedPatchwerk").GetValue(thoriumWorld); });
+                Call("AddKey", "Thorium", "bloom", (Func<bool>)delegate () { return (bool)thoriumWorld.GetType().GetField("downedBloom").GetValue(thoriumWorld); });
+                Call("AddKey", "Thorium", "strider", (Func<bool>)delegate () { return (bool)thoriumWorld.GetType().GetField("downedStrider").GetValue(thoriumWorld); });
+                Call("AddKey", "Thorium", "coznix", (Func<bool>)delegate () { return (bool)thoriumWorld.GetType().GetField("downedFallenBeholder").GetValue(thoriumWorld); });
+                Call("AddKey", "Thorium", "lich", (Func<bool>)delegate () { return (bool)thoriumWorld.GetType().GetField("downedLich").GetValue(thoriumWorld); });
+                Call("AddKey", "Thorium", "abyssion", (Func<bool>)delegate () { return (bool)thoriumWorld.GetType().GetField("downedDepthBoss").GetValue(thoriumWorld); });
+            }
+
+            // HERO's Mod support
+            herosMod = ModLoader.GetMod("HEROsMod");
             try
             {
                 if (herosMod != null)
