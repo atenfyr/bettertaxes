@@ -270,7 +270,7 @@ namespace BetterTaxes
         {
             Dictionary<string, SpecialInt> result = StaticConstants.TaxRatesDefaults.ToDictionary(i => i.Key, i => i.Value);
 
-            // Here we go ahead and put every single new field we know about into the config and their recommended values, if they exist
+            // Here we go ahead and put every single new field we know about into the config with their recommended values, if they exist (because otherwise how are you supposed to know about them?)
             foreach (KeyValuePair<string, Dictionary<string, Func<bool>>> entry in ModHandler.delegates)
             {
                 if (entry.Key == "Calamity" || entry.Key == "Thorium") continue; // We already have hardcoded recommended values for these lists
@@ -278,7 +278,7 @@ namespace BetterTaxes
                 {
                     string statement = entry.Key + "." + entry2.Key;
                     ModHandler.customStatements.TryGetValue(statement, out int determinedValue);
-                    if (determinedValue > -1) result.Add(statement, determinedValue);
+                    if (!result.ContainsKey(statement) && determinedValue > -1) result.Add(statement, determinedValue);
                 }
             }
 
@@ -291,6 +291,7 @@ namespace BetterTaxes
             if (TaxRates == null || TaxRates.Count == 0) TaxRates = GetTaxDefaults();
             if (MoneyCap > 2000000000) MoneyCap = 2000000000;
 
+            // We always sort the config file so that it follows the actual progression of the game, just looks nice
             var sortedResults = from entry in TaxRates orderby entry.Value ascending select entry;
             TaxRates = sortedResults.ToDictionary(pair => pair.Key, pair => pair.Value);
         }

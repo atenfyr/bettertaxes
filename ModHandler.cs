@@ -7,24 +7,6 @@ namespace BetterTaxes
 {
     public class ModHandler
     {
-        /*public static readonly Dictionary<string, string[]> legacyLists = new Dictionary<string, string[]> {
-            { "Thorium", new string[7] { "downedRealityBreaker", "downedPatchwerk", "downedBloom", "downedStrider", "downedFallenBeholder", "downedLich", "downedDepthBoss" } }
-        };
-
-        public static readonly Dictionary<string, string> legacySynonyms = new Dictionary<string, string> {
-            { "ragnarok", "downedRealityBreaker" },
-            { "patchwerk", "downedPatchwerk" },
-            { "bloom", "downedBloom" },
-            { "strider", "downedStrider" },
-            { "coznix", "downedFallenBeholder" },
-            { "lich", "downedLich" },
-            { "abyssion", "downedDepthBoss" }
-        };
-
-        public static readonly Dictionary<string, string[]> legacyMods = new Dictionary<string, string[]> {
-            { "Thorium", new string[2] { "ThoriumMod", "ThoriumWorld" } }
-        };*/
-
         internal static Dictionary<string, Dictionary<string, Func<bool>>> delegates = new Dictionary<string, Dictionary<string, Func<bool>>>();
 
         public static GateParser parser;

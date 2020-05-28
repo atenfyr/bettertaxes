@@ -14,7 +14,7 @@ namespace BetterTaxes
             {
                 if (entry.Value > taxRate && Interpret(entry.Key)) taxRate = entry.Value;
             }
-            if (taxRate == -1) throw new InvalidConfigException("No statement evaluated to true. To avoid this error, you should map the statement \"Base.always\" to a value to fall back on");
+            if (taxRate < 1) throw new InvalidConfigException("No statement evaluated to true. To avoid this error, you should map the statement \"Base.always\" to a positive value to fall back on");
 
             if (Main.expertMode && TaxWorld.serverConfig.ExpertModeBoost >= 0) taxRate = (int)(taxRate * TaxWorld.serverConfig.ExpertModeBoost); // Expert mode boost
             if (Main.xMas) taxRate = (int)(taxRate * 1.1); // Christmas boost

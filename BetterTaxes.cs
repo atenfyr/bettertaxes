@@ -130,13 +130,13 @@ namespace BetterTaxes
             {
                 ModWorld thoriumWorld = thoriumMod.GetModWorld("ThoriumWorld");
                 Call("AddList", "Thorium");
-                Call("AddKey", "Thorium", "ragnarok", (Func<bool>)delegate () { return (bool)thoriumWorld.GetType().GetField("downedRealityBreaker").GetValue(thoriumWorld); });
-                Call("AddKey", "Thorium", "patchwerk", (Func<bool>)delegate () { return (bool)thoriumWorld.GetType().GetField("downedPatchwerk").GetValue(thoriumWorld); });
-                Call("AddKey", "Thorium", "bloom", (Func<bool>)delegate () { return (bool)thoriumWorld.GetType().GetField("downedBloom").GetValue(thoriumWorld); });
-                Call("AddKey", "Thorium", "strider", (Func<bool>)delegate () { return (bool)thoriumWorld.GetType().GetField("downedStrider").GetValue(thoriumWorld); });
-                Call("AddKey", "Thorium", "coznix", (Func<bool>)delegate () { return (bool)thoriumWorld.GetType().GetField("downedFallenBeholder").GetValue(thoriumWorld); });
-                Call("AddKey", "Thorium", "lich", (Func<bool>)delegate () { return (bool)thoriumWorld.GetType().GetField("downedLich").GetValue(thoriumWorld); });
-                Call("AddKey", "Thorium", "abyssion", (Func<bool>)delegate () { return (bool)thoriumWorld.GetType().GetField("downedDepthBoss").GetValue(thoriumWorld); });
+                Call("AddKey", "Thorium", "ragnarok", (Func<bool>)delegate () { return (bool)thoriumWorld.GetType().GetField("downedRealityBreaker").GetValue(thoriumWorld); }, -1);
+                Call("AddKey", "Thorium", "patchwerk", (Func<bool>)delegate () { return (bool)thoriumWorld.GetType().GetField("downedPatchwerk").GetValue(thoriumWorld); }, -1);
+                Call("AddKey", "Thorium", "bloom", (Func<bool>)delegate () { return (bool)thoriumWorld.GetType().GetField("downedBloom").GetValue(thoriumWorld); }, -1);
+                Call("AddKey", "Thorium", "strider", (Func<bool>)delegate () { return (bool)thoriumWorld.GetType().GetField("downedStrider").GetValue(thoriumWorld); }, -1);
+                Call("AddKey", "Thorium", "coznix", (Func<bool>)delegate () { return (bool)thoriumWorld.GetType().GetField("downedFallenBeholder").GetValue(thoriumWorld); }, -1);
+                Call("AddKey", "Thorium", "lich", (Func<bool>)delegate () { return (bool)thoriumWorld.GetType().GetField("downedLich").GetValue(thoriumWorld); }, -1);
+                Call("AddKey", "Thorium", "abyssion", (Func<bool>)delegate () { return (bool)thoriumWorld.GetType().GetField("downedDepthBoss").GetValue(thoriumWorld); }, -1);
             }
 
             // HERO's Mod support
