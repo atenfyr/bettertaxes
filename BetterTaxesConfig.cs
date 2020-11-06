@@ -116,7 +116,7 @@ namespace BetterTaxes
             {"Base.golem", 500},
             {"Base.moonlord", 1000},
             {"Calamity.providence", 1250},
-            {"Thorium.ragnarok", 1500},
+            {"Thorium.primordials", 1500},
             {"Calamity.dog", 1500},
             {"Calamity.yharon", 2500},
             {"Calamity.scal", 5000},
@@ -264,6 +264,11 @@ namespace BetterTaxes
             var clone = (BetterTaxesConfig)base.Clone();
             clone.TaxRates = TaxRates?.ToDictionary(i => i.Key, i => i.Value);
             return clone;
+        }
+
+        public bool ShouldSerializeTaxRates()
+        {
+            return !ClassicPreset;
         }
 
         public Dictionary<string, SpecialInt> GetTaxDefaults()

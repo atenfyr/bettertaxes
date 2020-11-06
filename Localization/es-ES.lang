@@ -2,9 +2,9 @@ Esta traducción no es perfecta
 
 -- Diálogo --
 Dialog.0=¿Crees que puedo cobrar alquiler a la gente sin hogar? ¡Bah!
-Dialog.1=¡Nuestros ingresos son cero, gracias a tu maltrato a tus propios ciudadanos! ¡Bah!
+Dialog.1=¡Nuestros ingresos son cero, gracias al maltrato de tus propios ciudadanos! ¡Bah!
 Dialog.2=¡Bah! ¡Me encantaría tomar todo este dinero extra!
-Dialog.3=¡Más dinero para nosotros dos, gracias a tu asesinato en masa a "monstruos"!
+Dialog.3=¡Más dinero para nosotros, gracias a tu asesinato en masa de "monstruos"!
 Dialog.4=Si quieres cometer genocidio, el botín de los "monstruos poderosos" contribuirá lo suficiente con la economía para que pueda extorsionar más dinero de tus ciudadanos.
 Dialog.5=¿Por qué necesitas tu dinero tan a menudo?
 Dialog.6=Si me darías algo que puede almacenar tu dinero, como una alcancía, ¡ya no tendrías que hablar conmigo!
@@ -23,9 +23,8 @@ Status.Unknown=algo
 Config.ClassicD=La experiencia clásica de Better Taxes con soporte básico para Calamity y Thorium.
 Config.VanillaD=Devuelve al funcionamiento del recaudador de impuestos en Terraria vainilla.
 Config.TaxRatesD=Conecta "statements" que representan progresión del juego con el alquilar por PNJ.
-Config.IsFlexibleD=¿Otros mods pueden cambiar cosas en este fichero de configuración?
 Config.AddCustomDialogD=¿Las líneas nuevas del diálogo están incluido?
-Config.EnableAutoCollectD=¿El recaudador de impuestos pone los impuestos en una Alcancía, Caja Fuerte o Forja del Defensor en su cuarto a medianoche?
+Config.EnableAutoCollectD=¿El recaudador de impuestos pone los impuestos en una Alcancía, Caja Fuerte o Forja del Defensor en su cuarto cada medianoche?
 Config.TimeBetweenPaychecksD=La cantidad de tiempo entre las actualizaciones del almacenamiento de impuestos.
 Config.MoneyCapD=La cantidad de dinero que el recaudador de impuestos puede tener a la vez.
 Config.ExpertModeBoostD=El valor por el cual multiplicar las tarifas de impuesto en un mundo experto.

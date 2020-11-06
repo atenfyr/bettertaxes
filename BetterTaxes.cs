@@ -130,6 +130,7 @@ namespace BetterTaxes
             {
                 ModWorld thoriumWorld = thoriumMod.GetModWorld("ThoriumWorld");
                 Call("AddList", "Thorium");
+                Call("AddKey", "Thorium", "primordials", (Func<bool>)delegate () { return (bool)thoriumWorld.GetType().GetField("downedRealityBreaker").GetValue(thoriumWorld); }, -1);
                 Call("AddKey", "Thorium", "ragnarok", (Func<bool>)delegate () { return (bool)thoriumWorld.GetType().GetField("downedRealityBreaker").GetValue(thoriumWorld); }, -1);
                 Call("AddKey", "Thorium", "patchwerk", (Func<bool>)delegate () { return (bool)thoriumWorld.GetType().GetField("downedPatchwerk").GetValue(thoriumWorld); }, -1);
                 Call("AddKey", "Thorium", "bloom", (Func<bool>)delegate () { return (bool)thoriumWorld.GetType().GetField("downedBloom").GetValue(thoriumWorld); }, -1);
