@@ -89,7 +89,7 @@ namespace BetterTaxes
 
         public BetterTaxes()
         {
-            Properties = ModProperties.AutoLoadAll;
+            Properties/* tModPorter Note: Removed. Instead, assign the properties directly (ContentAutoloadingEnabled, GoreAutoloadingEnabled, MusicAutoloadingEnabled, and BackgroundAutoloadingEnabled) */ = ModProperties.AutoLoadAll;
         }
 
         public override object Call(params object[] args)
@@ -128,7 +128,7 @@ namespace BetterTaxes
             Mod thoriumMod = ModLoader.GetMod("ThoriumMod");
             if (thoriumMod != null)
             {
-                ModWorld thoriumWorld = thoriumMod.GetModWorld("ThoriumWorld");
+                ModSystem thoriumWorld = thoriumMod.GetModWorld("ThoriumWorld");
                 Call("AddList", "Thorium");
                 Call("AddKey", "Thorium", "primordials", (Func<bool>)delegate () { return (bool)thoriumWorld.GetType().GetField("downedRealityBreaker").GetValue(thoriumWorld); }, -1);
                 Call("AddKey", "Thorium", "ragnarok", (Func<bool>)delegate () { return (bool)thoriumWorld.GetType().GetField("downedRealityBreaker").GetValue(thoriumWorld); }, -1);

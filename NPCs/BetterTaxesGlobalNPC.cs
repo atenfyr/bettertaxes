@@ -1,7 +1,9 @@
+using Microsoft.Xna.Framework;
 using MonoMod.Cil;
 using System;
 using System.Linq;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -21,10 +23,10 @@ namespace BetterTaxes.NPCs
 
     public class BetterTaxesGlobalNPC : GlobalNPC
     {
-        public override bool Autoload(ref string name)
+        public override bool IsLoadingEnabled(Mod mod)
         {
             IL.Terraria.Main.GUIChatDrawInner += HookAdjustButton;
-            return base.Autoload(ref name);
+            return base.IsLoadingEnabled(ref name);
         }
 
         private void HookAdjustButton(ILContext il)
@@ -46,7 +48,7 @@ namespace BetterTaxes.NPCs
         {
             if (npc.type == NPCID.TaxCollector && !firstButton && TaxWorld.serverConfig.AddCustomDialog)
             {
-                Main.PlaySound(SoundID.MenuTick, -1, -1, 1, 1f, 0f);
+                SoundEngine.PlaySound(SoundID.MenuTick, new Vector2(-1, -1));
 
                 int rawTax = ModHandler.parser.CalculateRate();
                 int adjustedTax = rawTax * UsefulThings.CalculateNPCCount();
