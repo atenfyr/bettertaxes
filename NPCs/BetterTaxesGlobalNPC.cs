@@ -25,37 +25,9 @@ namespace BetterTaxes.NPCs
     {
         public override bool IsLoadingEnabled(Mod mod) => false;
 
-        private void HookAdjustButton(ILContext il)
-        {
-            var c = new ILCursor(il).Goto(0);
-            if (!c.TryGotoNext(i => i.MatchLdcI4(NPCID.TaxCollector))) return;
-            if (!c.TryGotoNext(i => i.Match(Bne_Un))) return;
-
-            c.Index++;
-            ILLabel label = il.DefineLabel();
-            c.EmitDelegate<Func<bool>>(() => TaxWorld.serverConfig.AddCustomDialog);
-            c.Emit(Brfalse_S, label);
-            c.EmitDelegate<Func<string>>(() => Language.GetTextValue("Mods.BetterTaxes.Status.Status"));
-            c.Emit(Stloc_S, (byte)10);
-            c.MarkLabel(label);
-        }
-
-        public override void OnChatButtonClicked(NPC npc, bool firstButton)
-        {
-            if (npc.type == NPCID.TaxCollector && !firstButton && TaxWorld.serverConfig.AddCustomDialog)
-            {
-                SoundEngine.PlaySound(SoundID.MenuTick, new Vector2(-1, -1));
-
-                int rawTax = ModHandler.parser.CalculateRate();
-                int adjustedTax = rawTax * UsefulThings.CalculateNPCCount();
-                double rate = TaxWorld.serverConfig.TimeBetweenPaychecks / Main.dayRate;
-                Main.npcChatText = Language.GetTextValue("Mods.BetterTaxes.Status.StatusMessage").Replace(@"%1", UsefulThings.ValueToCoinsWithColor(rawTax)).Replace(@"%2", UsefulThings.SecondsToHMSCasual((int)rate)).Replace(@"%3", UsefulThings.ValueToCoinsWithColor(adjustedTax * (3600 / rate)));
-            }
-        }
-
         public override void GetChat(NPC npc, ref string chat)
         {
-            if (npc.type == NPCID.TaxCollector && TaxWorld.serverConfig.AddCustomDialog)
+            if (npc.type == NPCID.TaxCollector)
             {
                 int taxAmount = Main.LocalPlayer.taxMoney;
 

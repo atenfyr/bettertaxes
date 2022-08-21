@@ -13,7 +13,7 @@ Mods: {
 		}
 
 		Status: {
-			StatusMessage: Pues, cobramos el alquiler por %1 cada %2 y estamos embolsando %3 cada hora. ¿Eso contesta la pregunta?
+			StatusMessage: Pues, cobramos el alquiler por %1 cada %2 para %4 ciudadanos y estamos embolsando %3 cada hora. ¿Eso contesta la pregunta?
 			Status: Estado
 			ALotOfMoney: mucho dinero
 			NotALotOfMoney: no mucho dinero

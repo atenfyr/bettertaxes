@@ -13,7 +13,7 @@ Mods: {
 		}
 
 		Status: {
-			StatusMessage: Well, rent's getting charged at %1 every %2 per citizen, which is netting you %3 an hour. Does that answer your question?
+			StatusMessage: Well, rent's getting charged at %1 every %2 for %4 citizens, which is netting you %3 an hour. Does that answer your question?
 			Status: Status
 			ALotOfMoney: a lot of money
 			NotALotOfMoney: not a lot of money
