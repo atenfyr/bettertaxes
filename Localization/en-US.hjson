@@ -1,0 +1,45 @@
+Mods: {
+	BetterTaxes: {
+		Dialog: {
+			0: Do you expect me to charge the homeless rent? Bah!
+			1: Our income right now is zero, all thanks to your mistreatment of your own citizens! Bah!
+			2: Bah! I've half a mind to keep all this extra coin for myself!
+			3: More money for the both of us, thanks to your mass murder of "monsters!"
+			4: If you're feeling genocidal, the loot some of those "powerful monsters" offer might contribute to the economy enough for me to extort more money from your citizens.
+			5: How come you expect your money so often?
+			6: If you were to give me something to put your coin into, like a piggy bank, you wouldn't have to talk to me anymore!
+			7: You would never harvest my soul, would you?
+			8: The Christmas season has always been excellent for consumerism! I'd reckon that the boosted economy will give us some extra cash.
+		}
+
+		Status: {
+			StatusMessage: Well, rent's getting charged at %1 every %2 per citizen, which is netting you %3 an hour. Does that answer your question?
+			Status: Status
+			ALotOfMoney: a lot of money
+			NotALotOfMoney: not a lot of money
+			Unknown: something
+		}
+
+		Config: {
+			ClassicD: The classic Better Taxes experience, with basic support for Calamity and Thorium.
+			VanillaD: Replicates the Tax Collector's behavior in vanilla Terraria.
+			TaxRatesD: Maps "statements" representing game progression to rent per NPC. See the GitHub page.
+			AddCustomDialogD: Should the new lines of dialog be added to the Tax Collector's dialog pool?
+			EnableAutoCollectD: Should the Tax Collector place his stored money into any personal storage item in his room at midnight?
+			TimeBetweenPaychecksD: The amount of time between updates of the Tax Collector's money storage.
+			MoneyCapD: The amount of money that the Tax Collector can hold at once.
+			ExpertModeBoostD: The amount to multiply tax rates by in an expert mode world.
+			NoPerms: You can't perform this action because you don't have the "%1" permission.
+			Rent: rent
+			Hour: hour
+			Hours: hours
+			Minute: minute
+			Minutes: minutes
+			Second: second
+			Seconds: seconds
+			Tick: tick
+			Unlimited: Unlimited
+			Disabled: Disabled
+		}
+	}
+}

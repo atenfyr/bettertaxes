@@ -1,0 +1,45 @@
+Mods: {
+	BetterTaxes: {
+		Dialog: {
+			0: ¿Crees que puedo cobrar alquiler a la gente sin hogar? ¡Bah!
+			1: ¡Nuestros ingresos son cero, gracias al maltrato de tus propios ciudadanos! ¡Bah!
+			2: ¡Bah! ¡Me encantaría tomar todo este dinero extra!
+			3: ¡Más dinero para nosotros, gracias a tu asesinato en masa de "monstruos"!
+			4: Si quieres cometer genocidio, el botín de los "monstruos poderosos" contribuirá lo suficiente con la economía para que pueda extorsionar más dinero de tus ciudadanos.
+			5: ¿Por qué necesitas tu dinero tan a menudo?
+			6: Si me darías algo que puede almacenar tu dinero, como una alcancía, ¡ya no tendrías que hablar conmigo!
+			7: Nunca cosecharás mi alma, ¿verdad?
+			8: ¡La temporada navideña siempre ha sido excelente para el consumismo! Creo que la economía estimulada nos dará un poco dinero extra.
+		}
+
+		Status: {
+			StatusMessage: Pues, cobramos el alquiler por %1 cada %2 y estamos embolsando %3 cada hora. ¿Eso contesta la pregunta?
+			Status: Estado
+			ALotOfMoney: mucho dinero
+			NotALotOfMoney: no mucho dinero
+			Unknown: algo
+		}
+
+		Config: {
+			ClassicD: La experiencia clásica de Better Taxes con soporte básico para Calamity y Thorium.
+			VanillaD: Devuelve al funcionamiento del recaudador de impuestos en Terraria vainilla.
+			TaxRatesD: Conecta "statements" que representan progresión del juego con el alquilar por PNJ.
+			AddCustomDialogD: ¿Las líneas nuevas del diálogo están incluido?
+			EnableAutoCollectD: ¿El recaudador de impuestos pone los impuestos en una Alcancía, Caja Fuerte o Forja del Defensor en su cuarto cada medianoche?
+			TimeBetweenPaychecksD: La cantidad de tiempo entre las actualizaciones del almacenamiento de impuestos.
+			MoneyCapD: La cantidad de dinero que el recaudador de impuestos puede tener a la vez.
+			ExpertModeBoostD: El valor por el cual multiplicar las tarifas de impuesto en un mundo experto.
+			NoPerms: No puedes realizar esta acción porque no tienes el permiso "%1".
+			Rent: alquiler
+			Hour: hora
+			Hours: horas
+			Minute: minuto
+			Minutes: minutos
+			Second: segundo
+			Seconds: segundos
+			Tick: tic
+			Unlimited: Ilimitado
+			Disabled: Deshabilitado
+		}
+	}
+}
