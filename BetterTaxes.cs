@@ -127,6 +127,7 @@ namespace BetterTaxes
 
         public override void PostSetupContent()
         {
+            /*
             // Thorium support
             Mod thoriumMod = ModLoader.GetMod("ThoriumMod");
             if (thoriumMod != null)
@@ -141,7 +142,7 @@ namespace BetterTaxes
                 Call("AddKey", "Thorium", "coznix", (Func<bool>)delegate () { return (bool)thoriumWorld.GetType().GetField("downedFallenBeholder").GetValue(thoriumWorld); }, -1);
                 Call("AddKey", "Thorium", "lich", (Func<bool>)delegate () { return (bool)thoriumWorld.GetType().GetField("downedLich").GetValue(thoriumWorld); }, -1);
                 Call("AddKey", "Thorium", "abyssion", (Func<bool>)delegate () { return (bool)thoriumWorld.GetType().GetField("downedDepthBoss").GetValue(thoriumWorld); }, -1);
-            }
+            }*/
 
             // HERO's Mod support
             herosMod = ModLoader.GetMod("HEROsMod");
