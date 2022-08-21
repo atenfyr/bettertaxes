@@ -68,7 +68,7 @@ namespace BetterTaxes.NPCs
                     if (Main.npc[i].homeless) homelessNpcCount++;
                 }
 
-                if (Main.rand.Next(2) == 0)
+                if (Main.rand.NextBool(2))
                 {
                     bool hasChosenDialog = false;
                     while (!hasChosenDialog)
