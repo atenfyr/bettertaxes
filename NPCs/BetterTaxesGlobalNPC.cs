@@ -64,7 +64,7 @@ namespace BetterTaxes.NPCs
                 for (int i = 0; i < 200; i++)
                 {
                     if (DialogUtils.permanentlyHomelessNPCs.Contains(Main.npc[i].type)) continue;
-                    if (Main.npc[i].active && NPC.TypeToHeadIndex(Main.npc[i].type) > 0) npcCount++;
+                    if (Main.npc[i].active && Main.npc[i].type > NPCID.None) npcCount++;
                     if (Main.npc[i].homeless) homelessNpcCount++;
                 }
 
