@@ -41,7 +41,7 @@ namespace BetterTaxes
         {
             if (calamityMod == null && !hasCheckedForCalamity)
             {
-                // calamityMod = ModLoader.GetMod("CalamityMod");
+                calamityMod = ModLoader.GetMod("CalamityMod");
                 hasCheckedForCalamity = true;
             }
             if (calamityMod == null) return false;
