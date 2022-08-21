@@ -6,11 +6,7 @@ namespace BetterTaxes
 {
     public class TaxPlayer : ModPlayer
     {
-        public override bool IsLoadingEnabled(Mod mod)
-        {
-            On.Terraria.Player.CollectTaxes += HookAdjustTaxes;
-            return base.IsLoadingEnabled(ref name);
-        }
+        public override bool IsLoadingEnabled(Mod mod) => false;
 
         private void HookAdjustTaxes(On.Terraria.Player.orig_CollectTaxes orig, Player self)
         {

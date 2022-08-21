@@ -23,11 +23,7 @@ namespace BetterTaxes.NPCs
 
     public class BetterTaxesGlobalNPC : GlobalNPC
     {
-        public override bool IsLoadingEnabled(Mod mod)
-        {
-            IL.Terraria.Main.GUIChatDrawInner += HookAdjustButton;
-            return base.IsLoadingEnabled(ref name);
-        }
+        public override bool IsLoadingEnabled(Mod mod) => false;
 
         private void HookAdjustButton(ILContext il)
         {
