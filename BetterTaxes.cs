@@ -89,7 +89,10 @@ namespace BetterTaxes
 
         public BetterTaxes()
         {
-            Properties/* tModPorter Note: Removed. Instead, assign the properties directly (ContentAutoloadingEnabled, GoreAutoloadingEnabled, MusicAutoloadingEnabled, and BackgroundAutoloadingEnabled) */ = ModProperties.AutoLoadAll;
+            ContentAutoloadingEnabled = true;
+            GoreAutoloadingEnabled = true;
+            MusicAutoloadingEnabled = true;
+            BackgroundAutoloadingEnabled = true;
         }
 
         public override object Call(params object[] args)
