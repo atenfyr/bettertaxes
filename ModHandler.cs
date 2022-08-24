@@ -43,21 +43,6 @@ namespace BetterTaxes
                 calamityMod = ModLoader.GetMod("CalamityMod");
                 if ((bool)calamityMod.Call("Downed", condition)) return true;
                 if ((bool)calamityMod.Call("Difficulty", condition)) return true;
-
-                // backwards compatibility
-                switch (condition)
-                {
-                    case "downedProvidence":
-                        return RunConditionByCalamity("providence");
-                    case "downedDoG":
-                        return RunConditionByCalamity("devourerofgods");
-                    case "downedYharon":
-                        return RunConditionByCalamity("yharon");
-                    case "downedSCal":
-                        return RunConditionByCalamity("supremecalamitas");
-                    case "revenge":
-                        return RunConditionByCalamity("revengeance");
-                }
             }
             return false;
         }
