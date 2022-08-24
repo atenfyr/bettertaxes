@@ -29,6 +29,7 @@ Mods: {
 			TimeBetweenPaychecksD: La cantidad de tiempo entre las actualizaciones del almacenamiento de impuestos.
 			MoneyCapD: La cantidad de dinero que el recaudador de impuestos puede tener a la vez.
 			ExpertModeBoostD: El valor por el cual multiplicar las tarifas de impuesto en un mundo experto.
+			MasterModeBoostD: El valor por el cual multiplicar las tarifas de impuesto en un mundo maestro.
 			NoPerms: No puedes realizar esta acción porque no tienes el permiso "%1".
 			Rent: alquiler
 			Hour: hora

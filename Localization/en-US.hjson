@@ -29,6 +29,7 @@ Mods: {
 			TimeBetweenPaychecksD: The amount of time between updates of the Tax Collector's money storage.
 			MoneyCapD: The amount of money that the Tax Collector can hold at once.
 			ExpertModeBoostD: The amount to multiply tax rates by in an expert mode world.
+			MasterModeBoostD: The amount to multiply tax rates by in a master mode world.
 			NoPerms: You can't perform this action because you don't have the "%1" permission.
 			Rent: rent
 			Hour: hour
