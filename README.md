@@ -16,5 +16,5 @@ Better Taxes overhauls the Tax Collector to be more useful with some small chang
     * If expert mode is enabled, the Tax Collector will give 1.5x the amount of money specified above.
     * If master mode is enabled, the Tax Collector will give 2.0x the amount of money specified above.
 * Adds a config file to modify the above values as well as the paycheck rate and money cap.
-* Adds a system in the config to add custom rent values for mods. See [the wiki](https://github.com/atenfyr/bettertaxes/wiki) for more information.
+* Adds a system in the config to add custom rent values for mods. See [the wiki](https://github.com/nolongerlucky/bettertaxes/wiki) for more information.
 * Adds a few extra things the Tax Collector can say.
