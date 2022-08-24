@@ -18,7 +18,13 @@ internal class StatusButton : ModSystem {
                         int rawTax = ModHandler.parser.CalculateRate();
                         int adjustedTax = rawTax * UsefulThings.CalculateNPCCount();
                         double rate = TaxWorld.serverConfig.TimeBetweenPaychecks / Main.dayRate;
-                        Main.npcChatText = Language.GetTextValue("Mods.BetterTaxes.Status.StatusMessage").Replace(@"%1", UsefulThings.ValueToCoinsWithColor(rawTax)).Replace(@"%2", UsefulThings.SecondsToHMSCasual((int)rate)).Replace(@"%3", UsefulThings.ValueToCoinsWithColor(adjustedTax * (3600 / rate))).Replace(@"%4", UsefulThings.CalculateNPCCount().ToString()).Replace(@"%5", UsefulThings.CalculateNPCCount() > 1 ? "s" : "");
+
+                        Main.npcChatText = Language.GetTextValue("Mods.BetterTaxes.Status.StatusMessage").
+                        Replace(@"%1", UsefulThings.ValueToCoinsWithColor(rawTax)).
+                        Replace(@"%2", UsefulThings.SecondsToHMSCasual((int)rate)).
+                        Replace(@"%3", UsefulThings.ValueToCoinsWithColor(adjustedTax * (3600 / rate))).
+                        Replace(@"%4", UsefulThings.CalculateNPCCount().ToString()).
+                        Replace(@"%5", UsefulThings.CalculateNPCCount() > 1 ? "s" : "");
                     }
                 }
             );
