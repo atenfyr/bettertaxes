@@ -87,6 +87,7 @@ namespace BetterTaxes
         internal static BetterTaxes Instance;
         internal Mod herosMod;
         internal static bool calamityLoaded;
+        internal static bool herosLoaded;
 
         public BetterTaxes()
         {
@@ -113,7 +114,8 @@ namespace BetterTaxes
         {
             Instance = this;
             new ModHandler();
-            calamityLoaded = ModLoader.TryGetMod("CalamityMod", out Mod mod);
+            calamityLoaded = ModLoader.TryGetMod("CalamityMod", out Mod CalamityMod);
+            herosLoaded = ModLoader.TryGetMod("HEROsMod", out Mod HEROsMod);
         }
 
         public override void Unload()
@@ -121,6 +123,7 @@ namespace BetterTaxes
             Instance = null;
             TaxWorld.serverConfig = null;
             ModHandler.calamityMod = null;
+            herosMod = null;
             ModHandler.parser = null;
             ModHandler.delegates = new Dictionary<string, Dictionary<string, Func<bool>>>();
             ModHandler.customStatements = new Dictionary<string, int>();
@@ -146,14 +149,11 @@ namespace BetterTaxes
             }*/
 
             // HERO's Mod support
-            herosMod = ModLoader.GetMod("HEROsMod");
-            try
-            {
-                if (herosMod != null)
-                {
-                    HerosIntegration(herosMod);
-                }
+            if (herosLoaded)
+            try {
+                HerosIntegration(ModLoader.GetMod("HEROsMod"));
             }
+            
             catch (Exception ex)
             {
                 Logger.Warn("BetterTaxes.PostSetupContent() error: " + ex.StackTrace + ex.Message);
