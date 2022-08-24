@@ -16,7 +16,12 @@ namespace BetterTaxes
             }
             if (taxRate < 1) throw new InvalidConfigException("No statement evaluated to true. To avoid this error, you should map the statement \"Base.always\" to a positive value to fall back on");
 
-            if (Main.expertMode && TaxWorld.serverConfig.ExpertModeBoost >= 0) taxRate = (int)(taxRate * TaxWorld.serverConfig.ExpertModeBoost); // Expert mode boost
+            float boost;
+            if (Main.masterMode && TaxWorld.serverConfig.MasterModeBoost >= 0) boost = TaxWorld.serverConfig.MasterModeBoost; // Master mode boost
+            else if (Main.expertMode && TaxWorld.serverConfig.ExpertModeBoost >= 0) boost = TaxWorld.serverConfig.ExpertModeBoost; // Expert mode boost
+            else boost = 1f;
+            taxRate = (int)(taxRate * boost);
+
             if (Main.xMas) taxRate = (int)(taxRate * 1.1); // Christmas boost
             return taxRate;
         }

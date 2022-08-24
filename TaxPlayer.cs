@@ -6,11 +6,7 @@ namespace BetterTaxes
 {
     public class TaxPlayer : ModPlayer
     {
-        public override bool Autoload(ref string name)
-        {
-            On.Terraria.Player.CollectTaxes += HookAdjustTaxes;
-            return base.Autoload(ref name);
-        }
+        public override bool IsLoadingEnabled(Mod mod) => false;
 
         private void HookAdjustTaxes(On.Terraria.Player.orig_CollectTaxes orig, Player self)
         {
@@ -30,16 +26,16 @@ namespace BetterTaxes
                 Player.taxRate = (TaxWorld.serverConfig.TimeBetweenPaychecks < 1) ? 1 : (TaxWorld.serverConfig.TimeBetweenPaychecks * 60);
 
                 if (Main.dayTime && hasCollected) hasCollected = false;
-                if (TaxWorld.serverConfig.EnableAutoCollect && !Main.dayTime && !hasCollected && Main.time >= 16200 && player.taxMoney > 0)
+                if (TaxWorld.serverConfig.EnableAutoCollect && !Main.dayTime && !hasCollected && Main.time >= 16200 && Player.taxMoney > 0)
                 {
                     hasCollected = true;
                     bool succeeded = false;
-                    if (TaxWorld.ClientBanksList[0] && !succeeded) succeeded = BankHandler.AddCoins(player.bank, player.taxMoney);
-                    if (TaxWorld.ClientBanksList[1] && !succeeded) succeeded = BankHandler.AddCoins(player.bank2, player.taxMoney);
-                    if (TaxWorld.ClientBanksList[2] && !succeeded) succeeded = BankHandler.AddCoins(player.bank3, player.taxMoney);
+                    if (TaxWorld.ClientBanksList[0] && !succeeded) succeeded = BankHandler.AddCoins(Player.bank, Player.taxMoney);
+                    if (TaxWorld.ClientBanksList[1] && !succeeded) succeeded = BankHandler.AddCoins(Player.bank2, Player.taxMoney);
+                    if (TaxWorld.ClientBanksList[2] && !succeeded) succeeded = BankHandler.AddCoins(Player.bank3, Player.taxMoney);
                     if (succeeded)
                     {
-                        player.taxMoney = 0;
+                        Player.taxMoney = 0;
                         BankHandler.LastCheckBank = true;
                     }
                     else

@@ -1,9 +1,11 @@
+A port of Atenfyr's 1.3 mod "Better Taxes".
+
 Overhauls the Tax Collector to be more useful with a few changes:
     * Increases the Tax Collector's money cap to 50 platinum rather than 10 gold.
-    * Increases profit depending on how far in the game you are, including support for both Calamity and Thorium. See the homepage.
+    * Increases profit depending on how far in the game you are, including support for both Calamity and Thorium.
     * Adds the ability for the Tax Collector to automatically place his earnings into a Piggy Bank, Safe, or Defender's Forge placed in his room at midnight every day.
     * Adds a config file to modify the above values as well as the paycheck rate and money cap.
     * Adds a system in the config to add custom rent values for mods, given some programming knowledge.
     * Adds a few extra things the Tax Collector can say.
 
-The source code for this mod is available on Github - https://github.com/atenfyr/bettertaxes
+The source code for this mod and more information is available on Github at https://github.com/nolongerlucky/bettertaxes

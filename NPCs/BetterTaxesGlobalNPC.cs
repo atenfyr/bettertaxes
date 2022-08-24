@@ -1,7 +1,9 @@
+using Microsoft.Xna.Framework;
 using MonoMod.Cil;
 using System;
 using System.Linq;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -21,43 +23,11 @@ namespace BetterTaxes.NPCs
 
     public class BetterTaxesGlobalNPC : GlobalNPC
     {
-        public override bool Autoload(ref string name)
-        {
-            IL.Terraria.Main.GUIChatDrawInner += HookAdjustButton;
-            return base.Autoload(ref name);
-        }
-
-        private void HookAdjustButton(ILContext il)
-        {
-            var c = new ILCursor(il).Goto(0);
-            if (!c.TryGotoNext(i => i.MatchLdcI4(NPCID.TaxCollector))) return;
-            if (!c.TryGotoNext(i => i.Match(Bne_Un))) return;
-
-            c.Index++;
-            ILLabel label = il.DefineLabel();
-            c.EmitDelegate<Func<bool>>(() => TaxWorld.serverConfig.AddCustomDialog);
-            c.Emit(Brfalse_S, label);
-            c.EmitDelegate<Func<string>>(() => Language.GetTextValue("Mods.BetterTaxes.Status.Status"));
-            c.Emit(Stloc_S, (byte)10);
-            c.MarkLabel(label);
-        }
-
-        public override void OnChatButtonClicked(NPC npc, bool firstButton)
-        {
-            if (npc.type == NPCID.TaxCollector && !firstButton && TaxWorld.serverConfig.AddCustomDialog)
-            {
-                Main.PlaySound(SoundID.MenuTick, -1, -1, 1, 1f, 0f);
-
-                int rawTax = ModHandler.parser.CalculateRate();
-                int adjustedTax = rawTax * UsefulThings.CalculateNPCCount();
-                double rate = TaxWorld.serverConfig.TimeBetweenPaychecks / Main.dayRate;
-                Main.npcChatText = Language.GetTextValue("Mods.BetterTaxes.Status.StatusMessage").Replace(@"%1", UsefulThings.ValueToCoinsWithColor(rawTax)).Replace(@"%2", UsefulThings.SecondsToHMSCasual((int)rate)).Replace(@"%3", UsefulThings.ValueToCoinsWithColor(adjustedTax * (3600 / rate)));
-            }
-        }
+        public override bool IsLoadingEnabled(Mod mod) => false;
 
         public override void GetChat(NPC npc, ref string chat)
         {
-            if (npc.type == NPCID.TaxCollector && TaxWorld.serverConfig.AddCustomDialog)
+            if (npc.type == NPCID.TaxCollector)
             {
                 int taxAmount = Main.LocalPlayer.taxMoney;
 
@@ -66,11 +36,11 @@ namespace BetterTaxes.NPCs
                 for (int i = 0; i < 200; i++)
                 {
                     if (DialogUtils.permanentlyHomelessNPCs.Contains(Main.npc[i].type)) continue;
-                    if (Main.npc[i].active && NPC.TypeToHeadIndex(Main.npc[i].type) > 0) npcCount++;
+                    if (Main.npc[i].active && Main.npc[i].type > NPCID.None) npcCount++;
                     if (Main.npc[i].homeless) homelessNpcCount++;
                 }
 
-                if (Main.rand.Next(2) == 0)
+                if (Main.rand.NextBool(2))
                 {
                     bool hasChosenDialog = false;
                     while (!hasChosenDialog)

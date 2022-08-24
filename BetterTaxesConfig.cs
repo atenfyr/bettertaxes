@@ -157,17 +157,17 @@ namespace BetterTaxes
         {
             get
             {
-                return StaticConstants.Equals(TaxRates, GetTaxDefaults()) && AddCustomDialog && EnableAutoCollect && (TimeBetweenPaychecks == 60) && (MoneyCap == Item.buyPrice(50, 0, 0, 0)) && (ExpertModeBoost == 1.5f);
+                return StaticConstants.Equals(TaxRates, GetTaxDefaults()) && EnableAutoCollect && (TimeBetweenPaychecks == 60) && (MoneyCap == Item.buyPrice(50, 0, 0, 0)) && (ExpertModeBoost == 1.5f && MasterModeBoost == 2.0f);
             }
             set
             {
                 if (value)
                 {
-                    AddCustomDialog = true;
                     EnableAutoCollect = true;
                     TimeBetweenPaychecks = 60;
                     MoneyCap = Item.buyPrice(50, 0, 0, 0);
                     ExpertModeBoost = 1.5f;
+                    MasterModeBoost = 2.0f;
                     TaxRates = GetTaxDefaults();
                 }
             }
@@ -180,17 +180,17 @@ namespace BetterTaxes
         {
             get
             {
-                return StaticConstants.Equals(TaxRates, StaticConstants.VanillaTaxRatesDefaults) && !AddCustomDialog && !EnableAutoCollect && (TimeBetweenPaychecks == 60) && (MoneyCap == Item.buyPrice(0, 10, 0, 0)) && (ExpertModeBoost == 1f);
+                return StaticConstants.Equals(TaxRates, StaticConstants.VanillaTaxRatesDefaults) && !EnableAutoCollect && (TimeBetweenPaychecks == 60) && (MoneyCap == Item.buyPrice(0, 10, 0, 0)) && (ExpertModeBoost == 1f && MasterModeBoost == 1f);
             }
             set
             {
                 if (value)
                 {
-                    AddCustomDialog = false;
                     EnableAutoCollect = false;
                     TimeBetweenPaychecks = 60;
                     MoneyCap = Item.buyPrice(0, 10, 0, 0);
                     ExpertModeBoost = 1f;
+                    MasterModeBoost = 1f;
                     TaxRates = StaticConstants.VanillaTaxRatesDefaults.ToDictionary(i => i.Key, i => i.Value);
                 }
             }
@@ -200,14 +200,6 @@ namespace BetterTaxes
         [Header("Configuration")]
         [Tooltip("$Mods.BetterTaxes.Config.TaxRatesD")]
         public Dictionary<string, SpecialInt> TaxRates
-        {
-            get;
-            set;
-        }
-
-        [Tooltip("$Mods.BetterTaxes.Config.AddCustomDialogD")]
-        [DefaultValue(true)]
-        public bool AddCustomDialog
         {
             get;
             set;
@@ -248,6 +240,16 @@ namespace BetterTaxes
         [SliderColor(135, 206, 250)]
         [CustomModConfigItem(typeof(BoostRangeElement))]
         public float ExpertModeBoost
+        {
+            get;
+            set;
+        }
+
+        [Tooltip("$Mods.BetterTaxes.Config.MasterModeBoostD")]
+        [DefaultValue(2.0f)]
+        [SliderColor(135, 206, 250)]
+        [CustomModConfigItem(typeof(BoostRangeElement))]
+        public float MasterModeBoost
         {
             get;
             set;
