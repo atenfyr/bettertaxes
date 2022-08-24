@@ -81,7 +81,7 @@ namespace BetterTaxes
 
     public class BetterTaxes : Mod
     {
-        public static string GithubUserName => "atenfyr";
+        public static string GithubUserName => "nolongerlucky";
         public static string GithubProjectName => "bettertaxes";
 
         internal static BetterTaxes Instance;
