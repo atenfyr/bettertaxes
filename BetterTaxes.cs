@@ -86,6 +86,7 @@ namespace BetterTaxes
 
         internal static BetterTaxes Instance;
         internal Mod herosMod;
+        internal static bool calamityLoaded;
 
         public BetterTaxes()
         {
@@ -112,6 +113,7 @@ namespace BetterTaxes
         {
             Instance = this;
             new ModHandler();
+            calamityLoaded = ModLoader.TryGetMod("CalamityMod", out Mod mod);
         }
 
         public override void Unload()
@@ -122,7 +124,6 @@ namespace BetterTaxes
             ModHandler.parser = null;
             ModHandler.delegates = new Dictionary<string, Dictionary<string, Func<bool>>>();
             ModHandler.customStatements = new Dictionary<string, int>();
-            ModHandler.hasCheckedForCalamity = false;
         }
 
         public override void PostSetupContent()

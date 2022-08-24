@@ -36,34 +36,29 @@ namespace BetterTaxes
         }
 
         internal static Mod calamityMod;
-        internal static bool hasCheckedForCalamity = false;
         public static bool RunConditionByCalamity(string condition)
         {
-            if (calamityMod == null && !hasCheckedForCalamity)
+            if (BetterTaxes.calamityLoaded)
             {
                 calamityMod = ModLoader.GetMod("CalamityMod");
-                hasCheckedForCalamity = true;
-            }
-            if (calamityMod == null) return false;
+                if ((bool)calamityMod.Call("Downed", condition)) return true;
+                if ((bool)calamityMod.Call("Difficulty", condition)) return true;
 
-            if ((bool)calamityMod.Call("Downed", condition)) return true;
-            if ((bool)calamityMod.Call("Difficulty", condition)) return true;
-            
-            // backwards compatibility
-            switch (condition) 
-            {
-                case "downedProvidence":
-                    return RunConditionByCalamity("providence");
-                case "downedDoG":
-                    return RunConditionByCalamity("devourerofgods");
-                case "downedYharon":
-                    return RunConditionByCalamity("yharon");
-                case "downedSCal":
-                    return RunConditionByCalamity("supremecalamitas");
-                case "revenge":
-                    return RunConditionByCalamity("revengeance");
+                // backwards compatibility
+                switch (condition)
+                {
+                    case "downedProvidence":
+                        return RunConditionByCalamity("providence");
+                    case "downedDoG":
+                        return RunConditionByCalamity("devourerofgods");
+                    case "downedYharon":
+                        return RunConditionByCalamity("yharon");
+                    case "downedSCal":
+                        return RunConditionByCalamity("supremecalamitas");
+                    case "revenge":
+                        return RunConditionByCalamity("revengeance");
+                }
             }
-
             return false;
         }
 
