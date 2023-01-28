@@ -19,10 +19,13 @@ internal class StatusButton : ModSystem {
                         int adjustedTax = rawTax * UsefulThings.CalculateNPCCount();
                         double rate = TaxWorld.serverConfig.TimeBetweenPaychecks / Main.dayRate;
 
+                        // inverse of multiplier used in tax money calculation
+                        double happinessPriceAdjustment = UsefulThings.GetTaxCollectorHappinessMultiplierInverse();
+
                         Main.npcChatText = Language.GetTextValue("Mods.BetterTaxes.Status.StatusMessage").
-                        Replace(@"%1", UsefulThings.ValueToCoinsWithColor(rawTax)).
+                        Replace(@"%1", UsefulThings.ValueToCoinsWithColor(rawTax * happinessPriceAdjustment)).
                         Replace(@"%2", UsefulThings.SecondsToHMSCasual((int)rate)).
-                        Replace(@"%3", UsefulThings.ValueToCoinsWithColor(adjustedTax * (3600 / rate))).
+                        Replace(@"%3", UsefulThings.ValueToCoinsWithColor((adjustedTax * happinessPriceAdjustment) * (3600 / rate))).
                         Replace(@"%4", UsefulThings.CalculateNPCCount().ToString()).
                         Replace(@"%5", UsefulThings.CalculateNPCCount() > 1 ? "s" : "");
                     }

@@ -68,6 +68,26 @@ namespace BetterTaxes
             return SecondsToHMS(num, zeroString);
         }
 
+        public static double GetTaxCollectorHappinessMultiplier()
+        {
+            if (!NPC.taxCollector) return 0;
+            int tcId = NPC.FindFirstNPC(NPCID.TaxCollector);
+            if (tcId < 0) return 0;
+
+            ShoppingSettings tcHappiness = Main.ShopHelper.GetShoppingSettings(new Player(), Main.npc[tcId]);
+            return 1 + (tcHappiness.PriceAdjustment - 1) * (1 - TaxWorld.serverConfig.HappinessBoost);
+        }
+
+        public static double GetTaxCollectorHappinessMultiplierInverse()
+        {
+            if (!NPC.taxCollector) return 0;
+            int tcId = NPC.FindFirstNPC(NPCID.TaxCollector);
+            if (tcId < 0) return 0;
+
+            ShoppingSettings tcHappiness = Main.ShopHelper.GetShoppingSettings(new Player(), Main.npc[tcId]);
+            return 1 / (1 + (tcHappiness.PriceAdjustment - 1) * (TaxWorld.serverConfig.HappinessBoost));
+        }
+
         public static int CalculateNPCCount()
         {
             int npcCount = 0;

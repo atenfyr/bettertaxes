@@ -13,7 +13,7 @@ namespace BetterTaxes
         }
         private void HookAdjustTaxes(On.Terraria.Player.orig_CollectTaxes orig, Player self)
         {
-            double happinessPriceAdjustment = 1 + (self.currentShoppingSettings.PriceAdjustment - 1) * (1 - TaxWorld.serverConfig.HappinessBoost);
+            double happinessPriceAdjustment = UsefulThings.GetTaxCollectorHappinessMultiplier();
 
             int cap = (int)(TaxWorld.serverConfig.MoneyCap * happinessPriceAdjustment);
             if (cap < 1) cap = 2000000000;
@@ -30,14 +30,15 @@ namespace BetterTaxes
             {
                 Player.taxRate = (TaxWorld.serverConfig.TimeBetweenPaychecks < 1) ? 1 : (TaxWorld.serverConfig.TimeBetweenPaychecks * 60);
 
+                int amountTaxMoneyToUse = (int)(Player.taxMoney / Player.currentShoppingSettings.PriceAdjustment);
                 if (Main.dayTime && hasCollected) hasCollected = false;
-                if (TaxWorld.serverConfig.EnableAutoCollect && !Main.dayTime && !hasCollected && Main.time >= 16200 && Player.taxMoney > 0)
+                if (TaxWorld.serverConfig.EnableAutoCollect && !Main.dayTime && !hasCollected && Main.time >= 16200 && amountTaxMoneyToUse > 0)
                 {
                     hasCollected = true;
                     bool succeeded = false;
-                    if (TaxWorld.ClientBanksList[0] && !succeeded) succeeded = BankHandler.AddCoins(Player.bank, Player.taxMoney);
-                    if (TaxWorld.ClientBanksList[1] && !succeeded) succeeded = BankHandler.AddCoins(Player.bank2, Player.taxMoney);
-                    if (TaxWorld.ClientBanksList[2] && !succeeded) succeeded = BankHandler.AddCoins(Player.bank3, Player.taxMoney);
+                    if (TaxWorld.ClientBanksList[0] && !succeeded) succeeded = BankHandler.AddCoins(Player.bank, amountTaxMoneyToUse);
+                    if (TaxWorld.ClientBanksList[1] && !succeeded) succeeded = BankHandler.AddCoins(Player.bank2, amountTaxMoneyToUse);
+                    if (TaxWorld.ClientBanksList[2] && !succeeded) succeeded = BankHandler.AddCoins(Player.bank3, amountTaxMoneyToUse);
                     if (succeeded)
                     {
                         Player.taxMoney = 0;
