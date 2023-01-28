@@ -6,8 +6,11 @@ namespace BetterTaxes
 {
     public class TaxPlayer : ModPlayer
     {
-        public override bool IsLoadingEnabled(Mod mod) => false;
-
+        public override bool IsLoadingEnabled(Mod mod)
+        {
+            On.Terraria.Player.CollectTaxes += HookAdjustTaxes;
+            return base.IsLoadingEnabled(mod);
+        }
         private void HookAdjustTaxes(On.Terraria.Player.orig_CollectTaxes orig, Player self)
         {
             int cap = TaxWorld.serverConfig.MoneyCap;

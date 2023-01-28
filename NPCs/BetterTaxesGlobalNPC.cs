@@ -17,13 +17,13 @@ namespace BetterTaxes.NPCs
 
         internal static bool CheckIfModExists(string name)
         {
-            return ModLoader.GetMod(name) != null;
+            return ModLoader.TryGetMod(name, out _);
         }
     }
 
     public class BetterTaxesGlobalNPC : GlobalNPC
     {
-        public override bool IsLoadingEnabled(Mod mod) => false;
+        public override bool IsLoadingEnabled(Mod mod) => true;
 
         public override void GetChat(NPC npc, ref string chat)
         {
@@ -103,13 +103,11 @@ namespace BetterTaxes.NPCs
                                 }
                                 break;
                             default:
-                                chat = Language.GetTextValue("tModLoader.DefaultTownNPCChat"); hasChosenDialog = true;
+                                hasChosenDialog = true;
                                 break;
                         }
-
                     }
                 }
-
             }
         }
     }
