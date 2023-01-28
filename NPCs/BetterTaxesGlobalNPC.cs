@@ -45,7 +45,7 @@ namespace BetterTaxes.NPCs
                     bool hasChosenDialog = false;
                     while (!hasChosenDialog)
                     {
-                        int chosenDialog = Main.rand.Next(9); // 0 - 8
+                        int chosenDialog = Main.rand.Next(9 + 1); // 0 - 9; one higher than max to avoid inf. loop
                         switch(chosenDialog)
                         {
                             case 0:
