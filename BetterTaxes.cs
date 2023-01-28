@@ -73,7 +73,7 @@ namespace BetterTaxes
             int npcCount = 0;
             for (int i = 0; i < 200; i++)
             {
-                if (Main.npc[i].active && !Main.npc[i].homeless && Main.npc[i].townNPC && Main.npc[i].netID != NPCID.OldMan) npcCount++;
+                if (Main.npc[i].active && !Main.npc[i].homeless && !NPCID.Sets.IsTownPet[Main.npc[i].type] && NPC.TypeToDefaultHeadIndex(Main.npc[i].type) > 0) npcCount++;
             }
             return npcCount;
         }

@@ -131,13 +131,38 @@ namespace BetterTaxes.UI
         {
             min = 1f;
             max = 4f;
-            increment = 0.05f;
+            increment = 0.1f;
         }
 
         public override string TransformValue(float val, string label)
         {
             if (val == 1) return label + ": " + Language.GetTextValue("Mods.BetterTaxes.Config.Disabled");
-            return label + ": " + val + "×";
+            return label + ": " + string.Format("{0:F1}", val) + "×";
+        }
+    }
+
+    public class HappinessRangeElement : ChangedTextRangeElement<float>
+    {
+        public override int NumberTicks => (int)((max - min) / increment) + 1;
+        public override float TickIncrement => (increment) / (max - min);
+
+        protected override float Proportion
+        {
+            get => (GetValue() - min) / (max - min);
+            set => SetValue((float)Math.Round((value * (max - min) + min) * (1 / increment)) * increment);
+        }
+
+        public HappinessRangeElement()
+        {
+            min = 0f;
+            max = 1f;
+            increment = 0.1f;
+        }
+
+        public override string TransformValue(float val, string label)
+        {
+            if (val == 0) return label + ": " + Language.GetTextValue("Mods.BetterTaxes.Config.Disabled");
+            return label + ": " + string.Format("{0:F1}", val) + "×";
         }
     }
 }

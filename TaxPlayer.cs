@@ -13,11 +13,13 @@ namespace BetterTaxes
         }
         private void HookAdjustTaxes(On.Terraria.Player.orig_CollectTaxes orig, Player self)
         {
-            int cap = TaxWorld.serverConfig.MoneyCap;
+            double happinessPriceAdjustment = 1 + (self.currentShoppingSettings.PriceAdjustment - 1) * (1 - TaxWorld.serverConfig.HappinessBoost);
+
+            int cap = (int)(TaxWorld.serverConfig.MoneyCap * happinessPriceAdjustment);
             if (cap < 1) cap = 2000000000;
             if (!NPC.taxCollector || self.taxMoney >= cap) return;
 
-            self.taxMoney += ModHandler.parser.CalculateRate() * UsefulThings.CalculateNPCCount();
+            self.taxMoney += (int)(ModHandler.parser.CalculateRate() * UsefulThings.CalculateNPCCount() * happinessPriceAdjustment);
             if (self.taxMoney > cap) self.taxMoney = cap;
         }
 

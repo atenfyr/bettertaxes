@@ -157,7 +157,7 @@ namespace BetterTaxes
         {
             get
             {
-                return StaticConstants.Equals(TaxRates, GetTaxDefaults()) && EnableAutoCollect && (TimeBetweenPaychecks == 60) && (MoneyCap == Item.buyPrice(50, 0, 0, 0)) && (ExpertModeBoost == 1.5f && MasterModeBoost == 2.0f);
+                return StaticConstants.Equals(TaxRates, GetTaxDefaults()) && EnableAutoCollect && (TimeBetweenPaychecks == 60) && (MoneyCap == Item.buyPrice(50, 0, 0, 0)) && (HappinessBoost == 0.0f && ExpertModeBoost == 1.5f && MasterModeBoost == 2.0f);
             }
             set
             {
@@ -166,6 +166,7 @@ namespace BetterTaxes
                     EnableAutoCollect = true;
                     TimeBetweenPaychecks = 60;
                     MoneyCap = Item.buyPrice(50, 0, 0, 0);
+                    HappinessBoost = 0.0f;
                     ExpertModeBoost = 1.5f;
                     MasterModeBoost = 2.0f;
                     TaxRates = GetTaxDefaults();
@@ -180,7 +181,7 @@ namespace BetterTaxes
         {
             get
             {
-                return StaticConstants.Equals(TaxRates, StaticConstants.VanillaTaxRatesDefaults) && !EnableAutoCollect && (TimeBetweenPaychecks == 60) && (MoneyCap == Item.buyPrice(0, 10, 0, 0)) && (ExpertModeBoost == 1f && MasterModeBoost == 1f);
+                return StaticConstants.Equals(TaxRates, StaticConstants.VanillaTaxRatesDefaults) && !EnableAutoCollect && (TimeBetweenPaychecks == 60) && (MoneyCap == Item.buyPrice(0, 25, 0, 0)) && (HappinessBoost == 1f && ExpertModeBoost == 1f && MasterModeBoost == 1f);
             }
             set
             {
@@ -188,7 +189,8 @@ namespace BetterTaxes
                 {
                     EnableAutoCollect = false;
                     TimeBetweenPaychecks = 60;
-                    MoneyCap = Item.buyPrice(0, 10, 0, 0);
+                    MoneyCap = Item.buyPrice(0, 25, 0, 0);
+                    HappinessBoost = 1f;
                     ExpertModeBoost = 1f;
                     MasterModeBoost = 1f;
                     TaxRates = StaticConstants.VanillaTaxRatesDefaults.ToDictionary(i => i.Key, i => i.Value);
@@ -230,6 +232,16 @@ namespace BetterTaxes
         [Increment(1000000)]
         [DefaultValue(50000000)]
         public SpecialInt MoneyCap
+        {
+            get;
+            set;
+        }
+
+        [Tooltip("$Mods.BetterTaxes.Config.HappinessBoostD")]
+        [DefaultValue(0.0f)]
+        [SliderColor(129, 250, 102)]
+        [CustomModConfigItem(typeof(HappinessRangeElement))]
+        public float HappinessBoost
         {
             get;
             set;
