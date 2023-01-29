@@ -68,12 +68,32 @@ namespace BetterTaxes
             return SecondsToHMS(num, zeroString);
         }
 
+        public static double GetTaxCollectorHappinessMultiplier()
+        {
+            if (!NPC.taxCollector) return 0;
+            int tcId = NPC.FindFirstNPC(NPCID.TaxCollector);
+            if (tcId < 0) return 0;
+
+            ShoppingSettings tcHappiness = Main.ShopHelper.GetShoppingSettings(new Player(), Main.npc[tcId]);
+            return 1 + (tcHappiness.PriceAdjustment - 1) * (1 - TaxWorld.serverConfig.HappinessBoost);
+        }
+
+        public static double GetTaxCollectorHappinessMultiplierInverse()
+        {
+            if (!NPC.taxCollector) return 0;
+            int tcId = NPC.FindFirstNPC(NPCID.TaxCollector);
+            if (tcId < 0) return 0;
+
+            ShoppingSettings tcHappiness = Main.ShopHelper.GetShoppingSettings(new Player(), Main.npc[tcId]);
+            return 1 / (1 + (tcHappiness.PriceAdjustment - 1) * (TaxWorld.serverConfig.HappinessBoost));
+        }
+
         public static int CalculateNPCCount()
         {
             int npcCount = 0;
             for (int i = 0; i < 200; i++)
             {
-                if (Main.npc[i].active && !Main.npc[i].homeless && NPC.TypeToHeadIndex(Main.npc[i].type) > 0) npcCount++;
+                if (Main.npc[i].active && !Main.npc[i].homeless && !NPCID.Sets.IsTownPet[Main.npc[i].type] && NPC.TypeToDefaultHeadIndex(Main.npc[i].type) > 0) npcCount++;
             }
             return npcCount;
         }
@@ -86,10 +106,15 @@ namespace BetterTaxes
 
         internal static BetterTaxes Instance;
         internal Mod herosMod;
+        internal static bool calamityLoaded;
+        internal static bool herosLoaded;
 
         public BetterTaxes()
         {
-            Properties = ModProperties.AutoLoadAll;
+            ContentAutoloadingEnabled = true;
+            GoreAutoloadingEnabled = true;
+            MusicAutoloadingEnabled = true;
+            BackgroundAutoloadingEnabled = true;
         }
 
         public override object Call(params object[] args)
@@ -109,6 +134,8 @@ namespace BetterTaxes
         {
             Instance = this;
             new ModHandler();
+            calamityLoaded = ModLoader.TryGetMod("CalamityMod", out Mod CalamityMod);
+            herosLoaded = ModLoader.TryGetMod("HEROsMod", out Mod HEROsMod);
         }
 
         public override void Unload()
@@ -116,19 +143,20 @@ namespace BetterTaxes
             Instance = null;
             TaxWorld.serverConfig = null;
             ModHandler.calamityMod = null;
+            herosMod = null;
             ModHandler.parser = null;
             ModHandler.delegates = new Dictionary<string, Dictionary<string, Func<bool>>>();
             ModHandler.customStatements = new Dictionary<string, int>();
-            ModHandler.hasCheckedForCalamity = false;
         }
 
         public override void PostSetupContent()
         {
+            /*
             // Thorium support
             Mod thoriumMod = ModLoader.GetMod("ThoriumMod");
             if (thoriumMod != null)
             {
-                ModWorld thoriumWorld = thoriumMod.GetModWorld("ThoriumWorld");
+                ModSystem thoriumWorld = thoriumMod.GetModWorld("ThoriumWorld");
                 Call("AddList", "Thorium");
                 Call("AddKey", "Thorium", "primordials", (Func<bool>)delegate () { return (bool)thoriumWorld.GetType().GetField("downedRealityBreaker").GetValue(thoriumWorld); }, -1);
                 Call("AddKey", "Thorium", "ragnarok", (Func<bool>)delegate () { return (bool)thoriumWorld.GetType().GetField("downedRealityBreaker").GetValue(thoriumWorld); }, -1);
@@ -138,17 +166,14 @@ namespace BetterTaxes
                 Call("AddKey", "Thorium", "coznix", (Func<bool>)delegate () { return (bool)thoriumWorld.GetType().GetField("downedFallenBeholder").GetValue(thoriumWorld); }, -1);
                 Call("AddKey", "Thorium", "lich", (Func<bool>)delegate () { return (bool)thoriumWorld.GetType().GetField("downedLich").GetValue(thoriumWorld); }, -1);
                 Call("AddKey", "Thorium", "abyssion", (Func<bool>)delegate () { return (bool)thoriumWorld.GetType().GetField("downedDepthBoss").GetValue(thoriumWorld); }, -1);
-            }
+            }*/
 
             // HERO's Mod support
-            herosMod = ModLoader.GetMod("HEROsMod");
-            try
-            {
-                if (herosMod != null)
-                {
-                    HerosIntegration(herosMod);
-                }
+            if (herosLoaded)
+            try {
+                HerosIntegration(ModLoader.GetMod("HEROsMod"));
             }
+            
             catch (Exception ex)
             {
                 Logger.Warn("BetterTaxes.PostSetupContent() error: " + ex.StackTrace + ex.Message);

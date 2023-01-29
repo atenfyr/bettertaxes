@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 
 namespace BetterTaxes
 {
-    public class TaxWorld : ModWorld
+    public class TaxWorld : ModSystem
     {
         public static BetterTaxesConfig serverConfig;
         private bool hasSynced = false;
@@ -30,7 +30,7 @@ namespace BetterTaxes
             }
         }
 
-        public override void PostUpdate()
+        public override void PostUpdateWorld()
         {
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {

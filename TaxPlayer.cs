@@ -6,19 +6,20 @@ namespace BetterTaxes
 {
     public class TaxPlayer : ModPlayer
     {
-        public override bool Autoload(ref string name)
+        public override bool IsLoadingEnabled(Mod mod)
         {
             On.Terraria.Player.CollectTaxes += HookAdjustTaxes;
-            return base.Autoload(ref name);
+            return base.IsLoadingEnabled(mod);
         }
-
         private void HookAdjustTaxes(On.Terraria.Player.orig_CollectTaxes orig, Player self)
         {
-            int cap = TaxWorld.serverConfig.MoneyCap;
+            double happinessPriceAdjustment = UsefulThings.GetTaxCollectorHappinessMultiplier();
+
+            int cap = (int)(TaxWorld.serverConfig.MoneyCap * happinessPriceAdjustment);
             if (cap < 1) cap = 2000000000;
             if (!NPC.taxCollector || self.taxMoney >= cap) return;
 
-            self.taxMoney += ModHandler.parser.CalculateRate() * UsefulThings.CalculateNPCCount();
+            self.taxMoney += (int)(ModHandler.parser.CalculateRate() * UsefulThings.CalculateNPCCount() * happinessPriceAdjustment);
             if (self.taxMoney > cap) self.taxMoney = cap;
         }
 
@@ -29,17 +30,18 @@ namespace BetterTaxes
             {
                 Player.taxRate = (TaxWorld.serverConfig.TimeBetweenPaychecks < 1) ? 1 : (TaxWorld.serverConfig.TimeBetweenPaychecks * 60);
 
+                int amountTaxMoneyToUse = (int)(Player.taxMoney / Player.currentShoppingSettings.PriceAdjustment);
                 if (Main.dayTime && hasCollected) hasCollected = false;
-                if (TaxWorld.serverConfig.EnableAutoCollect && !Main.dayTime && !hasCollected && Main.time >= 16200 && player.taxMoney > 0)
+                if (TaxWorld.serverConfig.EnableAutoCollect && !Main.dayTime && !hasCollected && Main.time >= 16200 && amountTaxMoneyToUse > 0)
                 {
                     hasCollected = true;
                     bool succeeded = false;
-                    if (TaxWorld.ClientBanksList[0] && !succeeded) succeeded = BankHandler.AddCoins(player.bank, player.taxMoney);
-                    if (TaxWorld.ClientBanksList[1] && !succeeded) succeeded = BankHandler.AddCoins(player.bank2, player.taxMoney);
-                    if (TaxWorld.ClientBanksList[2] && !succeeded) succeeded = BankHandler.AddCoins(player.bank3, player.taxMoney);
+                    if (TaxWorld.ClientBanksList[0] && !succeeded) succeeded = BankHandler.AddCoins(Player.bank, amountTaxMoneyToUse);
+                    if (TaxWorld.ClientBanksList[1] && !succeeded) succeeded = BankHandler.AddCoins(Player.bank2, amountTaxMoneyToUse);
+                    if (TaxWorld.ClientBanksList[2] && !succeeded) succeeded = BankHandler.AddCoins(Player.bank3, amountTaxMoneyToUse);
                     if (succeeded)
                     {
-                        player.taxMoney = 0;
+                        Player.taxMoney = 0;
                         BankHandler.LastCheckBank = true;
                     }
                     else

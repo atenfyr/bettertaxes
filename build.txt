@@ -1,5 +1,5 @@
-author = Atenfyr
-version = 2.4.1
+author = Atenfyr, NoLongerLucky
+version = 3.1.0
 displayName = Better Taxes
 homepage = https://forums.terraria.org/index.php?threads/better-taxes.76764/
 hideCode = true
@@ -7,3 +7,4 @@ hideResources = true
 includeSource = false
 buildIgnore = *.csproj, *.user, *.sln, *.md, wiki\*, Properties\*, obj\*, bin\*
 includePDB = true
+weakReferences = DialogueTweak, CalamityMod, HEROsMod

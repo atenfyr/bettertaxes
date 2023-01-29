@@ -32,17 +32,17 @@ namespace BetterTaxes.UI
         public override void OnBind()
         {
             base.OnBind();
-            tList = (IList<T>)list;
-            TextDisplayFunction = () => TransformValue(GetValue(), memberInfo.Name);
+            tList = (IList<T>)List;
+            TextDisplayFunction = () => TransformValue(GetValue(), MemberInfo.Name);
 
-            if (tList != null) TextDisplayFunction = () => TransformValue(tList[index], (index + 1).ToString());
-            if (labelAttribute != null) TextDisplayFunction = () => TransformValue(GetValue(), labelAttribute.Label);
-            if (rangeAttribute != null && rangeAttribute.min is T && rangeAttribute.max is T)
+            if (tList != null) TextDisplayFunction = () => TransformValue(tList[Index], (Index + 1).ToString());
+            if (LabelAttribute != null) TextDisplayFunction = () => TransformValue(GetValue(), LabelAttribute.Label);
+            if (RangeAttribute != null && RangeAttribute.Min is T && RangeAttribute.Max is T)
             {
-                min = (T)rangeAttribute.min;
-                max = (T)rangeAttribute.max;
+                min = (T)RangeAttribute.Min;
+                max = (T)RangeAttribute.Max;
             }
-            if (incrementAttribute != null && incrementAttribute.increment is T) increment = (T)incrementAttribute.increment;
+            if (IncrementAttribute != null && IncrementAttribute.Increment is T) increment = (T)IncrementAttribute.Increment;
         }
 
         public virtual string TransformValue(T val, string label)
@@ -77,18 +77,18 @@ namespace BetterTaxes.UI
         public override void OnBind()
         {
             base.OnBind();
-            units = ConfigManager.GetCustomAttribute<UnitsAttribute>(memberInfo, item, list)?.units ?? Unit.Coins;
-            tList = (IList<int>)list;
-            TextDisplayFunction = () => TransformValue(GetValue(), memberInfo.Name);
+            units = ConfigManager.GetCustomAttribute<UnitsAttribute>(MemberInfo, Item, List)?.units ?? Unit.Coins;
+            tList = (IList<int>)List;
+            TextDisplayFunction = () => TransformValue(GetValue(), MemberInfo.Name);
 
-            if (tList != null) TextDisplayFunction = () => TransformValue(tList[index], (index + 1).ToString());
-            if (labelAttribute != null) TextDisplayFunction = () => TransformValue(GetValue(), labelAttribute.Label);
-            if (rangeAttribute != null && rangeAttribute.min is int && rangeAttribute.max is int)
+            if (tList != null) TextDisplayFunction = () => TransformValue(tList[Index], (Index + 1).ToString());
+            if (LabelAttribute != null) TextDisplayFunction = () => TransformValue(GetValue(), LabelAttribute.Label);
+            if (RangeAttribute != null && RangeAttribute.Min is int && RangeAttribute.Max is int)
             {
-                min = (int)rangeAttribute.min;
-                max = (int)rangeAttribute.max;
+                min = (int)RangeAttribute.Min;
+                max = (int)RangeAttribute.Max;
             }
-            if (incrementAttribute != null && incrementAttribute.increment is int) increment = (int)incrementAttribute.increment;
+            if (IncrementAttribute != null && IncrementAttribute.Increment is int) increment = (int)IncrementAttribute.Increment;
         }
 
         public string TransformValue(int val, string label)
@@ -131,13 +131,38 @@ namespace BetterTaxes.UI
         {
             min = 1f;
             max = 4f;
-            increment = 0.05f;
+            increment = 0.1f;
         }
 
         public override string TransformValue(float val, string label)
         {
             if (val == 1) return label + ": " + Language.GetTextValue("Mods.BetterTaxes.Config.Disabled");
-            return label + ": " + val + "×";
+            return label + ": " + string.Format("{0:F1}", val) + "×";
+        }
+    }
+
+    public class HappinessRangeElement : ChangedTextRangeElement<float>
+    {
+        public override int NumberTicks => (int)((max - min) / increment) + 1;
+        public override float TickIncrement => (increment) / (max - min);
+
+        protected override float Proportion
+        {
+            get => (GetValue() - min) / (max - min);
+            set => SetValue((float)Math.Round((value * (max - min) + min) * (1 / increment)) * increment);
+        }
+
+        public HappinessRangeElement()
+        {
+            min = 0f;
+            max = 1f;
+            increment = 0.1f;
+        }
+
+        public override string TransformValue(float val, string label)
+        {
+            if (val == 0) return label + ": " + Language.GetTextValue("Mods.BetterTaxes.Config.Disabled");
+            return label + ": " + string.Format("{0:F1}", val) + "×";
         }
     }
 }

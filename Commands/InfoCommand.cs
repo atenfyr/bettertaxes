@@ -17,7 +17,9 @@ namespace BetterTaxes.Commands
             int npcCount = UsefulThings.CalculateNPCCount();
             int taxRate = ModHandler.parser.CalculateRate();
             long rate = TaxWorld.serverConfig.TimeBetweenPaychecks;
-            caller.Reply("Tax rate: " + UsefulThings.ValueToCoins(taxRate * npcCount) + " per " + TimeSpan.FromSeconds(rate / Main.dayRate).ToString(@"mm\:ss") + "\nUnadjusted tax rate: " + UsefulThings.ValueToCoins(taxRate) + " per " + TimeSpan.FromSeconds(rate).ToString(@"mm\:ss") + " per NPC\nHoused NPC Count: " + npcCount, Color.Yellow);
+            double happinessPriceAdjustment = UsefulThings.GetTaxCollectorHappinessMultiplierInverse();
+
+            caller.Reply("Tax rate: " + UsefulThings.ValueToCoins((int)(taxRate * npcCount * happinessPriceAdjustment)) + " per " + TimeSpan.FromSeconds(rate / Main.dayRate).ToString(@"mm\:ss") + "\nHappiness adjustment rate: " + string.Format("{0:F2}", happinessPriceAdjustment) + "x\nUnadjusted tax rate: " + UsefulThings.ValueToCoins(taxRate) + " per " + TimeSpan.FromSeconds(rate).ToString(@"mm\:ss") + " per NPC\nHoused NPC Count: " + npcCount, Color.Yellow);
         }
     }
 }

@@ -59,7 +59,7 @@ namespace BetterTaxes
             bank.item[i].SetDefaults(bank.item[i].type + 1);
             for (int j = 0; j < bank.item.Length; j++)
             {
-                if (bank.item[j].IsTheSameAs(bank.item[i]) && j != i && bank.item[j].type == bank.item[i].type && bank.item[j].stack < bank.item[j].maxStack)
+                if (bank.item[j].type == bank.item[i].type && j != i && bank.item[j].type == bank.item[i].type && bank.item[j].stack < bank.item[j].maxStack)
                 {
                     bank.item[j].stack++;
                     bank.item[i].SetDefaults();
