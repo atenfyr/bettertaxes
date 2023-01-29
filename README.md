@@ -15,7 +15,8 @@ Better Taxes overhauls the Tax Collector to be more useful with some small chang
     * If Thorium is installed and the Ragnarök has been defeated, rent raises to 15 silver a minute per NPC, or 1.98 platinum an hour with 22 NPCs. If downed bosses in Calamity would increase rent to higher than this, they do so.
     * If expert mode is enabled, the Tax Collector will give 1.5x the amount of money specified above.
     * If master mode is enabled, the Tax Collector will give 2.0x the amount of money specified above.
-    * The effects of happiness on the Tax Collector's rent and money cap, but can be re-enabled in the config.
+    * The effects of happiness on the Tax Collector's rent and money cap are disabled, but can be re-enabled in the config.
+* Adds the ability for the Tax Collector to automatically place his earnings into a Piggy Bank, Safe, or Defender's Forge placed in his room at midnight every day.
 * Adds a config file to modify the above values as well as the paycheck rate and money cap.
 * Adds a system in the config to add custom rent values for mods. See [the wiki](https://github.com/nolongerlucky/bettertaxes/wiki) for more information.
 * Adds a few extra things the Tax Collector can say.
