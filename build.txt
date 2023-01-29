@@ -1,7 +1,7 @@
-author = NoLongerLucky, Atenfyr
-version = 3.0.0
+author = Atenfyr, NoLongerLucky
+version = 3.1.0
 displayName = Better Taxes
-homepage = https://github.com/NoLongerLucky/bettertaxes
+homepage = https://forums.terraria.org/index.php?threads/better-taxes.76764/
 hideCode = true
 hideResources = true
 includeSource = false

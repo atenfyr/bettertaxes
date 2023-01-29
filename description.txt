@@ -1,5 +1,3 @@
-A port of Atenfyr's 1.3 mod "Better Taxes".
-
 Overhauls the Tax Collector to be more useful with a few changes:
     * Increases the Tax Collector's money cap to 50 platinum rather than 10 gold.
     * Increases profit depending on how far in the game you are, including support for both Calamity and Thorium.
@@ -8,4 +6,6 @@ Overhauls the Tax Collector to be more useful with a few changes:
     * Adds a system in the config to add custom rent values for mods, given some programming knowledge.
     * Adds a few extra things the Tax Collector can say.
 
-The source code for this mod and more information is available on Github at https://github.com/nolongerlucky/bettertaxes
+This mod was ported to Terraria 1.4 by @NoLongerLucky - thank you!
+
+The source code for this mod and more information is available on Github at https://github.com/atenfyr/bettertaxes
