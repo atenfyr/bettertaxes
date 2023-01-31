@@ -4,6 +4,7 @@ Overhauls the Tax Collector to be more useful with a few changes:
     * Adds the ability for the Tax Collector to automatically place his earnings into a Piggy Bank, Safe, or Defender's Forge placed in his room at midnight every day.
     * Adds a config file to modify the above values as well as the paycheck rate and money cap.
     * Adds a system in the config to add custom rent values for mods, given some programming knowledge.
+    * Adds a "status" button when the Dialogue Panel Rework mod is installed.
     * Adds a few extra things the Tax Collector can say.
 
 This mod was ported to Terraria 1.4 by @NoLongerLucky - thank you!

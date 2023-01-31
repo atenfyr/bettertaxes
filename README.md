@@ -18,8 +18,12 @@ Better Taxes overhauls the Tax Collector to be more useful with some small chang
     * The effects of happiness on the Tax Collector's rent and money cap are disabled, but can be re-enabled in the config.
 * Adds the ability for the Tax Collector to automatically place his earnings into a Piggy Bank, Safe, or Defender's Forge placed in his room at midnight every day.
 * Adds a config file to modify the above values as well as the paycheck rate and money cap.
-* Adds a system in the config to add custom rent values for mods. See [the wiki](https://github.com/nolongerlucky/bettertaxes/wiki) for more information.
+* Adds a system in the config to add custom rent values for mods. See [the wiki](https://github.com/atenfyr/bettertaxes/wiki) for more information.
+* Adds a "status" button when the Dialogue Panel Rework mod is installed.
 * Adds a few extra things the Tax Collector can say.
+
+## Dependencies
+* Dialogue Panel Rework (recommended): [https://steamcommunity.com/sharedfiles/filedetails/?id=2563815443](https://steamcommunity.com/sharedfiles/filedetails/?id=2563815443)
 
 ## Credits
 - @atenfyr: original design
