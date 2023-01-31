@@ -36,13 +36,32 @@ namespace BetterTaxes
         }
 
         internal static Mod calamityMod;
-        public static bool RunConditionByCalamity(string condition)
+        public static bool RunConditionByCalamity(string condition, bool isSecondRun = false)
         {
             if (BetterTaxes.calamityLoaded)
             {
                 calamityMod = ModLoader.GetMod("CalamityMod");
-                if ((bool)calamityMod.Call("Downed", condition)) return true;
-                if ((bool)calamityMod.Call("Difficulty", condition)) return true;
+                if ((bool)calamityMod.Call("GetBossDowned", condition.ToLower())) return true;
+                if ((bool)calamityMod.Call("DifficultyActive", condition.ToLower())) return true;
+                if (!isSecondRun)
+                {
+                    switch(condition)
+                    {
+                        case "leviathan":
+                            return RunConditionByCalamity("anahitaleviathan", true);
+                        case "plaguebringer":
+                            return RunConditionByCalamity("plaguebringergoliath", true);
+                        case "bumblebirb":
+                            return RunConditionByCalamity("dragonfolly", true);
+                        case "dog":
+                            return RunConditionByCalamity("devourerofgods", true);
+                        case "scal":
+                            return RunConditionByCalamity("supremecalamitas", true);
+                        case "revenge":
+                            return RunConditionByCalamity("revengeance", true);
+
+                    }
+                }
             }
             return false;
         }
