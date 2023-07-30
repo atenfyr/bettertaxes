@@ -149,10 +149,10 @@ namespace BetterTaxes
     {
         public override ConfigScope Mode => ConfigScope.ServerSide;
 
-        [Header("Presets")]
+        [Header("$Mods.BetterTaxes.Config.Presets")]
         [JsonIgnore]
-        [Label("Classic")]
-        [Tooltip("$Mods.BetterTaxes.Config.ClassicD")]
+        [LabelKey("$Mods.BetterTaxes.Config.Classic")]
+        [TooltipKey("$Mods.BetterTaxes.Config.ClassicD")]
         public bool ClassicPreset
         {
             get
@@ -175,8 +175,8 @@ namespace BetterTaxes
         }
 
         [JsonIgnore]
-        [Label("Vanilla")]
-        [Tooltip("$Mods.BetterTaxes.Config.VanillaD")]
+        [LabelKey("$Mods.BetterTaxes.Config.Vanilla")]
+        [TooltipKey("$Mods.BetterTaxes.Config.VanillaD")]
         public bool VanillaPreset
         {
             get
@@ -199,15 +199,17 @@ namespace BetterTaxes
         }
 
         [DefaultDictionaryKeyValue("")]
-        [Header("Configuration")]
-        [Tooltip("$Mods.BetterTaxes.Config.TaxRatesD")]
+        [Header("$Mods.BetterTaxes.Config.Configuration")]
+        [LabelKey("$Mods.BetterTaxes.Config.TaxRates")]
+        [TooltipKey("$Mods.BetterTaxes.Config.TaxRatesD")]
         public Dictionary<string, SpecialInt> TaxRates
         {
             get;
             set;
         }
 
-        [Tooltip("$Mods.BetterTaxes.Config.EnableAutoCollectD")]
+        [LabelKey("$Mods.BetterTaxes.Config.EnableAutoCollect")]
+        [TooltipKey("$Mods.BetterTaxes.Config.EnableAutoCollectD")]
         [DefaultValue(true)]
         public bool EnableAutoCollect
         {
@@ -215,7 +217,8 @@ namespace BetterTaxes
             set;
         }
 
-        [Tooltip("$Mods.BetterTaxes.Config.TimeBetweenPaychecksD")]
+        [LabelKey("$Mods.BetterTaxes.Config.TimeBetweenPaychecks")]
+        [TooltipKey("$Mods.BetterTaxes.Config.TimeBetweenPaychecksD")]
         [DefaultValue(60)]
         [SliderColor(183, 88, 25)]
         [Range(1, 300)]
@@ -227,7 +230,8 @@ namespace BetterTaxes
             set;
         }
 
-        [Tooltip("$Mods.BetterTaxes.Config.MoneyCapD")]
+        [LabelKey("$Mods.BetterTaxes.Config.MoneyCap")]
+        [TooltipKey("$Mods.BetterTaxes.Config.MoneyCapD")]
         [Range(0, 100000000)]
         [Increment(1000000)]
         [DefaultValue(50000000)]
@@ -237,7 +241,8 @@ namespace BetterTaxes
             set;
         }
 
-        [Tooltip("$Mods.BetterTaxes.Config.HappinessBoostD")]
+        [LabelKey("$Mods.BetterTaxes.Config.HappinessBoost")]
+        [TooltipKey("$Mods.BetterTaxes.Config.HappinessBoostD")]
         [DefaultValue(0.0f)]
         [SliderColor(129, 250, 102)]
         [CustomModConfigItem(typeof(HappinessRangeElement))]
@@ -247,7 +252,8 @@ namespace BetterTaxes
             set;
         }
 
-        [Tooltip("$Mods.BetterTaxes.Config.ExpertModeBoostD")]
+        [LabelKey("$Mods.BetterTaxes.Config.ExpertModeBoost")]
+        [TooltipKey("$Mods.BetterTaxes.Config.ExpertModeBoostD")]
         [DefaultValue(1.5f)]
         [SliderColor(135, 206, 250)]
         [CustomModConfigItem(typeof(BoostRangeElement))]
@@ -257,7 +263,8 @@ namespace BetterTaxes
             set;
         }
 
-        [Tooltip("$Mods.BetterTaxes.Config.MasterModeBoostD")]
+        [LabelKey("$Mods.BetterTaxes.Config.MasterModeBoost")]
+        [TooltipKey("$Mods.BetterTaxes.Config.MasterModeBoostD")]
         [DefaultValue(2.0f)]
         [SliderColor(135, 206, 250)]
         [CustomModConfigItem(typeof(BoostRangeElement))]

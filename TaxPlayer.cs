@@ -8,10 +8,10 @@ namespace BetterTaxes
     {
         public override bool IsLoadingEnabled(Mod mod)
         {
-            On.Terraria.Player.CollectTaxes += HookAdjustTaxes;
+            Terraria.On_Player.CollectTaxes += HookAdjustTaxes;
             return base.IsLoadingEnabled(mod);
         }
-        private void HookAdjustTaxes(On.Terraria.Player.orig_CollectTaxes orig, Player self)
+        private void HookAdjustTaxes(Terraria.On_Player.orig_CollectTaxes orig, Player self)
         {
             double happinessPriceAdjustment = UsefulThings.GetTaxCollectorHappinessMultiplier();
 

@@ -36,7 +36,6 @@ namespace BetterTaxes.UI
             TextDisplayFunction = () => TransformValue(GetValue(), MemberInfo.Name);
 
             if (tList != null) TextDisplayFunction = () => TransformValue(tList[Index], (Index + 1).ToString());
-            if (LabelAttribute != null) TextDisplayFunction = () => TransformValue(GetValue(), LabelAttribute.Label);
             if (RangeAttribute != null && RangeAttribute.Min is T && RangeAttribute.Max is T)
             {
                 min = (T)RangeAttribute.Min;
@@ -77,12 +76,11 @@ namespace BetterTaxes.UI
         public override void OnBind()
         {
             base.OnBind();
-            units = ConfigManager.GetCustomAttribute<UnitsAttribute>(MemberInfo, Item, List)?.units ?? Unit.Coins;
+            units = ConfigManager.GetCustomAttributeFromMemberThenMemberType<UnitsAttribute>(MemberInfo, Item, List)?.units ?? Unit.Coins;
             tList = (IList<int>)List;
             TextDisplayFunction = () => TransformValue(GetValue(), MemberInfo.Name);
 
             if (tList != null) TextDisplayFunction = () => TransformValue(tList[Index], (Index + 1).ToString());
-            if (LabelAttribute != null) TextDisplayFunction = () => TransformValue(GetValue(), LabelAttribute.Label);
             if (RangeAttribute != null && RangeAttribute.Min is int && RangeAttribute.Max is int)
             {
                 min = (int)RangeAttribute.Min;

@@ -42,6 +42,22 @@ Mods: {
 			Tick: tick
 			Unlimited: Unlimited
 			Disabled: Disabled
+			Classic: Classic
+			Vanilla: Vanilla
+			Configuration: Configuration
+			Presets: Presets
+			EnableAutoCollect: EnableAutoCollect
+			TimeBetweenPaychecks: TimeBetweenPaychecks
+			MoneyCap: MoneyCap
+			HappinessBoost: HappinessBoost
+			ExpertModeBoost: ExpertModeBoost
+			MasterModeBoost: MasterModeBoost
+			TaxRates: TaxRates
+		}
+
+		Configs: {
+			Config.DisplayName: Config
+			SpecialInt.Tooltip: ""
 		}
 	}
 }

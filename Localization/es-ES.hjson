@@ -42,6 +42,22 @@ Mods: {
 			Tick: tic
 			Unlimited: Ilimitado
 			Disabled: Deshabilitado
+			Classic: Clásico
+			Vanilla: Vainilla
+			Configuration: Configuración
+			Presets: Presets
+			EnableAutoCollect: EnableAutoCollect
+			TimeBetweenPaychecks: TimeBetweenPaychecks
+			MoneyCap: MoneyCap
+			HappinessBoost: HappinessBoost
+			ExpertModeBoost: ExpertModeBoost
+			MasterModeBoost: MasterModeBoost
+			TaxRates: TaxRates
+		}
+
+		Configs: {
+			Config.DisplayName: Configuración
+			SpecialInt.Tooltip: ""
 		}
 	}
 }

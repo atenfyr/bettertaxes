@@ -7,6 +7,6 @@ Overhauls the Tax Collector to be more useful with a few changes:
     * Adds a "status" button when the Dialogue Panel Rework mod is installed.
     * Adds a few extra things the Tax Collector can say.
 
-This mod was ported to Terraria 1.4 by @NoLongerLucky - thank you!
+This mod was originally ported to Terraria 1.4 by @NoLongerLucky - thank you!
 
 The source code for this mod and more information is available on Github at https://github.com/atenfyr/bettertaxes
